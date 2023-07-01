@@ -59,8 +59,17 @@ function createChatStripe(isAi, value, uniqueId) {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const data = new FormData(form);
-  const prompt = data.get('prompt');
+  const input = form.querySelector('textarea');
+  const prompt = input.value.trim();
+
+  if (prompt === '') {
+    // Do not submit if the prompt is empty
+    return;
+  }
+
+  // Disable the submit button while processing
+  const submitButton = form.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
 
   // User's chat stripe
   chatContainer.innerHTML += createChatStripe(false, prompt);
@@ -110,6 +119,9 @@ const handleSubmit = async (e) => {
   } catch (error) {
     messageDiv.innerHTML = 'Something went wrong';
     console.error(error);
+  } finally {
+    // Re-enable the submit button after processing
+    submitButton.disabled = false;
   }
 };
 
