@@ -84,19 +84,33 @@
 
     <script type="module" src="script.js"></script>
     <script>
-    // Function to handle speech recognition
-    function startSpeechRecognition() {
-      const recognition = new webkitSpeechRecognition() || SpeechRecognition();
-      recognition.lang = 'en-US'; // Set the language to English (change as needed)
-
-      recognition.onresult = function(event) {
-        const textArea = document.querySelector('textarea[name="prompt"]');
-        const transcript = event.results[0][0].transcript;
-        textArea.value = transcript;
-      }
-
-      recognition.start();
+  // Function to handle speech recognition
+  function startSpeechRecognition() {
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    const recognition = new SpeechRecognition();
+    const textArea = document.querySelector('textarea[name="prompt"]');
+    
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      textArea.value = transcript;
     }
-  </script>
+    
+    // Set the languages to be recognized
+    recognition.lang = 'en-US'; // English
+    recognition.lang = 'es-ES'; // Spanish
+    recognition.lang = 'fr-FR'; // French
+    recognition.lang = 'ta-IN'; // Tamil
+    recognition.lang = 'de-DE'; // German
+    recognition.lang = 'it-IT'; // Italian
+    recognition.lang = 'pt-BR'; // Portuguese (Brazil)
+    recognition.lang = 'ru-RU'; // Russian
+    recognition.lang = 'ko-KR'; // Korean
+    recognition.lang = 'ja-JP'; // Japanese
+    recognition.lang = 'zh-CN'; // Chinese (Simplified)
+    // Add more languages as needed
+    
+    recognition.start();
+  }
+</script>
   </body>
 </html>
