@@ -13,14 +13,12 @@ body {
     }
 
 .voice-mic {
-        width: 24px;
-        height: 24px;
+        font-size: 24px;
+        color: white;
         background-color: yellow;
         border-radius: 50%;
+        padding: 8px;
         cursor: pointer;
-        display: inline-block;
-        background-image: url("assets/mic.svg");
-        background-size: cover;
     }
 
 .star {
