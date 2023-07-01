@@ -3,7 +3,6 @@ import user from './assets/user.svg';
 
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
-const socket = new WebSocket('wss://your-websocket-server-url');
 
 let loadInterval;
 
@@ -83,22 +82,31 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   try {
-    // Send the user's message to the server via WebSocket
-    socket.send(JSON.stringify({ prompt }));
+    const response = await fetch('https://educational-development.onrender.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+      }),
+    });
 
-    socket.addEventListener('message', (event) => {
-      const response = JSON.parse(event.data);
-      const parsedData = response.bot.trim(); // Trim any trailing spaces or '\n'
+    clearInterval(loadInterval);
+    messageDiv.innerHTML = '';
 
-      clearInterval(loadInterval);
-      messageDiv.innerHTML = '';
+    if (response.ok) {
+      const data = await response.json();
+      const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
       // Display the bot's response with typing effect
       typeText(messageDiv, parsedData);
+    } else {
+      const err = await response.text();
 
-      // Scroll to the latest message
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    });
+      messageDiv.innerHTML = 'Something went wrong';
+      alert(err);
+    }
   } catch (error) {
     messageDiv.innerHTML = 'Something went wrong';
     console.error(error);
@@ -111,3 +119,21 @@ form.addEventListener('keyup', (e) => {
     handleSubmit(e);
   }
 });
+
+// Auto-scroll to the latest message
+function scrollToLatestMessage() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Attach event listener to scroll event
+chatContainer.addEventListener('scroll', () => {
+  const scrollOffset = 100; // Offset from the bottom of the container
+
+  if (chatContainer.scrollTop + chatContainer.clientHeight + scrollOffset >= chatContainer.scrollHeight) {
+    // User has scrolled to the bottom, so stop scrolling and stay at the latest message
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+});
+
+// Initialize auto-scroll on page load
+scrollToLatestMessage();
