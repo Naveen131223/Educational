@@ -83,7 +83,13 @@ body {
     .star.star12 {
       background-color: #ff3399;
     }
-    
+
+ #voice-mic {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px;
+      cursor: pointer;
+    }
 
 #app {
   width: 100vw;
