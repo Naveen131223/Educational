@@ -5,6 +5,7 @@ const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
 
 let loadInterval;
+let autoScrollEnabled = true;
 
 function loader(element) {
   element.textContent = '';
@@ -137,13 +138,28 @@ function scrollToLatestMessage() {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
+// Variable to track whether auto-scroll is enabled
+
+// Function to handle manual scrolling
+function handleScroll() {
+  if (autoScrollEnabled) {
+    scrollToLatestMessage();
+  }
+}
+
+// Attach event listener to scroll event for manual scrolling
+chatContainer.addEventListener('scroll', handleScroll);
+
 // Attach event listener to scroll event
 chatContainer.addEventListener('scroll', () => {
   const scrollOffset = 100; // Offset from the bottom of the container
 
   if (chatContainer.scrollTop + chatContainer.clientHeight + scrollOffset >= chatContainer.scrollHeight) {
-    // User has scrolled to the bottom, so stop scrolling and stay at the latest message
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    // User has scrolled to the bottom, so enable auto-scroll
+    autoScrollEnabled = true;
+  } else {
+    // User has manually scrolled up, so disable auto-scroll
+    autoScrollEnabled = false;
   }
 });
 
