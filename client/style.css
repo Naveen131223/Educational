@@ -11,6 +11,64 @@ body {
       background-color: #000;
       overflow: hidden;
     }
+
+.welcome-message {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      color: #fff;
+      text-align: center;
+    }
+    
+    .star.star1 {
+      background-color: #ffcc00;
+    }
+    
+    .star.star2 {
+      background-color: #ff6699;
+    }
+    
+    .star.star3 {
+      background-color: #cc33ff;
+    }
+    
+    .star.star4 {
+      background-color: #00ccff;
+    }
+    
+    .star.star5 {
+      background-color: #99ff33;
+    }
+    
+    .star.star6 {
+      background-color: #ff9933;
+    }
+    
+    .star.star7 {
+      background-color: #ff3366;
+    }
+    
+    .star.star8 {
+      background-color: #33ccff;
+    }
+    
+    .star.star9 {
+      background-color: #ffff66;
+    }
+    
+    .star.star10 {
+      background-color: #cc66ff;
+    }
+    
+    .star.star11 {
+      background-color: #66ccff;
+    }
+    
+    .star.star12 {
+      background-color: #ff3399;
+    }
     
 
 #app {
