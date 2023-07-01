@@ -29,6 +29,8 @@ body {
   cursor: pointer;
   background-color: #ff0000; /* Replace with your desired background color */
   border-radius: 50%;
+  padding: 6px; /* Increase the padding to increase the background color size */
+  box-sizing: border-box; /* Ensure the padding is included in the element size */
 }
 
 .send-logo:before {
@@ -39,11 +41,10 @@ body {
   transform: translateY(-50%);
   width: 10px;
   height: 10px;
-  border-top: 2px solid #ffffff; /* Replace with your desired arrow color */
-  border-right: 2px solid #ffffff; /* Replace with your desired arrow color */
-  transform-origin: bottom right;
-  transform: rotate(45deg);
+  background-color: #ffffff; /* Replace with your desired arrow color */
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
+
 
 
 
