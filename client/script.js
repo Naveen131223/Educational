@@ -1,8 +1,12 @@
 import bot from './assets/bot.svg';
 import user from './assets/user.svg';
+import * as tf from '@tensorflow/tfjs';
+import * as tfn from '@tensorflow/tfjs-node';
+import fetch from 'node-fetch';
 
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
+const apiEndpoint = 'https://api.openai.com/v1/engines/davinci-codex/completions';
 
 let loadInterval;
 
@@ -94,13 +98,15 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   try {
-    const response = await fetch('https://educational-development.onrender.com/', {
+    const response = await fetch(apiEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer YOUR_API_KEY' // Replace with your OpenAI API key
       },
       body: JSON.stringify({
         prompt: prompt,
+        max_tokens: 50 // Adjust the max tokens as per your requirement
       }),
     });
 
@@ -109,7 +115,7 @@ const handleSubmit = async (e) => {
 
     if (response.ok) {
       const data = await response.json();
-      const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
+      const parsedData = data.choices[0].text.trim(); // Trim any trailing spaces or '\n'
 
       // Display the bot's response with typing effect
       typeText(messageDiv, parsedData);
