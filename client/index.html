@@ -73,14 +73,30 @@
       <div id="app">
       <div id="chat_container"></div>
 
-      <form>
-        <textarea name="prompt" rows="1" cols="1" placeholder="Ask me Any Doubts in Text..."></textarea>
-        <button type="submit"><img src="assets/send.svg" alt="send" />
-      </form>
+       <form>
+    <textarea name="prompt" rows="1" cols="1" placeholder="Ask me any doubts in text..."></textarea>
+    <img id="voice-mic" src="assets/mic.svg" alt="Voice Mic" onclick="startSpeechRecognition()" />
+    <button type="submit"><img src="assets/send.svg" alt="Send" /></button>
+  </form>
     </div>
 
     
 
     <script type="module" src="script.js"></script>
+    <script>
+    // Function to handle speech recognition
+    function startSpeechRecognition() {
+      const recognition = new webkitSpeechRecognition() || SpeechRecognition();
+      recognition.lang = 'en-US'; // Set the language to English (change as needed)
+
+      recognition.onresult = function(event) {
+        const textArea = document.querySelector('textarea[name="prompt"]');
+        const transcript = event.results[0][0].transcript;
+        textArea.value = transcript;
+      }
+
+      recognition.start();
+    }
+  </script>
   </body>
 </html>
