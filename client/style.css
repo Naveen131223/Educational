@@ -11,6 +11,10 @@ body {
   background-color: #000;
 }
 
+.centered-title {
+      text-align: center;
+    }
+
 .voice-mic {
   font-size: 24px;
   color: white;
