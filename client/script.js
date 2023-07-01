@@ -63,8 +63,6 @@ const handleSubmit = async (e) => {
   const data = new FormData(form);
   const prompt = data.get('prompt');
 
-
-
   // User's chat stripe
   chatContainer.innerHTML += createChatStripe(false, prompt);
 
