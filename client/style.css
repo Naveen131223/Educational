@@ -12,14 +12,32 @@ body {
       overflow: hidden;
     }
 
-.welcome-message {
+.star {
       position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 24px;
-      color: #fff;
-      text-align: center;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      animation: twinkle 2s infinite;
+    }
+    
+    @keyframes twinkle {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0);
+      }
+    }
+
+.welcome-message h1 {
+      margin: 0;
+      color: yellow;
     }
     
     .star.star1 {
