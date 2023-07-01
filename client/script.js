@@ -142,16 +142,6 @@ function scrollToLatestMessage() {
 
 // Function to handle manual scrolling
 function handleScroll() {
-  if (autoScrollEnabled) {
-    scrollToLatestMessage();
-  }
-}
-
-// Attach event listener to scroll event for manual scrolling
-chatContainer.addEventListener('scroll', handleScroll);
-
-// Attach event listener to scroll event
-chatContainer.addEventListener('scroll', () => {
   const scrollOffset = 100; // Offset from the bottom of the container
 
   if (chatContainer.scrollTop + chatContainer.clientHeight + scrollOffset >= chatContainer.scrollHeight) {
@@ -160,6 +150,16 @@ chatContainer.addEventListener('scroll', () => {
   } else {
     // User has manually scrolled up, so disable auto-scroll
     autoScrollEnabled = false;
+  }
+}
+
+// Attach event listener to scroll event for manual scrolling
+chatContainer.addEventListener('scroll', handleScroll);
+
+// Attach event listener to scroll event
+chatContainer.addEventListener('scroll', () => {
+  if (autoScrollEnabled) {
+    scrollToLatestMessage();
   }
 });
 
