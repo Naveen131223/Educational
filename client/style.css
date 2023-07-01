@@ -25,36 +25,24 @@ body {
   display: inline-block;
   width: 24px;
   height: 24px;
-  background-color: #ff0000; /* Replace with your desired color */
-  border-radius: 50%;
   position: relative;
-  overflow: hidden;
   cursor: pointer;
 }
 
 .send-logo:before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 70%;
-  height: 70%;
-  background-color: white;
-  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid #ff0000; /* Replace with your desired color */
+  border-right: 2px solid #ff0000; /* Replace with your desired color */
+  transform-origin: center center;
+  transform: rotate(45deg);
 }
 
-.send-logo:after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  width: 40%;
-  height: 40%;
-  background-color: #ff0000; /* Replace with your desired color */
-  border-radius: 50%;
-}
 
 
 
