@@ -21,6 +21,13 @@ body {
         cursor: pointer;
     }
 
+.send-logo {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: #ff0000; /* Replace with your desired color */
+  }
+
 .star {
       position: absolute;
       width: 3px;
