@@ -8,8 +8,162 @@
 }
 
 body {
-  background: black;
-}
+      background-color: #000;
+      overflow: hidden;
+    }
+    
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      animation: twinkle 2s infinite;
+    }
+    
+    @keyframes twinkle {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0);
+      }
+    }
+    
+    .galaxy {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle, rgba(0, 0, 0, 0.8) 20%, transparent 70%);
+      background-size: 1500% 1500%;
+      animation: galaxyOpening 5s infinite;
+    }
+    
+    @keyframes galaxyOpening {
+      0% {
+        background-position: 0% 0%;
+      }
+      50% {
+        background-position: 100% 100%;
+      }
+      100% {
+        background-position: 0% 0%;
+      }
+    }
+    
+    .moon {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(to right, #f00, #f90, #ff0, #0f0, #00f, #90f, #f0f);
+      background-size: 600% 100%;
+      animation: moonMove 5s infinite linear, moonColorChange 10s infinite;
+    }
+    
+    .moon:before {
+      content: "";
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      width: 140px;
+      height: 140px;
+      background-color: #000;
+      border-radius: 50%;
+    }
+    
+    @keyframes moonMove {
+      0% {
+        transform: translate(-50%, -50%);
+      }
+      100% {
+        transform: translate(calc(-50% - 100vw), -50%);
+      }
+    }
+    
+    @keyframes moonColorChange {
+      0% {
+        background-position: 0% 0%;
+      }
+      100% {
+        background-position: 600% 0%;
+      }
+    }
+
+    .welcome-message {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      color: #fff;
+      text-align: center;
+    }
+    
+    .star.star1 {
+      background-color: #ffcc00;
+    }
+    
+    .star.star2 {
+      background-color: #ff6699;
+    }
+    
+    .star.star3 {
+      background-color: #cc33ff;
+    }
+    
+    .star.star4 {
+      background-color: #00ccff;
+    }
+    
+    .star.star5 {
+      background-color: #99ff33;
+    }
+    
+    .star.star6 {
+      background-color: #ff9933;
+    }
+    
+    .star.star7 {
+      background-color: #ff3366;
+    }
+    
+    .star.star8 {
+      background-color: #33ccff;
+    }
+    
+    .star.star9 {
+      background-color: #ffff66;
+    }
+    
+    .star.star10 {
+      background-color: #cc66ff;
+    }
+    
+    .star.star11 {
+      background-color: #66ccff;
+    }
+    
+    .star.star12 {
+      background-color: #ff3399;
+    }
 
 #app {
   width: 100vw;
