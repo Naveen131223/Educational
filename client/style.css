@@ -23,13 +23,13 @@ body {
 
 .send-logo {
   display: inline-block;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   position: relative;
   cursor: pointer;
   background-color: #ff0000; /* Replace with your desired background color */
   border-radius: 50%;
-  padding: 6px; /* Increase the padding to increase the background color size */
+  padding: 8px; /* Increase the padding to increase the background size */
   box-sizing: border-box; /* Ensure the padding is included in the element size */
 }
 
@@ -39,8 +39,8 @@ body {
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
+  width: 16px;
+  height: 16px;
   background-color: #ffffff; /* Replace with your desired arrow color */
   clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
