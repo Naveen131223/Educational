@@ -63,8 +63,7 @@ const handleSubmit = async (e) => {
   const data = new FormData(form);
   const prompt = data.get('prompt');
 
-  if (!prompt.trim()) {
-    // If the user's text input is empty or contains only whitespace
+  if (!prompt) {
     return;
   }
 
