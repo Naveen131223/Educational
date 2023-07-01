@@ -12,6 +12,14 @@ body {
       
     }
 
+.voice-mic {
+        width: 24px;
+        height: 24px;
+        background-color: yellow;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
 .star {
       position: absolute;
       width: 3px;
