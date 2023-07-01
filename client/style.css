@@ -8,18 +8,17 @@
 }
 
 body {
-      background-color: #000;
-      
-    }
+  background-color: #000;
+}
 
 .voice-mic {
-        font-size: 24px;
-        color: white;
-        background-color: yellow;
-        border-radius: 50%;
-        padding: 8px;
-        cursor: pointer;
-    }
+  font-size: 24px;
+  color: white;
+  background-color: yellow;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+}
 
 .send-logo {
   display: inline-block;
@@ -45,90 +44,83 @@ body {
   clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
 
-
-
-
-
-
-
 .star {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      border-radius: 50%;
-      animation: twinkle 2s infinite;
-    }
-    
-    @keyframes twinkle {
-      0% {
-        opacity: 0;
-        transform: scale(0);
-      }
-      50% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: scale(0);
-      }
-    }
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  animation: twinkle 2s infinite;
+}
 
-    
-    .star.star1 {
-      background-color: #ffcc00;
-    }
-    
-    .star.star2 {
-      background-color: #ff6699;
-    }
-    
-    .star.star3 {
-      background-color: #cc33ff;
-    }
-    
-    .star.star4 {
-      background-color: #00ccff;
-    }
-    
-    .star.star5 {
-      background-color: #99ff33;
-    }
-    
-    .star.star6 {
-      background-color: #ff9933;
-    }
-    
-    .star.star7 {
-      background-color: #ff3366;
-    }
-    
-    .star.star8 {
-      background-color: #33ccff;
-    }
-    
-    .star.star9 {
-      background-color: #ffff66;
-    }
-    
-    .star.star10 {
-      background-color: #cc66ff;
-    }
-    
-    .star.star11 {
-      background-color: #66ccff;
-    }
-    
-    .star.star12 {
-      background-color: #ff3399;
-    }
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
 
- #voice-mic {
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 10px;
-      cursor: pointer;
-    }
+.star.star1 {
+  background-color: #ffcc00;
+}
+
+.star.star2 {
+  background-color: #ff6699;
+}
+
+.star.star3 {
+  background-color: #cc33ff;
+}
+
+.star.star4 {
+  background-color: #00ccff;
+}
+
+.star.star5 {
+  background-color: #99ff33;
+}
+
+.star.star6 {
+  background-color: #ff9933;
+}
+
+.star.star7 {
+  background-color: #ff3366;
+}
+
+.star.star8 {
+  background-color: #33ccff;
+}
+
+.star.star9 {
+  background-color: #ffff66;
+}
+
+.star.star10 {
+  background-color: #cc66ff;
+}
+
+.star.star11 {
+  background-color: #66ccff;
+}
+
+.star.star12 {
+  background-color: #ff3399;
+}
+
+#voice-mic {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+  cursor: pointer;
+}
 
 #app {
   width: 100vw;
@@ -154,10 +146,11 @@ body {
   scroll-behavior: smooth;
 }
 
-/* hides scrollbar */
-#chat_container::-webkit-scrollbar {
+/* hides */
+::-webkit-scrollbar {
   display: none;
 }
+
 
 .wrapper {
   width: 100%;
@@ -165,7 +158,7 @@ body {
 }
 
 .ai {
-  background: #333;
+  background: #4CAF50;
   border-radius: 5px;
   padding: 10px;
 }
@@ -202,8 +195,8 @@ body {
 
 .message {
   flex: 1;
-  color: #ccc;
-  font-size: 20px;
+  color: #555;
+  font-size: 18px;
   max-width: 100%;
   overflow-x: auto;
   white-space: pre-wrap;
@@ -221,16 +214,17 @@ form {
   max-width: 1280px;
   margin: 0 auto;
   padding: 10px;
-  background: #333;
+  background: #f2f2f2;
   display: flex;
   flex-direction: row;
   gap: 10px;
+  border-radius: 5px;
 }
 
 textarea {
   width: 100%;
-  color: #ccc;
-  font-size: 18px;
+  color: #555;
+  font-size: 16px;
   padding: 10px;
   background: transparent;
   border-radius: 5px;
@@ -242,7 +236,16 @@ button {
   outline: 0;
   border: 0;
   cursor: pointer;
-  background: transparent;
+  background: #4CAF50;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #45a049;
 }
 
 form img {
