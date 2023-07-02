@@ -117,17 +117,8 @@ const handleSubmit = async (e) => {
         // Focus on the input field for the next response
         input.focus();
 
-        // Add event listeners for copy buttons
-        const copyButtons = document.querySelectorAll('.copy-btn');
-        copyButtons.forEach((button) => {
-          button.addEventListener('click', handleCopy);
-        });
-
-        // Add event listeners for feedback buttons
-        const feedbackButtons = document.querySelectorAll('.feedback-btn');
-        feedbackButtons.forEach((button) => {
-          button.addEventListener('click', handleFeedback);
-        });
+        // Listen for feedback on AI response
+        listenForFeedback(prompt, parsedData);
       } else {
         const err = await response.text();
 
@@ -165,6 +156,13 @@ function scrollToLatestMessage() {
 // Scroll to the latest message on initial load
 window.addEventListener('load', () => {
   scrollToLatestMessage();
+
+  // Copy button event listeners
+  chatContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('copy-btn')) {
+      handleCopy(e);
+    }
+  });
 });
 
 // Copy button event handler
@@ -184,35 +182,26 @@ function copyToClipboard(text) {
   document.body.removeChild(tempInput);
 }
 
-// Feedback button event handler
-function handleFeedback(event) {
-  const message = event.target.previousElementSibling.previousElementSibling.textContent;
-  const prompt = event.target.parentNode.dataset.prompt;
-  showFeedbackForm(prompt, message);
-}
-
-// Function to show the feedback form
-function showFeedbackForm(prompt, message) {
+// Function to listen for user feedback on the AI response
+const listenForFeedback = (prompt, botResponse) => {
   const feedbackForm = document.createElement('form');
   const feedbackInput = document.createElement('input');
   const feedbackSubmitButton = document.createElement('button');
-  const feedbackCancelButton = document.createElement('button');
 
   feedbackForm.classList.add('feedback-form');
   feedbackInput.setAttribute('type', 'text');
   feedbackInput.setAttribute('placeholder', 'Provide feedback');
   feedbackSubmitButton.setAttribute('type', 'submit');
   feedbackSubmitButton.textContent = 'Submit';
-  feedbackCancelButton.setAttribute('type', 'button');
-  feedbackCancelButton.textContent = 'Cancel';
 
   feedbackForm.appendChild(feedbackInput);
   feedbackForm.appendChild(feedbackSubmitButton);
-  feedbackForm.appendChild(feedbackCancelButton);
 
   const feedbackContainer = document.createElement('div');
   feedbackContainer.classList.add('feedback-container');
   feedbackContainer.appendChild(feedbackForm);
+
+  chatContainer.appendChild(feedbackContainer);
 
   feedbackForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -224,22 +213,15 @@ function showFeedbackForm(prompt, message) {
     }
 
     // Send the feedback to the server for model improvement
-    sendFeedback(prompt, message, feedback);
+    sendFeedback(prompt, botResponse, feedback);
 
     // Remove the feedback form from the chat
     chatContainer.removeChild(feedbackContainer);
   });
-
-  feedbackCancelButton.addEventListener('click', () => {
-    // Remove the feedback form from the chat
-    chatContainer.removeChild(feedbackContainer);
-  });
-
-  chatContainer.appendChild(feedbackContainer);
-}
+};
 
 // Function to send feedback to the server for model improvement
-const sendFeedback = async (prompt, message, feedback) => {
+const sendFeedback = async (prompt, botResponse, feedback) => {
   try {
     const response = await fetch('https://educational-development.onrender.com/feedback', {
       method: 'POST',
@@ -248,18 +230,15 @@ const sendFeedback = async (prompt, message, feedback) => {
       },
       body: JSON.stringify({
         prompt: prompt,
-        message: message,
+        botResponse: botResponse,
         feedback: feedback,
       }),
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error(error);
-      alert('Failed to submit feedback');
+      console.error('Failed to send feedback:', response.status, response.statusText);
     }
   } catch (error) {
-    console.error(error);
-    alert('Failed to submit feedback');
+    console.error('Error sending feedback:', error);
   }
 };
