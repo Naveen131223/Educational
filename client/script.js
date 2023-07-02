@@ -250,3 +250,31 @@ function copyToClipboard(text) {
   document.execCommand('copy');
   document.body.removeChild(tempInput);
 }
+function copyToClipboard(text) {
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+    }
+
+    // Rest of your existing JavaScript code here...
+
+    // Scroll to the latest message on initial load
+    window.addEventListener('load', () => {
+      scrollToLatestMessage();
+
+      // Copy button event listeners
+      const copyButtons = document.querySelectorAll('.copy-btn');
+      copyButtons.forEach((button) => {
+        button.addEventListener('click', handleCopy);
+      });
+    });
+
+    // Copy button event handler
+    function handleCopy(event) {
+      const message = event.target.previousElementSibling.textContent;
+      copyToClipboard(message);
+      
+    }
