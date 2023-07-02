@@ -110,14 +110,11 @@ const handleSubmit = async (e) => {
         messageDiv.textContent = 'Something went wrong';
         alert(err);
       }
-
-      // Re-enable the submit button after processing
-      submitButton.disabled = false;
     }, 800); // Adjust the delay duration as needed
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
     console.error(error);
-
+  } finally {
     // Re-enable the submit button after processing
     submitButton.disabled = false;
   }
