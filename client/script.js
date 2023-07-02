@@ -105,7 +105,7 @@ const handleSubmit = async (e) => {
         // Display the bot's response instantly
         messageDiv.innerHTML = `
           <span>${parsedData}</span>
-          ${isAi ? '<button class="copy-btn">Copy</button>' : ''}
+          <button class="copy-btn">Copy</button>
         `;
 
         // Scroll to the latest message after rendering the response
@@ -227,11 +227,10 @@ function scrollToLatestMessage() {
 window.addEventListener('load', () => {
   scrollToLatestMessage();
 
-  // Add event listeners to copy buttons
-  chatContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('copy-btn')) {
-      handleCopy(e);
-    }
+  // Copy button event listeners
+  const copyButtons = document.querySelectorAll('.copy-btn');
+  copyButtons.forEach((button) => {
+    button.addEventListener('click', handleCopy);
   });
 });
 
