@@ -72,9 +72,6 @@ const handleSubmit = async (e) => {
   const botChatStripe = createChatStripe(true, '', uniqueId);
   chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
 
-  // Focus and scroll to the bottom of the chat container
-  scrollToLatestMessage();
-
   // Get the message div
   const messageDiv = document.getElementById(uniqueId);
 
@@ -144,7 +141,7 @@ function handleAutoScroll() {
 
   if (chatContainer.scrollTop + chatContainer.clientHeight + scrollOffset >= chatContainer.scrollHeight) {
     // User has scrolled to the bottom, so enable auto-scroll
-    scrollToLatestMessage();
+    setTimeout(scrollToLatestMessage, 100); // Delay the auto-scroll for a smoother experience
   }
 }
 
