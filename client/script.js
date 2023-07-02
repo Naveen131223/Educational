@@ -25,7 +25,7 @@ function loader(element) {
 function generateUniqueId() {
   const timestamp = Date.now();
   const randomNumber = Math.random();
-  const hexadecimalString = randomNumber.toString(16);
+  const hexadecimalString = randomNumber.toString(16).slice(2, 8); // Generate a 6-digit hexadecimal string
 
   return `id-${timestamp}-${hexadecimalString}`;
 }
@@ -110,6 +110,9 @@ const handleSubmit = async (e) => {
 
         // Focus on the input field for the next response
         input.focus();
+
+        // Listen for user feedback on the response
+        listenForFeedback(prompt, parsedData);
       } else {
         const err = await response.text();
 
@@ -129,6 +132,67 @@ const handleSubmit = async (e) => {
   }
 };
 
+// Function to listen for user feedback on the AI response
+const listenForFeedback = (prompt, botResponse) => {
+  const feedbackForm = document.createElement('form');
+  const feedbackInput = document.createElement('input');
+  const feedbackSubmitButton = document.createElement('button');
+
+  feedbackForm.classList.add('feedback-form');
+  feedbackInput.setAttribute('type', 'text');
+  feedbackInput.setAttribute('placeholder', 'Provide feedback');
+  feedbackSubmitButton.setAttribute('type', 'submit');
+  feedbackSubmitButton.textContent = 'Submit';
+
+  feedbackForm.appendChild(feedbackInput);
+  feedbackForm.appendChild(feedbackSubmitButton);
+
+  const feedbackContainer = document.createElement('div');
+  feedbackContainer.classList.add('feedback-container');
+  feedbackContainer.appendChild(feedbackForm);
+
+  chatContainer.appendChild(feedbackContainer);
+
+  feedbackForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const feedback = feedbackInput.value.trim();
+
+    if (feedback === '') {
+      return;
+    }
+
+    // Send the feedback to the server for model improvement
+    sendFeedback(prompt, botResponse, feedback);
+
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+};
+
+// Function to send feedback to the server for model improvement
+const sendFeedback = async (prompt, botResponse, feedback) => {
+  try {
+    const response = await fetch('https://educational-development.onrender.com/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        botResponse: botResponse,
+        feedback: feedback,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to send feedback:', response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending feedback:', error);
+  }
+};
+
 form.addEventListener('submit', handleSubmit);
 form.addEventListener('keyup', (e) => {
   if (e.keyCode === 13) {
@@ -145,6 +209,4 @@ function scrollToLatestMessage() {
 }
 
 // Scroll to the latest message on initial load
-window.addEventListener('load', () => {
-  scrollToLatestMessage();
-});
+window.addEventListener('load', scrollToLatestMessage);
