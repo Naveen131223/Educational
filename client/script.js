@@ -104,17 +104,26 @@ const handleSubmit = async (e) => {
 
         // Scroll to the latest message after rendering the response
         scrollToLatestMessage();
+
+        // Re-enable the submit button after processing
+        submitButton.disabled = false;
+
+        // Focus on the input field for the next response
+        input.focus();
       } else {
         const err = await response.text();
 
         messageDiv.textContent = 'Something went wrong';
         alert(err);
+
+        // Re-enable the submit button after processing
+        submitButton.disabled = false;
       }
     }, 800); // Adjust the delay duration as needed
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
     console.error(error);
-  } finally {
+
     // Re-enable the submit button after processing
     submitButton.disabled = false;
   }
