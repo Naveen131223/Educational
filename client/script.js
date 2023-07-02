@@ -101,9 +101,6 @@ const handleSubmit = async (e) => {
 
         // Display the bot's response instantly
         messageDiv.textContent = parsedData;
-
-        // Scroll to the latest message after rendering the response
-        scrollToLatestMessage();
       } else {
         const err = await response.text();
 
@@ -126,27 +123,3 @@ form.addEventListener('keyup', (e) => {
     handleSubmit(e);
   }
 });
-
-// Auto-scroll to the latest message smoothly
-function scrollToLatestMessage() {
-  chatContainer.scrollTo({
-    top: chatContainer.scrollHeight,
-    behavior: 'smooth',
-  });
-}
-
-// Function to handle auto-scrolling
-function handleAutoScroll() {
-  const scrollOffset = 100; // Offset from the bottom of the container
-
-  if (chatContainer.scrollTop + chatContainer.clientHeight + scrollOffset >= chatContainer.scrollHeight) {
-    // User has scrolled to the bottom, so enable auto-scroll
-    setTimeout(scrollToLatestMessage, 100); // Delay the auto-scroll for a smoother experience
-  }
-}
-
-// Attach event listener to scroll event for auto-scrolling
-chatContainer.addEventListener('scroll', handleAutoScroll);
-
-// Initialize auto-scroll on page load
-scrollToLatestMessage();
