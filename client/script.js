@@ -105,7 +105,7 @@ const handleSubmit = async (e) => {
         // Display the bot's response instantly
         messageDiv.innerHTML = `
           <span>${parsedData}</span>
-          <button class="copy-btn">Copy</button>
+          ${isAi ? '<button class="copy-btn">Copy</button>' : ''}
         `;
 
         // Scroll to the latest message after rendering the response
@@ -238,22 +238,6 @@ window.addEventListener('load', () => {
 function handleCopy(event) {
   const message = event.target.previousElementSibling.textContent;
   copyToClipboard(message);
-  alert('Copied to clipboard!');
-}
-
-// Function to copy text to clipboard
-function copyToClipboard(text) {
-  const tempInput = document.createElement('input');
-  tempInput.value = text;
-  document.body.appendChild(tempInput);
-  tempInput.select();
-  document.execCommand('copy');
-  document.body.removeChild(tempInput);
-}
-// Copy button event handler
-function handleCopy(event) {
-  const message = event.target.previousElementSibling.textContent;
-  copyToClipboard(message);
   event.target.textContent = 'Copied!'; // Update the button text
 }
 
@@ -266,17 +250,3 @@ function copyToClipboard(text) {
   document.execCommand('copy');
   document.body.removeChild(tempInput);
 }
-// Function to copy text to clipboard
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text)
-    .then(() => {
-      // Success! Update the button text
-      const copyButton = document.querySelector('.copy-btn');
-      copyButton.textContent = 'Copied!';
-    })
-    .catch((error) => {
-      console.error('Unable to copy text to clipboard:', error);
-    });
-}
-
-
