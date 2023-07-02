@@ -105,7 +105,7 @@ const handleSubmit = async (e) => {
         // Display the bot's response instantly
         messageDiv.innerHTML = `
           <span>${parsedData}</span>
-          <button class="copy-btn">Copy</button>
+          ${isAi ? '<button class="copy-btn">Copy</button>' : ''}
         `;
 
         // Scroll to the latest message after rendering the response
@@ -117,8 +117,17 @@ const handleSubmit = async (e) => {
         // Focus on the input field for the next response
         input.focus();
 
-        // Listen for user feedback on the response
-        listenForFeedback(prompt, parsedData);
+        // Add event listeners for copy buttons
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach((button) => {
+          button.addEventListener('click', handleCopy);
+        });
+
+        // Add event listeners for feedback buttons
+        const feedbackButtons = document.querySelectorAll('.feedback-btn');
+        feedbackButtons.forEach((button) => {
+          button.addEventListener('click', handleFeedback);
+        });
       } else {
         const err = await response.text();
 
@@ -135,67 +144,6 @@ const handleSubmit = async (e) => {
 
     // Re-enable the submit button after processing
     submitButton.disabled = false;
-  }
-};
-
-// Function to listen for user feedback on the AI response
-const listenForFeedback = (prompt, botResponse) => {
-  const feedbackForm = document.createElement('form');
-  const feedbackInput = document.createElement('input');
-  const feedbackSubmitButton = document.createElement('button');
-
-  feedbackForm.classList.add('feedback-form');
-  feedbackInput.setAttribute('type', 'text');
-  feedbackInput.setAttribute('placeholder', 'Provide feedback');
-  feedbackSubmitButton.setAttribute('type', 'submit');
-  feedbackSubmitButton.textContent = 'Submit';
-
-  feedbackForm.appendChild(feedbackInput);
-  feedbackForm.appendChild(feedbackSubmitButton);
-
-  const feedbackContainer = document.createElement('div');
-  feedbackContainer.classList.add('feedback-container');
-  feedbackContainer.appendChild(feedbackForm);
-
-  chatContainer.appendChild(feedbackContainer);
-
-  feedbackForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const feedback = feedbackInput.value.trim();
-
-    if (feedback === '') {
-      return;
-    }
-
-    // Send the feedback to the server for model improvement
-    sendFeedback(prompt, botResponse, feedback);
-
-    // Remove the feedback form from the chat
-    chatContainer.removeChild(feedbackContainer);
-  });
-};
-
-// Function to send feedback to the server for model improvement
-const sendFeedback = async (prompt, botResponse, feedback) => {
-  try {
-    const response = await fetch('https://educational-development.onrender.com/feedback', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        botResponse: botResponse,
-        feedback: feedback,
-      }),
-    });
-
-    if (!response.ok) {
-      console.error('Failed to send feedback:', response.status, response.statusText);
-    }
-  } catch (error) {
-    console.error('Error sending feedback:', error);
   }
 };
 
@@ -217,12 +165,6 @@ function scrollToLatestMessage() {
 // Scroll to the latest message on initial load
 window.addEventListener('load', () => {
   scrollToLatestMessage();
-
-  // Copy button event listeners
-  const copyButtons = document.querySelectorAll('.copy-btn');
-  copyButtons.forEach((button) => {
-    button.addEventListener('click', handleCopy);
-  });
 });
 
 // Copy button event handler
@@ -241,3 +183,83 @@ function copyToClipboard(text) {
   document.execCommand('copy');
   document.body.removeChild(tempInput);
 }
+
+// Feedback button event handler
+function handleFeedback(event) {
+  const message = event.target.previousElementSibling.previousElementSibling.textContent;
+  const prompt = event.target.parentNode.dataset.prompt;
+  showFeedbackForm(prompt, message);
+}
+
+// Function to show the feedback form
+function showFeedbackForm(prompt, message) {
+  const feedbackForm = document.createElement('form');
+  const feedbackInput = document.createElement('input');
+  const feedbackSubmitButton = document.createElement('button');
+  const feedbackCancelButton = document.createElement('button');
+
+  feedbackForm.classList.add('feedback-form');
+  feedbackInput.setAttribute('type', 'text');
+  feedbackInput.setAttribute('placeholder', 'Provide feedback');
+  feedbackSubmitButton.setAttribute('type', 'submit');
+  feedbackSubmitButton.textContent = 'Submit';
+  feedbackCancelButton.setAttribute('type', 'button');
+  feedbackCancelButton.textContent = 'Cancel';
+
+  feedbackForm.appendChild(feedbackInput);
+  feedbackForm.appendChild(feedbackSubmitButton);
+  feedbackForm.appendChild(feedbackCancelButton);
+
+  const feedbackContainer = document.createElement('div');
+  feedbackContainer.classList.add('feedback-container');
+  feedbackContainer.appendChild(feedbackForm);
+
+  feedbackForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const feedback = feedbackInput.value.trim();
+
+    if (feedback === '') {
+      return;
+    }
+
+    // Send the feedback to the server for model improvement
+    sendFeedback(prompt, message, feedback);
+
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+
+  feedbackCancelButton.addEventListener('click', () => {
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+
+  chatContainer.appendChild(feedbackContainer);
+}
+
+// Function to send feedback to the server for model improvement
+const sendFeedback = async (prompt, message, feedback) => {
+  try {
+    const response = await fetch('https://educational-development.onrender.com/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        message: message,
+        feedback: feedback,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(error);
+      alert('Failed to submit feedback');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('Failed to submit feedback');
+  }
+};
