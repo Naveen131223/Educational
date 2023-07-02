@@ -73,7 +73,7 @@ const handleSubmit = async (e) => {
   chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
 
   // Focus and scroll to the bottom of the chat container
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  scrollToLatestMessage();
 
   // Get the message div
   const messageDiv = document.getElementById(uniqueId);
@@ -104,6 +104,9 @@ const handleSubmit = async (e) => {
 
         // Display the bot's response instantly
         messageDiv.textContent = parsedData;
+
+        // Scroll to the latest message after rendering the response
+        scrollToLatestMessage();
       } else {
         const err = await response.text();
 
@@ -127,9 +130,12 @@ form.addEventListener('keyup', (e) => {
   }
 });
 
-// Auto-scroll to the latest message
+// Auto-scroll to the latest message smoothly
 function scrollToLatestMessage() {
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
+    behavior: 'smooth',
+  });
 }
 
 // Function to handle auto-scrolling
