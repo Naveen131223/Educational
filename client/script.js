@@ -105,7 +105,7 @@ const handleSubmit = async (e) => {
         // Display the bot's response instantly
         messageDiv.innerHTML = `
           <span>${parsedData}</span>
-          <button class="copy-btn">Copy</button>
+          ${isAi ? '<button class="copy-btn">Copy</button>' : ''}
         `;
 
         // Scroll to the latest message after rendering the response
