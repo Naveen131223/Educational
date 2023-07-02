@@ -143,15 +143,19 @@ const listenForFeedback = (prompt, botResponse) => {
   const feedbackForm = document.createElement('form');
   const feedbackInput = document.createElement('input');
   const feedbackSubmitButton = document.createElement('button');
+  const feedbackCancelButton = document.createElement('button');
 
   feedbackForm.classList.add('feedback-form');
   feedbackInput.setAttribute('type', 'text');
   feedbackInput.setAttribute('placeholder', 'Provide feedback');
   feedbackSubmitButton.setAttribute('type', 'submit');
   feedbackSubmitButton.textContent = 'Submit';
+  feedbackCancelButton.setAttribute('type', 'button');
+  feedbackCancelButton.textContent = 'Cancel';
 
   feedbackForm.appendChild(feedbackInput);
   feedbackForm.appendChild(feedbackSubmitButton);
+  feedbackForm.appendChild(feedbackCancelButton);
 
   const feedbackContainer = document.createElement('div');
   feedbackContainer.classList.add('feedback-container');
@@ -171,6 +175,11 @@ const listenForFeedback = (prompt, botResponse) => {
     // Send the feedback to the server for model improvement
     sendFeedback(prompt, botResponse, feedback);
 
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+
+  feedbackCancelButton.addEventListener('click', () => {
     // Remove the feedback form from the chat
     chatContainer.removeChild(feedbackContainer);
   });
