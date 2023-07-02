@@ -134,3 +134,8 @@ function scrollToLatestMessage() {
     behavior: 'smooth',
   });
 }
+
+// Scroll to the latest message on initial load
+window.addEventListener('load', () => {
+  scrollToLatestMessage();
+});
