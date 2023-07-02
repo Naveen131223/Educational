@@ -3,9 +3,8 @@ import user from './assets/user.svg';
 
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
-const messageContainer = chatContainer.querySelector('.message-container');
 
-let loadInterval;
+let loadInterval; 
 
 function loader(element) {
   element.textContent = '';
@@ -26,7 +25,7 @@ function typeText(element, text) {
 
   let interval = setInterval(() => {
     if (index < text.length) {
-      element.textContent += text.charAt(index);
+      element.innerHTML += text.charAt(index);
       index++;
     } else {
       clearInterval(interval);
@@ -48,30 +47,16 @@ function generateUniqueId() {
 function createChatStripe(isAi, value, uniqueId) {
   const profileImg = isAi ? bot : user;
 
-  const wrapper = document.createElement('div');
-  wrapper.classList.add('wrapper', isAi ? 'ai' : '');
-
-  const chat = document.createElement('div');
-  chat.classList.add('chat');
-
-  const profile = document.createElement('div');
-  profile.classList.add('profile');
-
-  const img = document.createElement('img');
-  img.src = profileImg;
-  img.alt = isAi ? 'bot' : 'user';
-
-  const message = document.createElement('div');
-  message.id = uniqueId;
-  message.classList.add('message');
-  message.textContent = value;
-
-  profile.appendChild(img);
-  chat.appendChild(profile);
-  chat.appendChild(message);
-  wrapper.appendChild(chat);
-
-  return wrapper;
+  return `
+    <div class="wrapper ${isAi ? 'ai' : ''}">
+      <div class="chat">
+        <div class="profile">
+          <img src="${profileImg}" alt="${isAi ? 'bot' : 'user'}" />
+        </div>
+        <div class="message" id="${uniqueId}">${value}</div>
+      </div>
+    </div>
+  `;
 }
 
 const handleSubmit = async (e) => {
@@ -90,20 +75,17 @@ const handleSubmit = async (e) => {
   submitButton.disabled = true;
 
   // User's chat stripe
-  const userChatStripe = createChatStripe(false, prompt);
-  messageContainer.appendChild(userChatStripe);
+  chatContainer.innerHTML += createChatStripe(false, prompt);
 
   // Clear the textarea input
   form.reset();
 
   // Bot's chat stripe
   const uniqueId = generateUniqueId();
-  const botChatStripe = createChatStripe(true, '', uniqueId);
-  messageContainer.appendChild(botChatStripe);
+  chatContainer.innerHTML += createChatStripe(true, '', uniqueId);
 
   // Focus and scroll to the bottom of the chat container
-  input.focus();
-  messageContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 
   // Get the message div
   const messageDiv = document.getElementById(uniqueId);
@@ -123,7 +105,7 @@ const handleSubmit = async (e) => {
     });
 
     clearInterval(loadInterval);
-    messageDiv.textContent = '';
+    messageDiv.innerHTML = '';
 
     if (response.ok) {
       const data = await response.json();
@@ -134,11 +116,11 @@ const handleSubmit = async (e) => {
     } else {
       const err = await response.text();
 
-      messageDiv.textContent = 'Something went wrong';
+      messageDiv.innerHTML = 'Something went wrong';
       alert(err);
     }
   } catch (error) {
-    messageDiv.textContent = 'Something went wrong';
+    messageDiv.innerHTML = 'Something went wrong';
     console.error(error);
   } finally {
     // Re-enable the submit button after processing
@@ -153,13 +135,18 @@ form.addEventListener('keyup', (e) => {
   }
 });
 
+// Auto-scroll to the latest message
+function scrollToLatestMessage() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
 // Function to handle auto-scrolling
 function handleAutoScroll() {
   const scrollOffset = 100; // Offset from the bottom of the container
 
   if (chatContainer.scrollTop + chatContainer.clientHeight + scrollOffset >= chatContainer.scrollHeight) {
     // User has scrolled to the bottom, so enable auto-scroll
-    messageContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+    scrollToLatestMessage();
   }
 }
 
@@ -167,4 +154,4 @@ function handleAutoScroll() {
 chatContainer.addEventListener('scroll', handleAutoScroll);
 
 // Initialize auto-scroll on page load
-messageContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+scrollToLatestMessage();
