@@ -19,23 +19,7 @@ function loader(element) {
     if (element.textContent === '....') {
       element.textContent = '';
     }
-  }, 300);
-}
-
-function typeText(element, text) {
-  let index = 0;
-
-  let interval = setInterval(() => {
-    if (index < text.length) {
-      element.textContent += text.charAt(index);
-      index++;
-    } else {
-      clearInterval(interval);
-
-      // After text generation, stop auto-scrolling
-      chatContainer.removeEventListener('scroll', handleAutoScroll);
-    }
-  }, 20);
+  }, 100);
 }
 
 function generateUniqueId() {
@@ -60,6 +44,8 @@ function createChatStripe(isAi, value, uniqueId) {
     </div>
   `;
 }
+
+let thinkingTimeout;
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -96,31 +82,35 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   try {
-    const response = await fetch('https://educational-development.onrender.com/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-      }),
-    });
+    // Simulate AI "thinking" with a shorter delay
+    thinkingTimeout = setTimeout(async () => {
+      // Fetch the response from the server
+      const response = await fetch('https://educational-development.onrender.com/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+        }),
+      });
 
-    clearInterval(loadInterval);
-    messageDiv.textContent = '';
+      clearInterval(loadInterval);
+      messageDiv.textContent = '';
 
-    if (response.ok) {
-      const data = await response.json();
-      const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
+      if (response.ok) {
+        const data = await response.json();
+        const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
-      // Display the bot's response with typing effect
-      typeText(messageDiv, parsedData);
-    } else {
-      const err = await response.text();
+        // Display the bot's response instantly
+        messageDiv.textContent = parsedData;
+      } else {
+        const err = await response.text();
 
-      messageDiv.textContent = 'Something went wrong';
-      alert(err);
-    }
+        messageDiv.textContent = 'Something went wrong';
+        alert(err);
+      }
+    }, 800); // Adjust the delay duration as needed
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
     console.error(error);
