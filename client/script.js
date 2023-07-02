@@ -105,7 +105,7 @@ const handleSubmit = async (e) => {
         // Display the bot's response instantly
         messageDiv.innerHTML = `
           <span>${parsedData}</span>
-          ${isAi ? '<button class="copy-btn">Copy</button>' : ''}
+          <button class="copy-btn">Copy</button>
         `;
 
         // Scroll to the latest message after rendering the response
@@ -117,7 +117,7 @@ const handleSubmit = async (e) => {
         // Focus on the input field for the next response
         input.focus();
 
-        // Listen for feedback on AI response
+        // Listen for user feedback on the response
         listenForFeedback(prompt, parsedData);
       } else {
         const err = await response.text();
@@ -137,50 +137,6 @@ const handleSubmit = async (e) => {
     submitButton.disabled = false;
   }
 };
-
-form.addEventListener('submit', handleSubmit);
-form.addEventListener('keyup', (e) => {
-  if (e.keyCode === 13) {
-    handleSubmit(e);
-  }
-});
-
-// Auto-scroll to the latest message smoothly
-function scrollToLatestMessage() {
-  chatContainer.scrollTo({
-    top: chatContainer.scrollHeight,
-    behavior: 'smooth',
-  });
-}
-
-// Scroll to the latest message on initial load
-window.addEventListener('load', () => {
-  scrollToLatestMessage();
-
-  // Copy button event listeners
-  chatContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('copy-btn')) {
-      handleCopy(e);
-    }
-  });
-});
-
-// Copy button event handler
-function handleCopy(event) {
-  const message = event.target.previousElementSibling.textContent;
-  copyToClipboard(message);
-  alert('Copied to clipboard!');
-}
-
-// Function to copy text to clipboard
-function copyToClipboard(text) {
-  const tempInput = document.createElement('input');
-  tempInput.value = text;
-  document.body.appendChild(tempInput);
-  tempInput.select();
-  document.execCommand('copy');
-  document.body.removeChild(tempInput);
-}
 
 // Function to listen for user feedback on the AI response
 const listenForFeedback = (prompt, botResponse) => {
@@ -242,3 +198,46 @@ const sendFeedback = async (prompt, botResponse, feedback) => {
     console.error('Error sending feedback:', error);
   }
 };
+
+form.addEventListener('submit', handleSubmit);
+form.addEventListener('keyup', (e) => {
+  if (e.keyCode === 13) {
+    handleSubmit(e);
+  }
+});
+
+// Auto-scroll to the latest message smoothly
+function scrollToLatestMessage() {
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
+    behavior: 'smooth',
+  });
+}
+
+// Scroll to the latest message on initial load
+window.addEventListener('load', () => {
+  scrollToLatestMessage();
+
+  // Copy button event listeners
+  const copyButtons = document.querySelectorAll('.copy-btn');
+  copyButtons.forEach((button) => {
+    button.addEventListener('click', handleCopy);
+  });
+});
+
+// Copy button event handler
+function handleCopy(event) {
+  const message = event.target.previousElementSibling.textContent;
+  copyToClipboard(message);
+  alert('Copied to clipboard!');
+}
+
+// Function to copy text to clipboard
+function copyToClipboard(text) {
+  const tempInput = document.createElement('input');
+  tempInput.value = text;
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  document.execCommand('copy');
+  document.body.removeChild(tempInput);
+}
