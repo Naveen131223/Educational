@@ -3,8 +3,11 @@ import user from './assets/user.svg';
 
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
+const messageContainer = chatContainer.querySelector('.message-container');
+const mathKeywords = ['math', 'calculate', 'solve'];
 
-let loadInterval; 
+let loadInterval;
+const math = mathjs.create(); // Create an instance of Math.js
 
 function loader(element) {
   element.textContent = '';
@@ -25,7 +28,7 @@ function typeText(element, text) {
 
   let interval = setInterval(() => {
     if (index < text.length) {
-      element.innerHTML += text.charAt(index);
+      element.textContent += text.charAt(index);
       index++;
     } else {
       clearInterval(interval);
@@ -47,16 +50,30 @@ function generateUniqueId() {
 function createChatStripe(isAi, value, uniqueId) {
   const profileImg = isAi ? bot : user;
 
-  return `
-    <div class="wrapper ${isAi ? 'ai' : ''}">
-      <div class="chat">
-        <div class="profile">
-          <img src="${profileImg}" alt="${isAi ? 'bot' : 'user'}" />
-        </div>
-        <div class="message" id="${uniqueId}">${value}</div>
-      </div>
-    </div>
-  `;
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('wrapper', isAi ? 'ai' : '');
+
+  const chat = document.createElement('div');
+  chat.classList.add('chat');
+
+  const profile = document.createElement('div');
+  profile.classList.add('profile');
+
+  const img = document.createElement('img');
+  img.src = profileImg;
+  img.alt = isAi ? 'bot' : 'user';
+
+  const message = document.createElement('div');
+  message.id = uniqueId;
+  message.classList.add('message');
+  message.textContent = value;
+
+  profile.appendChild(img);
+  chat.appendChild(profile);
+  chat.appendChild(message);
+  wrapper.appendChild(chat);
+
+  return wrapper;
 }
 
 const handleSubmit = async (e) => {
@@ -75,17 +92,20 @@ const handleSubmit = async (e) => {
   submitButton.disabled = true;
 
   // User's chat stripe
-  chatContainer.innerHTML += createChatStripe(false, prompt);
+  const userChatStripe = createChatStripe(false, prompt);
+  messageContainer.appendChild(userChatStripe);
 
   // Clear the textarea input
   form.reset();
 
   // Bot's chat stripe
   const uniqueId = generateUniqueId();
-  chatContainer.innerHTML += createChatStripe(true, '', uniqueId);
+  const botChatStripe = createChatStripe(true, '', uniqueId);
+  messageContainer.appendChild(botChatStripe);
 
   // Focus and scroll to the bottom of the chat container
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  input.focus();
+  messageContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
 
   // Get the message div
   const messageDiv = document.getElementById(uniqueId);
@@ -94,33 +114,35 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   try {
-    const response = await fetch('https://educational-development.onrender.com/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-      }),
-    });
+    let response;
+    let parsedData;
 
-    clearInterval(loadInterval);
-    messageDiv.innerHTML = '';
-
-    if (response.ok) {
-      const data = await response.json();
-      const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
-
-      // Display the bot's response with typing effect
-      typeText(messageDiv, parsedData);
+    // Check if the prompt is a math-related query
+    if (isMathQuery(prompt)) {
+      parsedData = evaluateMathExpression(prompt);
     } else {
-      const err = await response.text();
+      response = await fetch('https://educational-development.onrender.com/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+        }),
+      });
 
-      messageDiv.innerHTML = 'Something went wrong';
-      alert(err);
+      if (response.ok) {
+        const data = await response.json();
+        parsedData = data.bot.trim();
+      } else {
+        throw new Error('Something went wrong');
+      }
     }
+
+    // Display the response
+    typeText(messageDiv, parsedData);
   } catch (error) {
-    messageDiv.innerHTML = 'Something went wrong';
+    messageDiv.textContent = 'Something went wrong';
     console.error(error);
   } finally {
     // Re-enable the submit button after processing
@@ -135,9 +157,25 @@ form.addEventListener('keyup', (e) => {
   }
 });
 
-// Auto-scroll to the latest message
-function scrollToLatestMessage() {
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+// Function to check if the prompt is a math-related query
+function isMathQuery(prompt) {
+  for (const keyword of mathKeywords) {
+    if (prompt.toLowerCase().includes(keyword)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Function to evaluate math expressions using Math.js
+function evaluateMathExpression(expression) {
+  try {
+    const result = math.evaluate(expression);
+    return result.toString();
+  } catch (error) {
+    console.error('Error evaluating math expression:', error);
+    return 'Invalid math expression';
+  }
 }
 
 // Function to handle auto-scrolling
@@ -146,7 +184,7 @@ function handleAutoScroll() {
 
   if (chatContainer.scrollTop + chatContainer.clientHeight + scrollOffset >= chatContainer.scrollHeight) {
     // User has scrolled to the bottom, so enable auto-scroll
-    scrollToLatestMessage();
+    messageContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
   }
 }
 
@@ -154,4 +192,4 @@ function handleAutoScroll() {
 chatContainer.addEventListener('scroll', handleAutoScroll);
 
 // Initialize auto-scroll on page load
-scrollToLatestMessage();
+messageContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
