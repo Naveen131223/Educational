@@ -41,7 +41,6 @@ function createChatStripe(isAi, value, uniqueId) {
         </div>
         <div class="message" id="${uniqueId}">
           <span>${value}</span>
-          ${isAi ? '<button class="copy-btn">Copy</button>' : ''}
         </div>
       </div>
     </div>
@@ -105,7 +104,6 @@ const handleSubmit = async (e) => {
         // Display the bot's response instantly
         messageDiv.innerHTML = `
           <span>${parsedData}</span>
-          <button class="copy-btn">Copy</button>
         `;
 
         // Scroll to the latest message after rendering the response
@@ -226,43 +224,4 @@ function scrollToLatestMessage() {
 // Scroll to the latest message on initial load
 window.addEventListener('load', () => {
   scrollToLatestMessage();
-
-  // Copy button event listeners
-  const copyButtons = document.querySelectorAll('.copy-btn');
-  copyButtons.forEach((button) => {
-    button.addEventListener('click', handleCopy);
-  });
 });
-
-// Copy button event handler
-function handleCopy(event) {
-  const message = event.target.previousElementSibling.textContent;
-  copyToClipboard(message);
-  alert('Copied to clipboard!');
-}
-
-// Function to copy text to clipboard
-function copyToClipboard(text) {
-  const tempInput = document.createElement('input');
-  tempInput.value = text;
-  document.body.appendChild(tempInput);
-  tempInput.select();
-  document.execCommand('copy');
-  document.body.removeChild(tempInput);
-}
-function copyToClipboard(text) {
-      const tempInput = document.createElement('input');
-      tempInput.value = text;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-    }
-
-    // Rest of your existing JavaScript code here...
-
-    // Scroll to the latest message on initial load
-    window.addEventListener('load', () => {
-      scrollToLatestMessage();
-
-     
