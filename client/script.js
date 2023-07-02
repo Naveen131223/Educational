@@ -227,10 +227,10 @@ function scrollToLatestMessage() {
 window.addEventListener('load', () => {
   scrollToLatestMessage();
 
-  // Add event listeners to copy buttons
-  chatContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('copy-btn')) {
-      handleCopy(e);
+  // Copy button event listener using event delegation
+  chatContainer.addEventListener('click', (event) => {
+    if (event.target.classList.contains('copy-btn')) {
+      handleCopy(event);
     }
   });
 });
@@ -244,7 +244,7 @@ function handleCopy(event) {
 
 // Function to copy text to clipboard
 function copyToClipboard(text) {
-  const tempInput = document.createElement('input');
+  const tempInput = document.createElement('textarea');
   tempInput.value = text;
   document.body.appendChild(tempInput);
   tempInput.select();
