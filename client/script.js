@@ -4,10 +4,8 @@ import user from './assets/user.svg';
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
 const messageContainer = chatContainer.querySelector('.message-container');
-const mathKeywords = ['math', 'calculate', 'solve'];
 
 let loadInterval;
-const math = mathjs.create(); // Create an instance of Math.js
 
 function loader(element) {
   element.textContent = '';
@@ -114,33 +112,31 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   try {
-    let response;
-    let parsedData;
+    const response = await fetch('https://educational-development.onrender.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+      }),
+    });
 
-    // Check if the prompt is a math-related query
-    if (isMathQuery(prompt)) {
-      parsedData = evaluateMathExpression(prompt);
+    clearInterval(loadInterval);
+    messageDiv.textContent = '';
+
+    if (response.ok) {
+      const data = await response.json();
+      const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
+
+      // Display the bot's response with typing effect
+      typeText(messageDiv, parsedData);
     } else {
-      response = await fetch('https://educational-development.onrender.com/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: prompt,
-        }),
-      });
+      const err = await response.text();
 
-      if (response.ok) {
-        const data = await response.json();
-        parsedData = data.bot.trim();
-      } else {
-        throw new Error('Something went wrong');
-      }
+      messageDiv.textContent = 'Something went wrong';
+      alert(err);
     }
-
-    // Display the response
-    typeText(messageDiv, parsedData);
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
     console.error(error);
@@ -156,27 +152,6 @@ form.addEventListener('keyup', (e) => {
     handleSubmit(e);
   }
 });
-
-// Function to check if the prompt is a math-related query
-function isMathQuery(prompt) {
-  for (const keyword of mathKeywords) {
-    if (prompt.toLowerCase().includes(keyword)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-// Function to evaluate math expressions using Math.js
-function evaluateMathExpression(expression) {
-  try {
-    const result = math.evaluate(expression);
-    return result.toString();
-  } catch (error) {
-    console.error('Error evaluating math expression:', error);
-    return 'Invalid math expression';
-  }
-}
 
 // Function to handle auto-scrolling
 function handleAutoScroll() {
