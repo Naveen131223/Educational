@@ -1,6 +1,5 @@
 import bot from './assets/bot.svg';
 import user from './assets/user.svg';
-const puppeteer = require('puppeteer');
 
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
@@ -80,61 +79,47 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   try {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
-    // Navigate to the search page
-    await page.goto('https://search.brave.com');
-
-    // Type the search query in the search input field
-    await page.type('#search_form_input_homepage', prompt);
-
-    // Submit the search form
-    await page.keyboard.press('Enter');
-
-    // Wait for the search results to load
-    await page.waitForSelector('#links .result');
-
-    // Extract the search results
-    const searchResults = await page.evaluate(() => {
-      const results = Array.from(document.querySelectorAll('#links .result'));
-      const searchResultData = results.map((result) => {
-        const title = result.querySelector('h2').textContent;
-        const link = result.querySelector('a').href;
-        const description = result.querySelector('p').textContent;
-
-        return {
-          title,
-          link,
-          description,
-        };
+    // Simulate AI "thinking" with a shorter delay
+    thinkingTimeout = setTimeout(async () => {
+      // Fetch the response from the server
+      const response = await fetch('https://educational-development.onrender.com/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+        }),
       });
 
-      return searchResultData;
-    });
+      clearInterval(loadInterval);
+      messageDiv.textContent = '';
 
-    // Close the browser
-    await browser.close();
+      if (response.ok) {
+        const data = await response.json();
+        const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
-    if (searchResults.length > 0) {
-      // Display the search results
-      searchResults.forEach((result) => {
-        const resultText = `${result.title}\n${result.link}\n${result.description}`;
-        const resultChatStripe = createChatStripe(true, resultText);
-        chatContainer.insertAdjacentHTML('beforeend', resultChatStripe);
-      });
-    } else {
-      // If no results were found, display a message
-      const noResultsMessage = 'No results found';
-      const noResultsChatStripe = createChatStripe(true, noResultsMessage);
-      chatContainer.insertAdjacentHTML('beforeend', noResultsChatStripe);
-    }
+        // Display the bot's response instantly
+        messageDiv.textContent = parsedData;
 
-    clearInterval(loadInterval);
-    messageDiv.textContent = '';
+        // Scroll to the latest message after rendering the response
+        scrollToLatestMessage();
 
-    // Re-enable the submit button after processing
-    submitButton.disabled = false;
+        // Re-enable the submit button after processing
+        submitButton.disabled = false;
+
+        // Focus on the input field for the next response
+        input.focus();
+      } else {
+        const err = await response.text();
+
+        messageDiv.textContent = 'Something went wrong';
+        alert(err);
+
+        // Re-enable the submit button after processing
+        submitButton.disabled = false;
+      }
+    }, 800); // Adjust the delay duration as needed
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
     console.error(error);
