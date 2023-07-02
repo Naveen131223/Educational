@@ -262,6 +262,60 @@ recognition.lang = 'zu-ZA'; // Zulu
     recognition.start();
   }
 </script>
+	  <script>
+		  
+
+
+        var printButton = document.createElement("button");
+        printButton.innerHTML = "Print";
+        printButton.className = "add-course-button-1";
+        printButton.onclick = printPage;
+        document.body.appendChild(printButton);
+
+        var youtubeButton = document.createElement("button");
+        youtubeButton.innerHTML = "YouTube Guidance in Tamil";
+        youtubeButton.className = "add-course-button-2";
+        youtubeButton.onclick = openYouTubeGuidance;
+        document.body.appendChild(youtubeButton);
+
+        var shareButton = document.createElement("button");
+        shareButton.innerHTML = "Share";
+        shareButton.className = "add-course-button-3";
+        shareButton.onclick = sharePage;
+        document.body.appendChild(shareButton);
+
+
+
+
+	function sharePage() {
+            // Add your code for sharing the page here
+            var linkToShare = 'https://naveen1312.000webhostapp.com/';
+
+      if (navigator.share) {
+        navigator.share({
+          url: linkToShare
+        })
+          .then(() => console.log('Link shared successfully.'))
+          .catch((error) => console.log('Error sharing link:', error));
+      } else {
+        alert('Web Share API is not supported by your browser.');
+      }
+    
+    
+        }
+    function printPage() {
+            // Add your code for printing the page here
+            window.print();
+        }
+         function openYouTubeGuidance() {
+            // Add your YouTube guidance link here
+            var youtubeLink = "https://youtu.be/ueJA3biPOKg";
+            // Add your code to open the YouTube link
+            window.open(youtubeLink, "_blank");
+        }
+
+		  
+		  </script>
 	  <script type="text/javascript">
 	atOptions = {
 		'key' : '78aad4955c6c7ddf26dac894594762b2',
