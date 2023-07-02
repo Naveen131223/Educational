@@ -3,8 +3,10 @@ import user from './assets/user.svg';
 
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
+const input = form.querySelector('textarea');
+const submitButton = form.querySelector('button[type="submit"]');
 
-let loadInterval; 
+let loadInterval;
 
 function loader(element) {
   element.textContent = '';
@@ -25,7 +27,7 @@ function typeText(element, text) {
 
   let interval = setInterval(() => {
     if (index < text.length) {
-      element.innerHTML += text.charAt(index);
+      element.textContent += text.charAt(index);
       index++;
     } else {
       clearInterval(interval);
@@ -62,7 +64,6 @@ function createChatStripe(isAi, value, uniqueId) {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const input = form.querySelector('textarea');
   const prompt = input.value.trim();
 
   if (prompt === '') {
@@ -71,18 +72,19 @@ const handleSubmit = async (e) => {
   }
 
   // Disable the submit button while processing
-  const submitButton = form.querySelector('button[type="submit"]');
   submitButton.disabled = true;
 
   // User's chat stripe
-  chatContainer.innerHTML += createChatStripe(false, prompt);
+  const userChatStripe = createChatStripe(false, prompt);
+  chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
 
   // Clear the textarea input
   form.reset();
 
   // Bot's chat stripe
   const uniqueId = generateUniqueId();
-  chatContainer.innerHTML += createChatStripe(true, '', uniqueId);
+  const botChatStripe = createChatStripe(true, '', uniqueId);
+  chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
 
   // Focus and scroll to the bottom of the chat container
   chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -105,7 +107,7 @@ const handleSubmit = async (e) => {
     });
 
     clearInterval(loadInterval);
-    messageDiv.innerHTML = '';
+    messageDiv.textContent = '';
 
     if (response.ok) {
       const data = await response.json();
@@ -116,11 +118,11 @@ const handleSubmit = async (e) => {
     } else {
       const err = await response.text();
 
-      messageDiv.innerHTML = 'Something went wrong';
+      messageDiv.textContent = 'Something went wrong';
       alert(err);
     }
   } catch (error) {
-    messageDiv.innerHTML = 'Something went wrong';
+    messageDiv.textContent = 'Something went wrong';
     console.error(error);
   } finally {
     // Re-enable the submit button after processing
