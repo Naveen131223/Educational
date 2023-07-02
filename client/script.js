@@ -266,4 +266,17 @@ function copyToClipboard(text) {
   document.execCommand('copy');
   document.body.removeChild(tempInput);
 }
+// Function to copy text to clipboard
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      // Success! Update the button text
+      const copyButton = document.querySelector('.copy-btn');
+      copyButton.textContent = 'Copied!';
+    })
+    .catch((error) => {
+      console.error('Unable to copy text to clipboard:', error);
+    });
+}
+
 
