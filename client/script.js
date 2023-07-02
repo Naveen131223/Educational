@@ -101,6 +101,9 @@ const handleSubmit = async (e) => {
 
         // Display the bot's response instantly
         messageDiv.textContent = parsedData;
+
+        // Scroll to the latest message after rendering the response
+        scrollToLatestMessage();
       } else {
         const err = await response.text();
 
@@ -123,3 +126,11 @@ form.addEventListener('keyup', (e) => {
     handleSubmit(e);
   }
 });
+
+// Auto-scroll to the latest message smoothly
+function scrollToLatestMessage() {
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
+    behavior: 'smooth',
+  });
+}
