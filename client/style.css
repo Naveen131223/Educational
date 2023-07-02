@@ -22,6 +22,39 @@ body {
       color: yellow;
     }
 
+    .add-course-button-1 {
+        background-color: blue;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    .add-course-button-2 {
+        background-color: red;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    .add-course-button-3 {
+        background-color: green;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
 .voice-mic {
   font-size: 24px;
   color: white;
