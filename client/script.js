@@ -265,16 +265,4 @@ function copyToClipboard(text) {
     window.addEventListener('load', () => {
       scrollToLatestMessage();
 
-      // Copy button event listeners
-      const copyButtons = document.querySelectorAll('.copy-btn');
-      copyButtons.forEach((button) => {
-        button.addEventListener('click', handleCopy);
-      });
-    });
-
-    // Copy button event handler
-    function handleCopy(event) {
-      const message = event.target.previousElementSibling.textContent;
-      copyToClipboard(message);
-      
-    }
+     
