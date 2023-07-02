@@ -128,7 +128,28 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
     </div>
 
-    
+
+
+	  <script>
+        var printButton = document.createElement("button");
+        printButton.innerHTML = "Print";
+        printButton.className = "add-course-button-1";
+        printButton.onclick = printPage;
+        document.body.appendChild(printButton);
+
+        var youtubeButton = document.createElement("button");
+        youtubeButton.innerHTML = "YouTube Guidance in Tamil";
+        youtubeButton.className = "add-course-button-2";
+        youtubeButton.onclick = openYouTubeGuidance;
+        document.body.appendChild(youtubeButton);
+
+        var shareButton = document.createElement("button");
+        shareButton.innerHTML = "Share";
+        shareButton.className = "add-course-button-3";
+        shareButton.onclick = sharePage;
+        document.body.appendChild(shareButton);
+		  </script>
+	  
 
     <script type="module" src="script.js"></script>
     <script>
@@ -266,30 +287,14 @@ recognition.lang = 'zu-ZA'; // Zulu
 		  
 
 
-        var printButton = document.createElement("button");
-        printButton.innerHTML = "Print";
-        printButton.className = "add-course-button-1";
-        printButton.onclick = printPage;
-        document.body.appendChild(printButton);
 
-        var youtubeButton = document.createElement("button");
-        youtubeButton.innerHTML = "YouTube Guidance in Tamil";
-        youtubeButton.className = "add-course-button-2";
-        youtubeButton.onclick = openYouTubeGuidance;
-        document.body.appendChild(youtubeButton);
-
-        var shareButton = document.createElement("button");
-        shareButton.innerHTML = "Share";
-        shareButton.className = "add-course-button-3";
-        shareButton.onclick = sharePage;
-        document.body.appendChild(shareButton);
 
 
 
 
 	function sharePage() {
             // Add your code for sharing the page here
-            var linkToShare = 'https://naveen1312.000webhostapp.com/';
+            var linkToShare = 'https://educational-umber.vercel.app/';
 
       if (navigator.share) {
         navigator.share({
