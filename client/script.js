@@ -69,6 +69,9 @@ const handleSubmit = async (e) => {
   // Clear the textarea input
   form.reset();
 
+  // Scroll to the latest message after inserting the user's chat stripe
+  scrollToLatestMessage();
+
   // Bot's chat stripe
   const uniqueId = generateUniqueId();
   const botChatStripe = createChatStripe(true, '', uniqueId);
