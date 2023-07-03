@@ -221,7 +221,7 @@ function scrollToLatestMessage() {
   });
 }
 
-// Scroll to the latest message on initial load and after rendering the bot's response
+// Scroll to the latest message on initial load
 window.addEventListener('load', () => {
   scrollToLatestMessage();
 });
