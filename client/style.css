@@ -22,6 +22,10 @@ body {
       color: yellow;
     }
 
+.colorful {
+    transition: color 0.5s;
+  }
+
     .add-course-button-1 {
         background-color: blue;
         color: white;
