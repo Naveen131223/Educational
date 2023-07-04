@@ -338,10 +338,10 @@ document.body.appendChild(printButton);
     
     
         }
-    function printPage() {
-            // Add your code for printing the page here
-            window.print();
-        }
+    printButton.addEventListener('click', () => {
+  renderChatMessages();
+  window.print();
+});
          function openYouTubeGuidance() {
             // Add your YouTube guidance link here
             var youtubeLink = "https://youtu.be/bMKzvjCFZao";
