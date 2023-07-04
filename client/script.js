@@ -5,8 +5,11 @@ const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
 const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
+const printButton = document.querySelector('#print_button');
 
 let loadInterval;
+const userChats = [];
+const botChats = [];
 
 function loader(element) {
   element.textContent = '';
@@ -32,6 +35,13 @@ function generateUniqueId() {
 
 function createChatStripe(isAi, value, uniqueId) {
   const profileImg = isAi ? bot : user;
+  const message = { isAi, value };
+
+  if (isAi) {
+    botChats.push(message);
+  } else {
+    userChats.push(message);
+  }
 
   return `
     <div class="wrapper ${isAi ? 'ai' : ''}">
@@ -227,4 +237,30 @@ function scrollToLatestMessage() {
 // Scroll to the latest message on initial load
 window.addEventListener('load', () => {
   scrollToLatestMessage();
+});
+
+// Function to render the chat messages on the webpage
+function renderChatMessages() {
+  chatContainer.innerHTML = '';
+
+  for (let i = 0; i < userChats.length; i++) {
+    const { value: userMessage } = userChats[i];
+    const userChatStripe = createChatStripe(false, userMessage);
+    chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
+  }
+
+  for (let i = 0; i < botChats.length; i++) {
+    const { value: botMessage } = botChats[i];
+    const uniqueId = generateUniqueId();
+    const botChatStripe = createChatStripe(true, botMessage, uniqueId);
+    chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
+  }
+
+  scrollToLatestMessage();
+}
+
+// Event listener for the print button
+printButton.addEventListener('click', () => {
+  renderChatMessages();
+  window.print();
 });
