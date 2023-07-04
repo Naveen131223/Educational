@@ -306,6 +306,13 @@ recognition.lang = 'zu-ZA'; // Zulu
         youtubeButton.onclick = openYouTubeGuidance;
         document.body.appendChild(youtubeButton);
 
+        var youtubeButton_1 = document.createElement("button");
+        youtubeButton_1.innerHTML = "YouTube Guidance in English just 2 minute video";
+        youtubeButton_1.className = "add-course-button-2";
+        youtubeButton_1.onclick = openYouTubeGuidance;
+        document.body.appendChild(youtubeButton_1);
+
+
         var shareButton = document.createElement("button");
         shareButton.innerHTML = "Share";
         shareButton.className = "add-course-button-3";
@@ -340,6 +347,12 @@ recognition.lang = 'zu-ZA'; // Zulu
             // Add your code to open the YouTube link
             window.open(youtubeLink, "_blank");
         }
+
+		  function openYouTubeGuidance_1() {
+    var youtubeLink = "https://youtu.be/q9GxUt59vxg";
+    window.open(youtubeLink, "_blank");
+}
+
 
 		  function animateLines() {
   var lines = document.getElementsByClassName('colorful');
