@@ -5,7 +5,7 @@ const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
 const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
-const printButton = document.querySelector('#print_button');
+const printButton = document.createElement("button");
 
 let loadInterval;
 const userChats = [];
@@ -260,11 +260,11 @@ function renderChatMessages() {
 }
 
 // Event listener for the print button
-// Event listener for the print button
+printButton.textContent = 'Print Chat';
 printButton.addEventListener('click', () => {
   renderChatMessages();
+  window.print();
 });
 
-
-  
-  
+// Append the print button to the document body
+document.body.appendChild(printButton);
