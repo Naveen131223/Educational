@@ -26,14 +26,12 @@ body {
     transition: color 0.5s;
   }
 
-.galaxy-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
 
-.galaxy {
+  .galaxy {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 300px;
   height: 300px;
   border-radius: 50%;
@@ -50,6 +48,7 @@ body {
     transform: rotate(360deg);
   }
 }
+
 
 
     .add-course-button-1 {
