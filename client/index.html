@@ -296,13 +296,18 @@ recognition.lang = 'zu-ZA'; // Zulu
 
 
 var printButton = document.createElement("button");
-printButton.innerHTML = "Print";
+printButton.textContent = "Print";
 printButton.className = "add-course-button-1";
-printButton.onclick = function() {
- window.print();
+printButton.addEventListener("click", function() {
 renderChatMessages();
-};
+window.print();
+});
 document.body.appendChild(printButton);
+
+// Append the print button to the document body or a specific container
+var container = document.getElementById("container"); // Replace "container" with the ID of the desired container
+container.appendChild(printButton);
+
 
 
 
