@@ -34,7 +34,14 @@ body {
   background-image: url('milky_way_image.jpg');
   background-size: cover;
   animation: rotate 10s infinite linear;
+
+  /* Centering code */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
+
 
 @keyframes rotate {
   from {
