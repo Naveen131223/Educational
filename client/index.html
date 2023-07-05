@@ -295,6 +295,13 @@ recognition.lang = 'zu-ZA'; // Zulu
 	  <script>
 
 
+var printButton = document.createElement("button");
+printButton.innerHTML = "Print";
+printButton.className = "add-course-button-1";
+printButton.onclick = function() {
+renderChatMessages();
+window.print();
+});
 
 
 
