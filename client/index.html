@@ -293,15 +293,14 @@ recognition.lang = 'zu-ZA'; // Zulu
   }
 </script>
 	  <script>
-
-		  var printButton = document.createElement("button");
+var printButton = document.createElement("button");
 printButton.innerHTML = "Print";
 printButton.className = "add-course-button-1";
-printButton.onclick = printPage;
+printButton.onclick = addPrintEventListener;
 document.body.appendChild(printButton);
 
 			   
-             var youtubeButton = document.createElement("button");
+        var youtubeButton = document.createElement("button");
         youtubeButton.innerHTML = "YouTube Guidance in Tamil";
         youtubeButton.className = "add-course-button-2";
         youtubeButton.onclick = openYouTubeGuidance;
@@ -338,10 +337,19 @@ document.body.appendChild(printButton);
     
     
         }
-    printButton.addEventListener('click', () => {
-  renderChatMessages();
-  window.print();
-});
+
+
+		  function addPrintEventListener() {
+  const printButton = document.getElementById('printButton');
+  printButton.addEventListener('click', () => {
+    renderChatMessages();
+    window.print();
+  });
+}
+
+  
+  
+
          function openYouTubeGuidance() {
             // Add your YouTube guidance link here
             var youtubeLink = "https://youtu.be/bMKzvjCFZao";
