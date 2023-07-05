@@ -299,9 +299,10 @@ var printButton = document.createElement("button");
 printButton.textContent = "Print";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-renderChatMessages();
+
 window.print();
 renderChatMessages();
+window.print();
 });
 document.body.appendChild(printButton);
 
