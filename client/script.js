@@ -260,11 +260,4 @@ function renderChatMessages() {
 }
 
 // Event listener for the print button
-printButton.textContent = 'Print Chat';
-printButton.addEventListener('click', () => {
-  renderChatMessages();
-  window.print();
-});
 
-// Append the print button to the document body
-document.body.appendChild(printButton);
