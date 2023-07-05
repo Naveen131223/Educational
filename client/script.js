@@ -1,20 +1,20 @@
-var bot = './assets/bot.svg';
-var user = './assets/user.svg';
+import bot from './assets/bot.svg';
+import user from './assets/user.svg';
 
-var form = document.querySelector('form');
-var chatContainer = document.querySelector('#chat_container');
-var input = form.querySelector('textarea');
-var submitButton = form.querySelector('button[type="submit"]');
-var printButton = document.querySelector('#print_button');
+const form = document.querySelector('form');
+const chatContainer = document.querySelector('#chat_container');
+const input = form.querySelector('textarea');
+const submitButton = form.querySelector('button[type="submit"]');
+const printButton = document.querySelector('#print_button');
 
-var loadInterval;
-var userChats = [];
-var botChats = [];
+let loadInterval;
+const userChats = [];
+const botChats = [];
 
 function loader(element) {
   element.textContent = '';
 
-  loadInterval = setInterval(function() {
+  loadInterval = setInterval(() => {
     // Update the text content of the loading indicator
     element.textContent += '.';
 
@@ -26,16 +26,16 @@ function loader(element) {
 }
 
 function generateUniqueId() {
-  var timestamp = Date.now();
-  var randomNumber = Math.random();
-  var hexadecimalString = randomNumber.toString(16).slice(2, 8); // Generate a 6-digit hexadecimal string
+  const timestamp = Date.now();
+  const randomNumber = Math.random();
+  const hexadecimalString = randomNumber.toString(16).slice(2, 8); // Generate a 6-digit hexadecimal string
 
-  return 'id-' + timestamp + '-' + hexadecimalString;
+  return `id-${timestamp}-${hexadecimalString}`;
 }
 
 function createChatStripe(isAi, value, uniqueId) {
-  var profileImg = isAi ? bot : user;
-  var message = { isAi, value };
+  const profileImg = isAi ? bot : user;
+  const message = { isAi, value };
 
   if (isAi) {
     botChats.push(message);
@@ -57,12 +57,12 @@ function createChatStripe(isAi, value, uniqueId) {
   `;
 }
 
-var thinkingTimeout;
+let thinkingTimeout;
 
-var handleSubmit = async function(e) {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
-  var prompt = input.value.trim();
+  const prompt = input.value.trim();
 
   if (prompt === '') {
     // Do not submit if the prompt is empty
@@ -73,7 +73,7 @@ var handleSubmit = async function(e) {
   submitButton.disabled = true;
 
   // User's chat stripe
-  var userChatStripe = createChatStripe(false, prompt);
+  const userChatStripe = createChatStripe(false, prompt);
   chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
 
   // Clear the textarea input
@@ -83,21 +83,21 @@ var handleSubmit = async function(e) {
   scrollToLatestMessage();
 
   // Bot's chat stripe
-  var uniqueId = generateUniqueId();
-  var botChatStripe = createChatStripe(true, '', uniqueId);
+  const uniqueId = generateUniqueId();
+  const botChatStripe = createChatStripe(true, '', uniqueId);
   chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
 
   // Get the message div
-  var messageDiv = document.getElementById(uniqueId);
+  const messageDiv = document.getElementById(uniqueId);
 
   // Show the loading indicator
   loader(messageDiv);
 
   try {
     // Simulate AI "thinking" with a shorter delay
-    thinkingTimeout = setTimeout(async function() {
+    thinkingTimeout = setTimeout(async () => {
       // Fetch the response from the server
-      var response = await fetch('https://educational-development.onrender.com/', {
+      const response = await fetch('https://educational-development.onrender.com/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,8 +111,8 @@ var handleSubmit = async function(e) {
       messageDiv.textContent = '';
 
       if (response.ok) {
-        var data = await response.json();
-        var parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
+        const data = await response.json();
+        const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
         // Display the bot's response instantly
         messageDiv.innerHTML = `
@@ -131,7 +131,7 @@ var handleSubmit = async function(e) {
         // Listen for user feedback on the response
         listenForFeedback(prompt, parsedData);
       } else {
-        var err = await response.text();
+        const err = await response.text();
 
         messageDiv.textContent = 'Something went wrong';
         alert(err);
@@ -150,11 +150,11 @@ var handleSubmit = async function(e) {
 };
 
 // Function to listen for user feedback on the AI response
-var listenForFeedback = function(prompt, botResponse) {
-  var feedbackForm = document.createElement('form');
-  var feedbackInput = document.createElement('input');
-  var feedbackSubmitButton = document.createElement('button');
-  var feedbackCancelButton = document.createElement('button');
+const listenForFeedback = (prompt, botResponse) => {
+  const feedbackForm = document.createElement('form');
+  const feedbackInput = document.createElement('input');
+  const feedbackSubmitButton = document.createElement('button');
+  const feedbackCancelButton = document.createElement('button');
 
   feedbackForm.classList.add('feedback-form');
   feedbackInput.setAttribute('type', 'text');
@@ -168,16 +168,16 @@ var listenForFeedback = function(prompt, botResponse) {
   feedbackForm.appendChild(feedbackSubmitButton);
   feedbackForm.appendChild(feedbackCancelButton);
 
-  var feedbackContainer = document.createElement('div');
+  const feedbackContainer = document.createElement('div');
   feedbackContainer.classList.add('feedback-container');
   feedbackContainer.appendChild(feedbackForm);
 
   chatContainer.appendChild(feedbackContainer);
 
-  feedbackForm.addEventListener('submit', function(e) {
+  feedbackForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    var feedback = feedbackInput.value.trim();
+    const feedback = feedbackInput.value.trim();
 
     if (feedback === '') {
       return;
@@ -190,16 +190,16 @@ var listenForFeedback = function(prompt, botResponse) {
     chatContainer.removeChild(feedbackContainer);
   });
 
-  feedbackCancelButton.addEventListener('click', function() {
+  feedbackCancelButton.addEventListener('click', () => {
     // Remove the feedback form from the chat
     chatContainer.removeChild(feedbackContainer);
   });
 };
 
 // Function to send feedback to the server for model improvement
-var sendFeedback = async function(prompt, botResponse, feedback) {
+const sendFeedback = async (prompt, botResponse, feedback) => {
   try {
-    var response = await fetch('https://educational-development.onrender.com/feedback', {
+    const response = await fetch('https://educational-development.onrender.com/feedback', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -220,7 +220,7 @@ var sendFeedback = async function(prompt, botResponse, feedback) {
 };
 
 form.addEventListener('submit', handleSubmit);
-form.addEventListener('keyup', function(e) {
+form.addEventListener('keyup', (e) => {
   if (e.keyCode === 13) {
     handleSubmit(e);
   }
@@ -235,7 +235,7 @@ function scrollToLatestMessage() {
 }
 
 // Scroll to the latest message on initial load
-window.addEventListener('load', function() {
+window.addEventListener('load', () => {
   scrollToLatestMessage();
 });
 
@@ -243,16 +243,16 @@ window.addEventListener('load', function() {
 function renderChatMessages() {
   chatContainer.innerHTML = '';
 
-  for (var i = 0; i < userChats.length; i++) {
-    var userMessage = userChats[i].value;
-    var userChatStripe = createChatStripe(false, userMessage);
+  for (let i = 0; i < userChats.length; i++) {
+    const { value: userMessage } = userChats[i];
+    const userChatStripe = createChatStripe(false, userMessage);
     chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
   }
 
-  for (var i = 0; i < botChats.length; i++) {
-    var botMessage = botChats[i].value;
-    var uniqueId = generateUniqueId();
-    var botChatStripe = createChatStripe(true, botMessage, uniqueId);
+  for (let i = 0; i < botChats.length; i++) {
+    const { value: botMessage } = botChats[i];
+    const uniqueId = generateUniqueId();
+    const botChatStripe = createChatStripe(true, botMessage, uniqueId);
     chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
   }
 
@@ -260,29 +260,11 @@ function renderChatMessages() {
 }
 
 // Event listener for the print button
-printButton.addEventListener('click', function() {
-  // Hide the print button
-  printButton.style.display = 'none';
-
-  // Create a new window for printing
-  var printWindow = window.open('', '_blank');
-
-  // Set the HTML content of the print window
-  printWindow.document.open();
-  printWindow.document.write('<html><head><title>Chat Transcript</title></head><body>');
-  printWindow.document.write('<h1>Chat Transcript</h1>');
-  printWindow.document.write(chatContainer.innerHTML);
-  printWindow.document.write('</body></html>');
-  printWindow.document.close();
-
-  // Wait for the window content to load before printing
-  printWindow.onload = function() {
-    printWindow.print();
-
-    // Close the print window after printing
-    printWindow.close();
-
-    // Show the print button again
-    printButton.style.display = 'block';
-  };
+// Event listener for the print button
+printButton.addEventListener('click', () => {
+  renderChatMessages();
 });
+
+
+  
+  
