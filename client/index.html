@@ -303,12 +303,21 @@ printButton.addEventListener("click", function() {
   var chatContainer = document.getElementById("chat_container");
   var appContent = appDiv.innerHTML;
   var chatContent = chatContainer.innerHTML;
+
+  // Apply styling to the printed content
+  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+  
+  // Remove the microphone logo and small text
+  appContent = appContent.replace('<span class="user-input"> 🎙️</span>', '');
+  appContent = appContent.replace('<span class="small">Press Enter to send</span>', '');
+
   var printWindow = window.open("", "_blank");
   printWindow.document.open();
-  printWindow.document.write("<html><head><title>Print</title></head><body>" + appContent + "</body></html>"); // Only include appContent in the print
+  printWindow.document.write("<html><head><title>Print</title>" + style + "</head><body>" + appContent + "</body></html>");
   printWindow.document.close();
   printWindow.print();
 });
+
 document.body.appendChild(printButton);
 
 
