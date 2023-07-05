@@ -260,7 +260,14 @@ function renderChatMessages() {
 }
 
 // Event listener for the print button
-printButton.addEventListener('click', () => {
-  renderChatMessages();
-  window.print();
-});
+function addPrintEventListener() {
+  var printButton = document.getElementById('printButton');
+  printButton.addEventListener('click', () => {
+    renderChatMessages();
+    window.print();
+  });
+}
+
+  
+  
+
