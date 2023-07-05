@@ -300,8 +300,9 @@ printButton.innerHTML = "Print";
 printButton.className = "add-course-button-1";
 printButton.onclick = function() {
 renderChatMessages();
-window.print();
-});
+ window.print();
+};
+document.body.appendChild(printButton);
 
 
 
