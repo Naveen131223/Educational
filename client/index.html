@@ -296,7 +296,9 @@ recognition.lang = 'zu-ZA'; // Zulu
 
 
 
- var printButton = document.createElement("button");
+
+  
+  var printButton = document.createElement("button");
 printButton.textContent = "Print";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -307,7 +309,7 @@ printButton.addEventListener("click", function() {
 
   // Apply styling to the printed content
   var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
-  
+
   // Remove the microphone logo and small text
   appContent = appContent.replace('<span class="user-input"> 🎙️</span>', '');
   appContent = appContent.replace('<span class="small">Press Enter to send</span>', '');
@@ -317,12 +319,13 @@ printButton.addEventListener("click", function() {
 
   var printWindow = window.open("", "_blank");
   printWindow.document.open();
-  printWindow.document.write("<html><head><title>Print</title>" + style + "</head><body>" + appContent + chatContent + "</body></html>");
+  printWindow.document.write("<html><head><title>Print</title>" + style + "</head><body>" + appContent + "</body></html>");
   printWindow.document.close();
   printWindow.print();
 });
 
 document.body.appendChild(printButton);
+
 
 
 
