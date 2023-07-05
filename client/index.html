@@ -296,13 +296,15 @@ recognition.lang = 'zu-ZA'; // Zulu
 
 
 var printButton = document.createElement("button");
-printButton.innerHTML = "Print";
-printButton.className = "add-course-button-1";
-printButton.onclick = function() {
-renderChatMessages();
- window.print();
-};
+printButton.innerHTML = "Print Chat";
+printButton.addEventListener("click", function() {
+  renderChatMessages();
+  window.print();
+});
+
+// Append the print button to the document body
 document.body.appendChild(printButton);
+
 
 			   
         var youtubeButton = document.createElement("button");
