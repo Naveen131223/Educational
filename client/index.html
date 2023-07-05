@@ -297,6 +297,7 @@ recognition.lang = 'zu-ZA'; // Zulu
 
 var printButton = document.createElement("button");
 printButton.innerHTML = "Print Chat";
+printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   renderChatMessages();
   window.print();
