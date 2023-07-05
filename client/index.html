@@ -305,11 +305,12 @@ printButton.addEventListener("click", function() {
   var chatContent = chatContainer.innerHTML;
   var printWindow = window.open("", "_blank");
   printWindow.document.open();
-  printWindow.document.write("<html><head><title>Print</title></head><body>" + appContent + chatContent + "</body></html>");
+  printWindow.document.write("<html><head><title>Print</title></head><body>" + appContent + "</body></html>"); // Only include appContent in the print
   printWindow.document.close();
   printWindow.print();
 });
 document.body.appendChild(printButton);
+
 
 
 
