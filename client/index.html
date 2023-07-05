@@ -295,6 +295,13 @@ recognition.lang = 'zu-ZA'; // Zulu
 	  <script>
 
 
+var printButton = document.createElement("button");
+printButton.innerHTML = "Print";
+printButton.className = "print-button";
+printButton.onclick = function() {
+  window.print();
+};
+document.body.appendChild(printButton);
 
 			   
         var youtubeButton = document.createElement("button");
@@ -386,7 +393,6 @@ window.onload = animateLines;
 		  
 		  </script>
 
-<button id="print_button">Print</button>
 	  
 	  <script type="text/javascript">
 	atOptions = {
