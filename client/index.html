@@ -303,8 +303,10 @@ printButton.addEventListener("click", function() {
   window.print();
 });
 
-// Append the print button to the document body
-document.body.appendChild(printButton);
+// Append the print button to the document body or a specific container
+var container = document.getElementById("container"); // Replace "container" with the ID of the desired container
+container.appendChild(printButton);
+
 
 
 			   
