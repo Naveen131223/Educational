@@ -471,6 +471,9 @@ printButton.addEventListener("click", function() {
   // Remove the first chat text with the microphone logo
   chatContent = chatContent.replace(/<span class="user">.+?<\/span>\s*<span class="assistant">.+?<\/span>\s*/, '');
 
+  // Remove the remaining microphone logo and small text from chatContent
+  chatContent = chatContent.replace(/<span class="user-input"> 🎙️<\/span>|<span class="small">Press Enter to send<\/span>/g, '');
+
   var printWindow = window.open("", "_blank");
   printWindow.document.open();
   printWindow.document.write("<html><head><title>Print</title>" + style + "</head><body>" + appContent + chatContent + "</body></html>");
@@ -479,6 +482,7 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+
 
 
 
