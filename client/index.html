@@ -456,29 +456,30 @@ recognition.lang = 'zu-ZA'; // Zulu
 printButton.textContent = "Print";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-  var appDiv = document.getElementById("app");
-  var chatContainer = document.getElementById("chat_container");
-  var appContent = appDiv.innerHTML;
-  var chatContent = chatContainer.innerHTML;
+var appDiv = document.getElementById("app");
+var chatContainer = document.getElementById("chat_container");
+var appContent = appDiv.innerHTML;
+var chatContent = chatContainer.innerHTML;
 
-  // Apply styling to the printed content
-  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+// Apply styling to the printed content
+var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
 
-  // Remove the microphone logo and small text
-  appContent = appContent.replace('<span class="user-input"> 🎙️</span>', '');
-  appContent = appContent.replace('<span class="small">Press Enter to send</span>', '');
+// Remove the microphone logo and small text
+appContent = appContent.replace('<span class="user-input"> 🎙️</span>', '');
+appContent = appContent.replace('<span class="small">Press Enter to send</span>', '');
 
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+// Remove chat text with microphone logo
+chatContent = chatContent.replace(/<span class="user">.+?<\/span>\s*<span class="assistant">.+?<\/span>\s*/g, '');
 
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write("<html><head><title>Print</title>" + style + "</head><body>" + appContent + "</body></html>");
-  printWindow.document.close();
-  printWindow.print();
+var printWindow = window.open("", "_blank");
+printWindow.document.open();
+printWindow.document.write("<html><head><title>Print</title>" + style + "</head><body>" + appContent + chatContent + "</body></html>");
+printWindow.document.close();
+printWindow.print();
 });
 
 document.body.appendChild(printButton);
+
 
 
 
