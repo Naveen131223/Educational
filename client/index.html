@@ -453,6 +453,7 @@ recognition.lang = 'zu-ZA'; // Zulu
 
   
   var printButton = document.createElement("button");
+printButtovar printButton = document.createElement("button");
 printButton.textContent = "Print";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -468,11 +469,8 @@ printButton.addEventListener("click", function() {
   appContent = appContent.replace('<span class="user-input"> 🎙️</span>', '');
   appContent = appContent.replace('<span class="small">Press Enter to send</span>', '');
 
-  // Remove the first chat text with the microphone logo
+  // Remove the first occurrence of the chat text with the microphone logo
   chatContent = chatContent.replace(/<span class="user">.+?<\/span>\s*<span class="assistant">.+?<\/span>\s*/, '');
-
-  // Remove the remaining microphone logo and small text from chatContent
-  chatContent = chatContent.replace(/<span class="user-input"> 🎙️<\/span>|<span class="small">Press Enter to send<\/span>/g, '');
 
   var printWindow = window.open("", "_blank");
   printWindow.document.open();
