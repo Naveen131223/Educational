@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.min.js"></script>
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 	  <meta name="monetag" content="ba4637525a3672c946928ed211a1847d">
 
@@ -144,7 +145,11 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	  
 	  
 	  
-
+<div class="ad"></div>
+    <div id="adblock-message">
+        <h2>You Are Using an AdBlocker</h2>
+        <p>Please disable your ad blocker and refresh the page to continue supporting our website.</p>
+    </div>
 
 
 	  
@@ -650,7 +655,15 @@ window.onload = animateLines;
 	  
    
 	  
-	  
+
+	  <script>
+        $(document).ready(function () {
+            // Check if an adblocker is enabled
+            if ($('.ad').css('display') === 'none') {
+                $('#adblock-message').show();
+            }
+        });
+    </script>
 	
 	 
     
