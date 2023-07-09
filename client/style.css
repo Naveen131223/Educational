@@ -9,6 +9,7 @@
 
 body {
   background-image: url("galaxy.jpg");
+  background-color: black;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -17,9 +18,9 @@ body {
   padding: 0;
         }
 
-.my-div {
-  background-color: black;
-}
+
+  
+
 
 
 .centered-title {
