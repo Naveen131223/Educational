@@ -9,6 +9,7 @@
 
 body {
   background-image: url("galaxy.jpg");  
+  background-color: white;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
