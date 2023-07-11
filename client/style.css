@@ -57,6 +57,13 @@ body {
       }
     }
 
+.high-quality-image {
+      image-rendering: optimizeQuality; /* For modern browsers */
+      image-rendering: -webkit-optimize-contrast; /* For Safari */
+      image-rendering: crisp-edges; /* For old versions of Chrome and Firefox */
+}
+
+
 
   p {
       margin-bottom: 1em;
