@@ -17,19 +17,7 @@ body {
   padding: 0;
         }
 
-.black-section {
-      height: 100vh;
-      width: 70%;
-      background-color: black;
-      float: left;
-    }
 
-    .white-section {
-      height: 100vh;
-      width: 75%;
-      background-color: white;
-      float: left;
- }
 
 .image-container {
       display: flex;
