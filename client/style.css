@@ -8,8 +8,7 @@
 }
 
 body {
-  background-image: url("galaxy.jpg");
-  background-color: white;
+  background-image: url("galaxy.jpg");  
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -17,6 +16,20 @@ body {
   margin: 0;
   padding: 0;
         }
+
+.black-section {
+      height: 100vh;
+      width: 25%;
+      background-color: black;
+      float: left;
+    }
+
+    .white-section {
+      height: 100vh;
+      width: 75%;
+      background-color: white;
+      float: left;
+ }
 
 .image-container {
       display: flex;
