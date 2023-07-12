@@ -32,14 +32,6 @@ body {
       z-index: 9999;
     }
     
-    #countdown-container {
-      margin-top: 50px;
-    }
-    
-    table {
-      margin-top: 100px;
-      /* Add any other styles you need for your table */
-    }
 
 .image-container {
       display: flex;
