@@ -354,15 +354,26 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	  
     <script>
   // Function to handle speech recognition
-  function startSpeechRecognition() {
-    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    const recognition = new SpeechRecognition();
-    const textArea = document.querySelector('textarea[name="prompt"]');
-    
-    recognition.onresult = function(event) {
-      const transcript = event.results[0][0].transcript;
-      textArea.value = transcript;
-    }
+  // Function to handle speech recognition
+function startSpeechRecognition() {
+  const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+  const recognition = new SpeechRecognition();
+  const textArea = document.querySelector('textarea[name="prompt"]');
+  
+  recognition.onresult = function(event) {
+    const transcript = event.results[0][0].transcript;
+    textArea.value += transcript; // Append the new transcript to the existing value
+  };
+
+  // Start speech recognition
+  recognition.start();
+
+  // Stop speech recognition after 18 seconds
+  setTimeout(() => {
+    recognition.stop();
+  }, 18000);
+}
+
     
     // Set the languages to be recognized
 recognition.lang = 'es-ES'; // Spanish
