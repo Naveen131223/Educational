@@ -259,5 +259,5 @@ function renderChatMessages() {
   scrollToLatestMessage();
 }
 
-// Event listener for the print button
+
 
