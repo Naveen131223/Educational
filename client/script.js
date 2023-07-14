@@ -137,6 +137,7 @@ function createChatStripe(isAi, value, uniqueId) {
         </div>
         <div class="message" id="${uniqueId}">
           <span>${value}</span>
+          <div class="highlight"></div>
         </div>
       </div>
     </div>
@@ -203,6 +204,7 @@ const handleSubmit = async (e) => {
         // Display the bot's response instantly
         messageDiv.innerHTML = `
           <span>${parsedData}</span>
+          <div class="highlight"></div>
         `;
 
         // Scroll to the latest message after rendering the response
@@ -325,14 +327,14 @@ function scrollToLatestMessage() {
 
 // Function to add a highlight effect to the message being read
 function addHighlight(index) {
-  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 2}) .message`);
-  botMessage.classList.add('highlight');
+  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 2}) .highlight`);
+  botMessage.classList.add('highlight-active');
 }
 
 // Function to remove the highlight effect from the message
 function removeHighlight(index) {
-  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 2}) .message`);
-  botMessage.classList.remove('highlight');
+  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 2}) .highlight`);
+  botMessage.classList.remove('highlight-active');
 }
 
 // Scroll to the latest message on initial load
