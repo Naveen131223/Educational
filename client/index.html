@@ -356,7 +356,6 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	  
     <script>
   // Function to handle speech recognition
-  // Function to handle speech recognition
 function startSpeechRecognition() {
   const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
   const recognition = new SpeechRecognition();
@@ -364,7 +363,7 @@ function startSpeechRecognition() {
   
   recognition.onresult = function(event) {
     const transcript = event.results[0][0].transcript;
-    textArea.value += transcript; // Append the new transcript to the existing value
+    textArea.value += ' ' + transcript; // Add a space between the old and new text
   };
 
   // Start speech recognition
