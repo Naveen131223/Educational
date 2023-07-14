@@ -10,7 +10,7 @@ const printButton = document.createElement('button');
 let loadInterval;
 const userChats = [];
 const botChats = [];
-let utterance;
+let speechSynthesisUtterance; // Variable to hold the SpeechSynthesisUtterance instance
 let isReading = false;
 let readingMessageIndex = 0; // New variable to track the reading index
 
@@ -31,7 +31,8 @@ printButton.textContent = 'Read AI Output';
 function toggleReading(message) {
   if (isReading) {
     // Stop reading if currently reading
-    window.speechSynthesis.cancel();
+    speechSynthesisUtterance.onend = null; // Remove the onend callback
+    speechSynthesisUtterance.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
     readingMessageIndex = 0; // Reset the reading index
@@ -40,18 +41,14 @@ function toggleReading(message) {
     const messages = botChats.map(chat => chat.value); // Get all bot messages
     const messagesToRead = messages.slice(readingMessageIndex); // Get the remaining messages to read
     if (messagesToRead.length > 0) {
-      utterance = new SpeechSynthesisUtterance(messagesToRead.join(' '));
-      utterance.voiceURI = 'Google US English';
-      utterance.lang = 'en-US';
-      utterance.volume = 1;
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.onend = () => {
+      speechSynthesisUtterance = new SpeechSynthesisUtterance(messagesToRead.join(' '));
+      speechSynthesisUtterance.voice = speechSynthesis.getVoices().find(voice => voice.lang === 'en-US');
+      speechSynthesisUtterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
         readingMessageIndex += messagesToRead.length; // Update the reading index
       };
-      window.speechSynthesis.speak(utterance);
+      speechSynthesis.speak(speechSynthesisUtterance);
       isReading = true;
       printButton.textContent = 'Stop Reading';
     }
