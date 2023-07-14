@@ -5,11 +5,55 @@ const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
 const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
-const printButton = document.createElement("button");
+const printButton = document.createElement('button');
 
 let loadInterval;
 const userChats = [];
 const botChats = [];
+let utterance;
+let isReading = false;
+
+// CSS styles for the button
+printButton.style.cssText = `
+  background-color: #007bff;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+`;
+
+printButton.textContent = 'Read AI Output';
+
+// Function to toggle reading the AI output
+function toggleReading() {
+  if (isReading) {
+    // Stop reading if currently reading
+    window.speechSynthesis.cancel();
+    isReading = false;
+    printButton.textContent = 'Read AI Output';
+  } else {
+    // Start reading the AI output
+    const message = botChats[botChats.length - 1].value;
+    utterance = new SpeechSynthesisUtterance(message);
+    utterance.voiceURI = 'Google US English';
+    utterance.lang = 'en-US';
+    utterance.volume = 1;
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.onend = () => {
+      isReading = false;
+      printButton.textContent = 'Read AI Output';
+    };
+    window.speechSynthesis.speak(utterance);
+    isReading = true;
+    printButton.textContent = 'Stop Reading';
+  }
+}
+
+printButton.addEventListener('click', toggleReading);
+chatContainer.appendChild(printButton);
 
 function loader(element) {
   element.textContent = '';
