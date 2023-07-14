@@ -54,7 +54,7 @@ function toggleReading(message, index) {
       utterance = new SpeechSynthesisUtterance(message);
       currentUtteranceIndex = index;
       utterance.voiceURI = 'Google US English';
-      utterance.lang = 'en-IN';
+      utterance.lang = 'en-IN-ta';
       utterance.volume = 1;
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
