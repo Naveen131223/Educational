@@ -60,6 +60,13 @@ function toggleReading(message, index) {
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
+
+        // Check if there is a next message to continue reading
+        const nextIndex = currentUtteranceIndex + 1;
+        const nextBotChat = botChats[nextIndex];
+        if (nextBotChat) {
+          toggleReading(nextBotChat.value, nextIndex);
+        }
       };
     }
     window.speechSynthesis.speak(utterance);
