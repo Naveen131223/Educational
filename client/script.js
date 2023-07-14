@@ -54,10 +54,10 @@ function toggleReading(message, index) {
       utterance = new SpeechSynthesisUtterance(message);
       currentUtteranceIndex = index;
       utterance.voiceURI = 'Google US English';
-      utterance.lang = 'en-US';
+      utterance.lang = 'en-IN';
       utterance.volume = 1;
       utterance.rate = 0.9;
-      utterance.pitch = 0.8;
+      utterance.pitch = 1.2;
       utterance.onstart = () => {
         // Highlight the message being read
         addHighlight(index);
