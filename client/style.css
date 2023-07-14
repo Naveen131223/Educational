@@ -49,14 +49,11 @@ body {
     
     
    .message.highlight {
-  background-color: blue;
+  background-color: darkblue;
   color: white;
   transition: background-color 0.3s ease;
 }
 
-.wrapper.ai .message.highlight {
-  background-color: darkblue;
-}
 
 
 
