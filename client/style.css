@@ -49,25 +49,17 @@ body {
     
     
    .message.highlight {
-  position: relative;
-}
-
-.message.highlight::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   background-color: blue;
-  opacity: 0.3;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  color: white;
+  transition: background-color 0.3s ease;
 }
 
-.message.highlight:hover::after {
-  opacity: 0.6;
+.wrapper.ai:nth-child(odd) .message.highlight {
+  background-color: darkblue;
 }
+
+
+
 
 
     
