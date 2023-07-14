@@ -12,6 +12,7 @@ const userChats = [];
 const botChats = [];
 let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
+let currentCharacterIndex = 0; // Variable to keep track of the current character being read
 let isReading = false;
 
 // CSS styles for the buttons
@@ -50,8 +51,9 @@ function toggleReading(message, index) {
     // Start reading the AI output
     if (currentUtteranceIndex !== index) {
       // Create a new utterance for the new message
-      utterance = new SpeechSynthesisUtterance(message);
+      utterance = new SpeechSynthesisUtterance();
       currentUtteranceIndex = index;
+      currentCharacterIndex = 0; // Reset the current character index
       utterance.voiceURI = 'Google US English';
       utterance.lang = 'en-US';
       utterance.volume = 1;
@@ -69,6 +71,11 @@ function toggleReading(message, index) {
         }
       };
     }
+
+    // Set the current message as the text to be read
+    utterance.text = message.slice(currentCharacterIndex);
+
+    // Start reading from the current position
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
