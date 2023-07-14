@@ -331,7 +331,7 @@ function addHighlight(index) {
 
 // Function to remove the highlight effect from the message
 function removeHighlight(index) {
-  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 2}) .message`);
+  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 2}) .message`); 
   botMessage.classList.remove('highlight');
 }
 
