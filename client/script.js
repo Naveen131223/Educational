@@ -10,9 +10,8 @@ const printButton = document.createElement('button');
 let loadInterval;
 const userChats = [];
 const botChats = [];
-let speechSynthesisUtterance; // Variable to hold the SpeechSynthesisUtterance instance
+let utterance;
 let isReading = false;
-let readingMessageIndex = 0; // New variable to track the reading index
 
 // CSS styles for the button
 printButton.style.cssText = `
@@ -31,27 +30,24 @@ printButton.textContent = 'Read AI Output';
 function toggleReading(message) {
   if (isReading) {
     // Stop reading if currently reading
-    speechSynthesisUtterance.onend = null; // Remove the onend callback
-    speechSynthesisUtterance.cancel();
+    window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
-    readingMessageIndex = 0; // Reset the reading index
   } else {
-    // Start or continue reading the AI output
-    const messages = botChats.map(chat => chat.value); // Get all bot messages
-    const messagesToRead = messages.slice(readingMessageIndex); // Get the remaining messages to read
-    if (messagesToRead.length > 0) {
-      speechSynthesisUtterance = new SpeechSynthesisUtterance(messagesToRead.join(' '));
-      speechSynthesisUtterance.voice = speechSynthesis.getVoices().find(voice => voice.lang === 'en-US');
-      speechSynthesisUtterance.onend = () => {
-        isReading = false;
-        printButton.textContent = 'Read AI Output';
-        readingMessageIndex += messagesToRead.length; // Update the reading index
-      };
-      speechSynthesis.speak(speechSynthesisUtterance);
-      isReading = true;
-      printButton.textContent = 'Stop Reading';
-    }
+    // Start reading the AI output
+    utterance = new SpeechSynthesisUtterance(message);
+    utterance.voiceURI = 'Google US English';
+    utterance.lang = 'en-US';
+    utterance.volume = 1;
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.onend = () => {
+      isReading = false;
+      printButton.textContent = 'Read AI Output';
+    };
+    window.speechSynthesis.speak(utterance);
+    isReading = true;
+    printButton.textContent = 'Stop Reading';
   }
 }
 
