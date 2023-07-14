@@ -54,9 +54,10 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.wrapper.ai:nth-child(odd) .message.highlight {
+.wrapper.ai .message.highlight {
   background-color: darkblue;
 }
+
 
 
 
