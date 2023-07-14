@@ -56,8 +56,8 @@ function toggleReading(message, index) {
       utterance.voiceURI = 'Google US English';
       utterance.lang = 'en-US';
       utterance.volume = 1;
-      utterance.rate = 0.8;
-      utterance.pitch = 1.0;
+      utterance.rate = 0.9;
+      utterance.pitch = 0.8;
       utterance.onstart = () => {
         // Highlight the message being read
         addHighlight(index);
