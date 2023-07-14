@@ -27,7 +27,7 @@ printButton.style.cssText = `
 printButton.textContent = 'Read AI Output';
 
 // Function to toggle reading the AI output
-function toggleReading() {
+function toggleReading(message) {
   if (isReading) {
     // Stop reading if currently reading
     window.speechSynthesis.cancel();
@@ -35,7 +35,6 @@ function toggleReading() {
     printButton.textContent = 'Read AI Output';
   } else {
     // Start reading the AI output
-    const message = botChats[botChats.length - 1].value;
     utterance = new SpeechSynthesisUtterance(message);
     utterance.voiceURI = 'Google US English';
     utterance.lang = 'en-US';
@@ -52,7 +51,12 @@ function toggleReading() {
   }
 }
 
-printButton.addEventListener('click', toggleReading);
+printButton.addEventListener('click', () => {
+  const lastBotChat = botChats[botChats.length - 1];
+  if (lastBotChat) {
+    toggleReading(lastBotChat.value);
+  }
+});
 chatContainer.appendChild(printButton);
 
 function loader(element) {
@@ -174,6 +178,9 @@ const handleSubmit = async (e) => {
 
         // Listen for user feedback on the response
         listenForFeedback(prompt, parsedData);
+
+        // Start reading the AI output
+        toggleReading(parsedData);
       } else {
         const err = await response.text();
 
