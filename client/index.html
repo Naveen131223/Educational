@@ -616,7 +616,18 @@ document.body.appendChild(printButton);
   var delay = 10000; // 10 seconds
 
   function changeColorRandomly(element) {
-    var colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#FFFF00', '#00FFFF'];
+    var colors = [
+  '#FF0000', // Red
+  '#00FF00', // Green
+  '#0000FF', // Blue
+  '#FF00FF', // Magenta
+  '#FFFF00', // Yellow
+  '#00FFFF', // Cyan
+  '#FFA500', // Orange
+  '#800080', // Purple
+  '#FFC0CB', // Pink
+  '#00FF7F'  // Spring Green
+];
     var randomColor = colors[Math.floor(Math.random() * colors.length)];
     element.style.color = randomColor;
   }
