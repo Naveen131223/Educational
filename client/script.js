@@ -6,14 +6,15 @@ const chatContainer = document.querySelector('#chat_container');
 const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
 const printButton = document.createElement('button');
-
+const stopReadingButton = document.createElement('button');
 let loadInterval;
 const userChats = [];
 const botChats = [];
 let utterance;
+let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
 let isReading = false;
 
-// CSS styles for the button
+// CSS styles for the buttons
 printButton.style.cssText = `
   background-color: #007bff;
   color: #fff;
@@ -24,27 +25,43 @@ printButton.style.cssText = `
   cursor: pointer;
 `;
 
+stopReadingButton.style.cssText = `
+  background-color: #dc3545;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+`;
+
 printButton.textContent = 'Read AI Output';
+stopReadingButton.textContent = 'Stop Reading';
 
 // Function to toggle reading the AI output
-function toggleReading(message) {
-  if (isReading) {
-    // Stop reading if currently reading
+function toggleReading(message, index) {
+  if (isReading && currentUtteranceIndex === index) {
+    // Stop reading if currently reading the same message
     window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
   } else {
     // Start reading the AI output
-    utterance = new SpeechSynthesisUtterance(message);
-    utterance.voiceURI = 'Google US English';
-    utterance.lang = 'en-US';
-    utterance.volume = 1;
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.onend = () => {
-      isReading = false;
-      printButton.textContent = 'Read AI Output';
-    };
+    if (currentUtteranceIndex !== index) {
+      // Create a new utterance for the new message
+      utterance = new SpeechSynthesisUtterance(message);
+      currentUtteranceIndex = index;
+      utterance.voiceURI = 'Google US English';
+      utterance.lang = 'en-US';
+      utterance.volume = 1;
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.onend = () => {
+        isReading = false;
+        printButton.textContent = 'Read AI Output';
+      };
+    }
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
@@ -54,10 +71,20 @@ function toggleReading(message) {
 printButton.addEventListener('click', () => {
   const lastBotChat = botChats[botChats.length - 1];
   if (lastBotChat) {
-    toggleReading(lastBotChat.value);
+    toggleReading(lastBotChat.value, botChats.length - 1);
   }
 });
 chatContainer.appendChild(printButton);
+
+stopReadingButton.addEventListener('click', () => {
+  if (isReading) {
+    // Stop reading if currently reading
+    window.speechSynthesis.cancel();
+    isReading = false;
+    printButton.textContent = 'Read AI Output';
+  }
+});
+chatContainer.appendChild(stopReadingButton);
 
 function loader(element) {
   element.textContent = '';
@@ -180,7 +207,7 @@ const handleSubmit = async (e) => {
         listenForFeedback(prompt, parsedData);
 
         // Start reading the AI output
-        toggleReading(parsedData);
+        toggleReading(parsedData, botChats.length - 1);
       } else {
         const err = await response.text();
 
