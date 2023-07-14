@@ -238,26 +238,3 @@ function scrollToLatestMessage() {
 window.addEventListener('load', () => {
   scrollToLatestMessage();
 });
-
-// Function to render the chat messages on the webpage
-function renderChatMessages() {
-  chatContainer.innerHTML = '';
-
-  for (let i = 0; i < userChats.length; i++) {
-    const { value: userMessage } = userChats[i];
-    const userChatStripe = createChatStripe(false, userMessage);
-    chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
-  }
-
-  for (let i = 0; i < botChats.length; i++) {
-    const { value: botMessage } = botChats[i];
-    const uniqueId = generateUniqueId();
-    const botChatStripe = createChatStripe(true, botMessage, uniqueId);
-    chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
-  }
-
-  scrollToLatestMessage();
-}
-
-
-
