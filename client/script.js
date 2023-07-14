@@ -12,6 +12,7 @@ const userChats = [];
 const botChats = [];
 let utterance;
 let isReading = false;
+let readingMessageIndex = 0; // New variable to track the reading index
 
 // CSS styles for the button
 printButton.style.cssText = `
@@ -33,21 +34,27 @@ function toggleReading(message) {
     window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
+    readingMessageIndex = 0; // Reset the reading index
   } else {
-    // Start reading the AI output
-    utterance = new SpeechSynthesisUtterance(message);
-    utterance.voiceURI = 'Google US English';
-    utterance.lang = 'en-US';
-    utterance.volume = 1;
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.onend = () => {
-      isReading = false;
-      printButton.textContent = 'Read AI Output';
-    };
-    window.speechSynthesis.speak(utterance);
-    isReading = true;
-    printButton.textContent = 'Stop Reading';
+    // Start or continue reading the AI output
+    const messages = botChats.map(chat => chat.value); // Get all bot messages
+    const messagesToRead = messages.slice(readingMessageIndex); // Get the remaining messages to read
+    if (messagesToRead.length > 0) {
+      utterance = new SpeechSynthesisUtterance(messagesToRead.join(' '));
+      utterance.voiceURI = 'Google US English';
+      utterance.lang = 'en-US';
+      utterance.volume = 1;
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.onend = () => {
+        isReading = false;
+        printButton.textContent = 'Read AI Output';
+        readingMessageIndex += messagesToRead.length; // Update the reading index
+      };
+      window.speechSynthesis.speak(utterance);
+      isReading = true;
+      printButton.textContent = 'Stop Reading';
+    }
   }
 }
 
