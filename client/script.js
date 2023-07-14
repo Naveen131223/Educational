@@ -248,7 +248,7 @@ function readMessage(message) {
   utterance.volume = 1;
   utterance.rate = 1;
   utterance.pitch = 1;
-  window.speechSynthesis.speak(utterance);
+  speechSynthesis.speak(utterance);
 }
 
 // Scroll to the latest message on initial load
