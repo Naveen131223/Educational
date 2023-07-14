@@ -5,10 +5,59 @@ const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
 const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
+const printButton = document.createElement('button');
 
 let loadInterval;
 const userChats = [];
 const botChats = [];
+let utterance;
+let isReading = false;
+
+// CSS styles for the button
+printButton.style.cssText = `
+  background-color: #007bff;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+`;
+
+printButton.textContent = 'Read AI Output';
+
+// Function to toggle reading the AI output
+function toggleReading(message) {
+  if (isReading) {
+    // Stop reading if currently reading
+    window.speechSynthesis.cancel();
+    isReading = false;
+    printButton.textContent = 'Read AI Output';
+  } else {
+    // Start reading the AI output
+    utterance = new SpeechSynthesisUtterance(message);
+    utterance.voiceURI = 'Google US English';
+    utterance.lang = 'en-US';
+    utterance.volume = 1;
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.onend = () => {
+      isReading = false;
+      printButton.textContent = 'Read AI Output';
+    };
+    window.speechSynthesis.speak(utterance);
+    isReading = true;
+    printButton.textContent = 'Stop Reading';
+  }
+}
+
+printButton.addEventListener('click', () => {
+  const lastBotChat = botChats[botChats.length - 1];
+  if (lastBotChat) {
+    toggleReading(lastBotChat.value);
+  }
+});
+chatContainer.appendChild(printButton);
 
 function loader(element) {
   element.textContent = '';
@@ -51,7 +100,6 @@ function createChatStripe(isAi, value, uniqueId) {
         <div class="message" id="${uniqueId}">
           <span>${value}</span>
         </div>
-        ${isAi ? `<button class="read-button">Read AI Output</button>` : ''}
       </div>
     </div>
   `;
@@ -131,11 +179,8 @@ const handleSubmit = async (e) => {
         // Listen for user feedback on the response
         listenForFeedback(prompt, parsedData);
 
-        // Add event listener to the "Read AI Output" button
-        const readButton = messageDiv.querySelector('.read-button');
-        readButton.addEventListener('click', () => {
-          readMessage(parsedData);
-        });
+        // Start reading the AI output
+        toggleReading(parsedData);
       } else {
         const err = await response.text();
 
@@ -238,17 +283,6 @@ function scrollToLatestMessage() {
     top: chatContainer.scrollHeight,
     behavior: 'smooth',
   });
-}
-
-// Function to read the AI message aloud
-function readMessage(message) {
-  const utterance = new SpeechSynthesisUtterance(message);
-  utterance.voiceURI = 'Google US English';
-  utterance.lang = 'en-US';
-  utterance.volume = 1;
-  utterance.rate = 1;
-  utterance.pitch = 1;
-  speechSynthesis.speak(utterance);
 }
 
 // Scroll to the latest message on initial load
