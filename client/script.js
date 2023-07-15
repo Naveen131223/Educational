@@ -349,6 +349,13 @@ function readPreviousMessage() {
   if (previousUtteranceIndex >= 0) {
     toggleReading(botChats[previousUtteranceIndex].value, previousUtteranceIndex, 'backward');
     previousUtteranceIndex--;
+  } else {
+    // If no previous message is available, start reading from the beginning
+    const firstBotChat = botChats[0];
+    if (firstBotChat) {
+      toggleReading(firstBotChat.value, 0);
+      previousUtteranceIndex = 0;
+    }
   }
 }
 
