@@ -46,7 +46,6 @@ function toggleReading(message, index) {
     window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
-    removeHighlight(index); // Remove the highlight from the message
   } else {
     // Start reading the AI output
     if (currentUtteranceIndex !== index) {
@@ -58,14 +57,9 @@ function toggleReading(message, index) {
       utterance.volume = 1;
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
-      utterance.onstart = () => {
-        // Highlight the message being read
-        addHighlight(index);
-      };
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
-        removeHighlight(index); // Remove the highlight from the message
 
         // Check if there is a next message to continue reading
         const nextIndex = currentUtteranceIndex + 1;
@@ -321,18 +315,6 @@ function scrollToLatestMessage() {
     top: chatContainer.scrollHeight,
     behavior: 'smooth',
   });
-}
-
-// Function to add a highlight effect to the message being read
-function addHighlight(index) {
-  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 1}) .message`);
-  botMessage.classList.add('highlight');
-}
-
-// Function to remove the highlight effect from the message
-function removeHighlight(index) {
-  const botMessage = document.querySelector(`.wrapper.ai:nth-child(${index + 1}) .message`);
-  botMessage.classList.remove('highlight');
 }
 
 // Scroll to the latest message on initial load
