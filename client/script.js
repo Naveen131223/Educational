@@ -68,35 +68,45 @@ nextButton.textContent = 'Next';
 function toggleReading(message, index) {
   if (isReading && currentUtteranceIndex === index) {
     // Stop reading if currently reading the same message
-    window.speechSynthesis.cancel();
-    isReading = false;
-    printButton.textContent = 'Read AI Output';
+    stopReading();
   } else {
     // Start reading the AI output
-    if (currentUtteranceIndex !== index) {
-      // Create a new utterance for the new message
-      utterance = new SpeechSynthesisUtterance(message);
-      currentUtteranceIndex = index;
-      utterance.voiceURI = 'Google US English';
-      utterance.lang = 'en-IN-ta';
-      utterance.volume = 1;
-      utterance.rate = 0.9;
-      utterance.pitch = 1.2;
-      utterance.onend = () => {
-        isReading = false;
-        printButton.textContent = 'Read AI Output';
-
-        // Check if there is a next message to continue reading
-        const nextIndex = currentUtteranceIndex + 1;
-        const nextBotChat = botChats[nextIndex];
-        if (nextBotChat) {
-          toggleReading(nextBotChat.value, nextIndex);
-        }
-      };
+    if (currentUtteranceIndex < index) {
+      // Stop the current reading if the new message index is greater than the current index
+      stopReading();
     }
+
+    // Create a new utterance for the new message
+    utterance = new SpeechSynthesisUtterance(message);
+    currentUtteranceIndex = index;
+    utterance.voiceURI = 'Google US English';
+    utterance.lang = 'en-IN-ta';
+    utterance.volume = 1;
+    utterance.rate = 0.9;
+    utterance.pitch = 1.2;
+    utterance.onend = () => {
+      isReading = false;
+      printButton.textContent = 'Read AI Output';
+
+      // Check if there is a next message to continue reading
+      const nextIndex = currentUtteranceIndex + 1;
+      const nextBotChat = botChats[nextIndex];
+      if (nextBotChat) {
+        toggleReading(nextBotChat.value, nextIndex);
+      }
+    };
+
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
+  }
+}
+
+function stopReading() {
+  if (isReading) {
+    window.speechSynthesis.cancel();
+    isReading = false;
+    printButton.textContent = 'Read AI Output';
   }
 }
 
