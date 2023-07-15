@@ -7,6 +7,7 @@ const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
 const printButton = document.createElement('button');
 const continueReadingButton = document.createElement('button');
+const previousButton = document.createElement('button');
 let loadInterval;
 const userChats = [];
 const botChats = [];
@@ -36,11 +37,23 @@ continueReadingButton.style.cssText = `
   margin-left: 10px;
 `;
 
+previousButton.style.cssText = `
+  background-color: #dc3545;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+`;
+
 printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
+previousButton.textContent = 'Read Previous';
 
 // Function to toggle reading the AI output
-function toggleReading(message, index) {
+function toggleReading(message, index, direction = 'forward') {
   if (isReading && currentUtteranceIndex === index) {
     // Stop reading if currently reading the same message
     window.speechSynthesis.cancel();
@@ -61,11 +74,19 @@ function toggleReading(message, index) {
         isReading = false;
         printButton.textContent = 'Read AI Output';
 
-        // Check if there is a next message to continue reading
-        const nextIndex = currentUtteranceIndex + 1;
-        const nextBotChat = botChats[nextIndex];
-        if (nextBotChat) {
-          toggleReading(nextBotChat.value, nextIndex);
+        // Continue reading in the specified direction
+        if (direction === 'forward') {
+          const nextIndex = currentUtteranceIndex + 1;
+          const nextBotChat = botChats[nextIndex];
+          if (nextBotChat) {
+            toggleReading(nextBotChat.value, nextIndex);
+          }
+        } else if (direction === 'backward') {
+          const previousIndex = currentUtteranceIndex - 1;
+          const previousBotChat = botChats[previousIndex];
+          if (previousBotChat) {
+            toggleReading(previousBotChat.value, previousIndex, 'backward');
+          }
         }
       };
     }
@@ -86,10 +107,15 @@ chatContainer.appendChild(printButton);
 continueReadingButton.addEventListener('click', () => {
   const lastBotChat = botChats[currentUtteranceIndex];
   if (lastBotChat) {
-    toggleReading(lastBotChat.value, currentUtteranceIndex);
+    toggleReading(lastBotChat.value, currentUtteranceIndex, 'forward');
   }
 });
 chatContainer.appendChild(continueReadingButton);
+
+previousButton.addEventListener('click', () => {
+  readPreviousMessage();
+});
+chatContainer.appendChild(previousButton);
 
 function loader(element) {
   element.textContent = '';
@@ -315,6 +341,15 @@ function scrollToLatestMessage() {
     top: chatContainer.scrollHeight,
     behavior: 'smooth',
   });
+}
+
+// Function to handle reading previous text messages
+function readPreviousMessage() {
+  const previousIndex = currentUtteranceIndex - 1;
+  const previousBotChat = botChats[previousIndex];
+  if (previousBotChat) {
+    toggleReading(previousBotChat.value, previousIndex, 'backward');
+  }
 }
 
 // Scroll to the latest message on initial load
