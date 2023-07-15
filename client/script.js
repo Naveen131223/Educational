@@ -13,6 +13,7 @@ const userChats = [];
 const botChats = [];
 let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
+let previousUtteranceIndex = -1; // Variable to keep track of the previous message
 let isReading = false;
 
 // CSS styles for the buttons
@@ -345,10 +346,9 @@ function scrollToLatestMessage() {
 
 // Function to handle reading previous text messages
 function readPreviousMessage() {
-  const previousIndex = currentUtteranceIndex - 1;
-  const previousBotChat = botChats[previousIndex];
-  if (previousBotChat) {
-    toggleReading(previousBotChat.value, previousIndex, 'backward');
+  if (previousUtteranceIndex >= 0) {
+    toggleReading(botChats[previousUtteranceIndex].value, previousUtteranceIndex, 'backward');
+    previousUtteranceIndex--;
   }
 }
 
