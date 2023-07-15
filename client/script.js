@@ -139,8 +139,6 @@ function createChatStripe(isAi, value, uniqueId) {
 
 let thinkingTimeout;
 
-const MAX_WORD_LIMIT = 100000;
-
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -195,12 +193,7 @@ const handleSubmit = async (e) => {
 
         if (response.ok) {
           const data = await response.json();
-          let parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
-
-          if (parsedData.split(' ').length > MAX_WORD_LIMIT) {
-            // If the response exceeds the word limit, provide a message indicating so
-            parsedData = `The response exceeds the maximum word limit of ${MAX_WORD_LIMIT} words. Please provide a more specific prompt or ask for a shorter response.`;
-          }
+          const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
           // Display the bot's response instantly
           messageDiv.innerHTML = `
