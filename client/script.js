@@ -176,48 +176,56 @@ const handleSubmit = async (e) => {
   try {
     // Simulate AI "thinking" with a shorter delay
     thinkingTimeout = setTimeout(async () => {
-      // Fetch the response from the server
-      const response = await fetch('https://educational-development.onrender.com/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: prompt,
-        }),
-      });
+      try {
+        // Fetch the response from the server
+        const response = await fetch('https://educational-development.onrender.com/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+          }),
+        });
 
-      clearInterval(loadInterval);
-      messageDiv.textContent = '';
+        clearInterval(loadInterval);
+        messageDiv.textContent = '';
 
-      if (response.ok) {
-        const data = await response.json();
-        const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
+        if (response.ok) {
+          const data = await response.json();
+          const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
-        // Display the bot's response instantly
-        messageDiv.innerHTML = `
-          <span>${parsedData}</span>
-        `;
+          // Display the bot's response instantly
+          messageDiv.innerHTML = `
+            <span>${parsedData}</span>
+          `;
 
-        // Scroll to the latest message after rendering the response
-        scrollToLatestMessage();
+          // Scroll to the latest message after rendering the response
+          scrollToLatestMessage();
 
-        // Re-enable the submit button after processing
-        submitButton.disabled = false;
+          // Re-enable the submit button after processing
+          submitButton.disabled = false;
 
-        // Focus on the input field for the next response
-        input.focus();
+          // Focus on the input field for the next response
+          input.focus();
 
-        // Listen for user feedback on the response
-        listenForFeedback(prompt, parsedData);
+          // Listen for user feedback on the response
+          listenForFeedback(prompt, parsedData);
 
-        // Start reading the AI output
-        toggleReading(parsedData, botChats.length - 1);
-      } else {
-        const err = await response.text();
+          // Start reading the AI output
+          toggleReading(parsedData, botChats.length - 1);
+        } else {
+          const err = await response.text();
 
+          messageDiv.textContent = 'Something went wrong';
+          alert(err);
+
+          // Re-enable the submit button after processing
+          submitButton.disabled = false;
+        }
+      } catch (error) {
         messageDiv.textContent = 'Something went wrong';
-        alert(err);
+        console.error(error);
 
         // Re-enable the submit button after processing
         submitButton.disabled = false;
