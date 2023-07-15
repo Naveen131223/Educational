@@ -48,11 +48,7 @@ body {
     }
     
     
-   .message.highlight {
-  background-color: darkblue;
-  color: white;
-  transition: background-color 0.3s ease;
-}
+   
 
 
 
