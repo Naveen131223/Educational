@@ -15,6 +15,7 @@ const botChats = [];
 let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
 let isReading = false;
+let continueReadingIndex = -1; // Variable to keep track of the last index of message read using "Continue Reading" button
 
 // CSS styles for the buttons
 printButton.style.cssText = `
@@ -119,9 +120,9 @@ printButton.addEventListener('click', () => {
 chatContainer.appendChild(printButton);
 
 continueReadingButton.addEventListener('click', () => {
-  const lastBotChat = botChats[currentUtteranceIndex];
+  const lastBotChat = botChats[continueReadingIndex];
   if (lastBotChat) {
-    toggleReading(lastBotChat.value, currentUtteranceIndex);
+    toggleReading(lastBotChat.value, continueReadingIndex);
   }
 });
 chatContainer.appendChild(continueReadingButton);
@@ -132,6 +133,7 @@ previousButton.addEventListener('click', () => {
   if (previousBotChat) {
     toggleReading(previousBotChat.value, previousIndex);
   }
+  continueReadingIndex = previousIndex;
 });
 chatContainer.appendChild(previousButton);
 
@@ -141,6 +143,7 @@ nextButton.addEventListener('click', () => {
   if (nextBotChat) {
     toggleReading(nextBotChat.value, nextIndex);
   }
+  continueReadingIndex = nextIndex;
 });
 chatContainer.appendChild(nextButton);
 
@@ -266,6 +269,7 @@ const handleSubmit = async (e) => {
 
         // Start reading the AI output
         toggleReading(parsedData, botChats.length - 1);
+        continueReadingIndex = botChats.length - 1;
       } else {
         const err = await response.text();
 
