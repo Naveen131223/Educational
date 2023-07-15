@@ -7,6 +7,8 @@ const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
 const printButton = document.createElement('button');
 const continueReadingButton = document.createElement('button');
+const previousButton = document.createElement('button');
+const nextButton = document.createElement('button');
 let loadInterval;
 const userChats = [];
 const botChats = [];
@@ -36,8 +38,31 @@ continueReadingButton.style.cssText = `
   margin-left: 10px;
 `;
 
+previousButton.style.cssText = `
+  background-color: #ffc107;
+  color: #000;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  margin-right: 10px;
+`;
+
+nextButton.style.cssText = `
+  background-color: #ffc107;
+  color: #000;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+`;
+
 printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
+previousButton.textContent = 'Previous';
+nextButton.textContent = 'Next';
 
 // Function to toggle reading the AI output
 function toggleReading(message, index) {
@@ -90,6 +115,24 @@ continueReadingButton.addEventListener('click', () => {
   }
 });
 chatContainer.appendChild(continueReadingButton);
+
+previousButton.addEventListener('click', () => {
+  const previousIndex = currentUtteranceIndex - 1;
+  const previousBotChat = botChats[previousIndex];
+  if (previousBotChat) {
+    toggleReading(previousBotChat.value, previousIndex);
+  }
+});
+chatContainer.appendChild(previousButton);
+
+nextButton.addEventListener('click', () => {
+  const nextIndex = currentUtteranceIndex + 1;
+  const nextBotChat = botChats[nextIndex];
+  if (nextBotChat) {
+    toggleReading(nextBotChat.value, nextIndex);
+  }
+});
+chatContainer.appendChild(nextButton);
 
 function loader(element) {
   element.textContent = '';
