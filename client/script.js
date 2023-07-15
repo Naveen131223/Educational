@@ -7,15 +7,12 @@ const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
 const printButton = document.createElement('button');
 const continueReadingButton = document.createElement('button');
-const previousButton = document.createElement('button');
-const nextButton = document.createElement('button');
 let loadInterval;
 const userChats = [];
 const botChats = [];
 let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
 let isReading = false;
-let continueReadingIndex = -1; // Variable to keep track of the last index of message read using "Continue Reading" button
 
 // CSS styles for the buttons
 printButton.style.cssText = `
@@ -39,75 +36,42 @@ continueReadingButton.style.cssText = `
   margin-left: 10px;
 `;
 
-previousButton.style.cssText = `
-  background-color: #ffc107;
-  color: #000;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  margin-top: 10px;
-  cursor: pointer;
-  margin-right: 10px;
-`;
-
-nextButton.style.cssText = `
-  background-color: #ffc107;
-  color: #000;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  margin-top: 10px;
-  cursor: pointer;
-`;
-
 printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
-previousButton.textContent = 'Previous';
-nextButton.textContent = 'Next';
 
 // Function to toggle reading the AI output
 function toggleReading(message, index) {
   if (isReading && currentUtteranceIndex === index) {
     // Stop reading if currently reading the same message
-    stopReading();
-  } else {
-    // Start reading the AI output
-    if (currentUtteranceIndex < index) {
-      // Stop the current reading if the new message index is greater than the current index
-      stopReading();
-    }
-
-    // Create a new utterance for the new message
-    utterance = new SpeechSynthesisUtterance(message);
-    currentUtteranceIndex = index;
-    utterance.voiceURI = 'Google US English';
-    utterance.lang = 'en-IN-ta';
-    utterance.volume = 1;
-    utterance.rate = 0.9;
-    utterance.pitch = 1.2;
-    utterance.onend = () => {
-      isReading = false;
-      printButton.textContent = 'Read AI Output';
-
-      // Check if there is a next message to continue reading
-      const nextIndex = currentUtteranceIndex + 1;
-      const nextBotChat = botChats[nextIndex];
-      if (nextBotChat) {
-        toggleReading(nextBotChat.value, nextIndex);
-      }
-    };
-
-    window.speechSynthesis.speak(utterance);
-    isReading = true;
-    printButton.textContent = 'Stop Reading';
-  }
-}
-
-function stopReading() {
-  if (isReading) {
     window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
+  } else {
+    // Start reading the AI output
+    if (currentUtteranceIndex !== index) {
+      // Create a new utterance for the new message
+      utterance = new SpeechSynthesisUtterance(message);
+      currentUtteranceIndex = index;
+      utterance.voiceURI = 'Google US English';
+      utterance.lang = 'en-IN-ta';
+      utterance.volume = 1;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.2;
+      utterance.onend = () => {
+        isReading = false;
+        printButton.textContent = 'Read AI Output';
+
+        // Check if there is a next message to continue reading
+        const nextIndex = currentUtteranceIndex + 1;
+        const nextBotChat = botChats[nextIndex];
+        if (nextBotChat) {
+          toggleReading(nextBotChat.value, nextIndex);
+        }
+      };
+    }
+    window.speechSynthesis.speak(utterance);
+    isReading = true;
+    printButton.textContent = 'Stop Reading';
   }
 }
 
@@ -120,32 +84,12 @@ printButton.addEventListener('click', () => {
 chatContainer.appendChild(printButton);
 
 continueReadingButton.addEventListener('click', () => {
-  const lastBotChat = botChats[continueReadingIndex];
+  const lastBotChat = botChats[currentUtteranceIndex];
   if (lastBotChat) {
-    toggleReading(lastBotChat.value, continueReadingIndex);
+    toggleReading(lastBotChat.value, currentUtteranceIndex);
   }
 });
 chatContainer.appendChild(continueReadingButton);
-
-previousButton.addEventListener('click', () => {
-  const previousIndex = currentUtteranceIndex - 1;
-  const previousBotChat = botChats[previousIndex];
-  if (previousBotChat) {
-    toggleReading(previousBotChat.value, previousIndex);
-  }
-  continueReadingIndex = previousIndex;
-});
-chatContainer.appendChild(previousButton);
-
-nextButton.addEventListener('click', () => {
-  const nextIndex = currentUtteranceIndex + 1;
-  const nextBotChat = botChats[nextIndex];
-  if (nextBotChat) {
-    toggleReading(nextBotChat.value, nextIndex);
-  }
-  continueReadingIndex = nextIndex;
-});
-chatContainer.appendChild(nextButton);
 
 function loader(element) {
   element.textContent = '';
@@ -269,7 +213,6 @@ const handleSubmit = async (e) => {
 
         // Start reading the AI output
         toggleReading(parsedData, botChats.length - 1);
-        continueReadingIndex = botChats.length - 1;
       } else {
         const err = await response.text();
 
