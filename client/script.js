@@ -10,9 +10,9 @@ const continueReadingButton = document.createElement('button');
 let loadInterval;
 const userChats = [];
 const botChats = [];
+let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
 let isReading = false;
-let isFetching = false;
 
 // CSS styles for the buttons
 printButton.style.cssText = `
@@ -50,7 +50,7 @@ function toggleReading(message, index) {
     // Start reading the AI output
     if (currentUtteranceIndex !== index) {
       // Create a new utterance for the new message
-      const utterance = new SpeechSynthesisUtterance(message);
+      utterance = new SpeechSynthesisUtterance(message);
       currentUtteranceIndex = index;
       utterance.voiceURI = 'Google US English';
       utterance.lang = 'en-IN-ta';
@@ -68,10 +68,10 @@ function toggleReading(message, index) {
           toggleReading(nextBotChat.value, nextIndex);
         }
       };
-      window.speechSynthesis.speak(utterance);
-      isReading = true;
-      printButton.textContent = 'Stop Reading';
     }
+    window.speechSynthesis.speak(utterance);
+    isReading = true;
+    printButton.textContent = 'Stop Reading';
   }
 }
 
@@ -139,123 +139,7 @@ function createChatStripe(isAi, value, uniqueId) {
 
 let thinkingTimeout;
 
-async function fetchResponse(prompt) {
-  try {
-    const response = await fetch('https://educational-development.onrender.com/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
-      return parsedData;
-    } else {
-      throw new Error('Failed to fetch response from the server');
-    }
-  } catch (error) {
-    console.error('Error fetching response:', error);
-    throw error;
-  }
-}
-
-const handleResponse = async (prompt) => {
-  try {
-    isFetching = true;
-
-    // Fetch the response from the server
-    const parsedData = await fetchResponse(prompt);
-
-    // Bot's chat stripe
-    const uniqueId = generateUniqueId();
-    const botChatStripe = createChatStripe(true, parsedData, uniqueId);
-    chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
-
-    // Get the message div
-    const messageDiv = document.getElementById(uniqueId);
-
-    // Clear the loading indicator
-    clearInterval(loadInterval);
-    messageDiv.textContent = '';
-
-    // Display the bot's response instantly
-    messageDiv.innerHTML = `
-      <span>${parsedData}</span>
-    `;
-
-    // Scroll to the latest message after rendering the response
-    scrollToLatestMessage();
-
-    // Re-enable the submit button after processing
-    submitButton.disabled = false;
-
-    // Focus on the input field for the next response
-    input.focus();
-
-    // Start reading the AI output
-    toggleReading(parsedData, botChats.length - 1);
-
-    // Check if there is a next user input message
-    const nextIndex = userChats.length;
-    const nextUserChat = userChats[nextIndex];
-    if (nextUserChat) {
-      // Simulate typing delay before showing the user input message
-      await simulateTypingDelay();
-      handleUserInput(nextUserChat.value);
-    }
-  } catch (error) {
-    console.error('Error handling response:', error);
-
-    // Re-enable the submit button after processing
-    submitButton.disabled = false;
-  } finally {
-    isFetching = false;
-  }
-};
-
-const simulateTypingDelay = () => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 500); // Adjust the typing delay duration as needed
-  });
-};
-
-const handleUserInput = (prompt) => {
-  // User's chat stripe
-  const userChatStripe = createChatStripe(false, prompt);
-  chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
-
-  // Clear the textarea input
-  form.reset();
-
-  // Scroll to the latest message after inserting the user's chat stripe
-  scrollToLatestMessage();
-
-  // Start fetching the AI response
-  if (!isFetching) {
-    // Show the loading indicator
-    const uniqueId = generateUniqueId();
-    const botChatStripe = createChatStripe(true, '', uniqueId);
-    chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
-
-    // Get the message div
-    const messageDiv = document.getElementById(uniqueId);
-
-    // Show the loading indicator
-    loader(messageDiv);
-
-    // Simulate AI "thinking" with a shorter delay
-    thinkingTimeout = setTimeout(() => {
-      handleResponse(prompt);
-    }, 500); // Adjust the AI delay duration as needed
-  }
-};
-
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const prompt = input.value.trim();
@@ -268,7 +152,162 @@ const handleSubmit = (e) => {
   // Disable the submit button while processing
   submitButton.disabled = true;
 
-  handleUserInput(prompt);
+  // User's chat stripe
+  const userChatStripe = createChatStripe(false, prompt);
+  chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
+
+  // Clear the textarea input
+  form.reset();
+
+  // Scroll to the latest message after inserting the user's chat stripe
+  scrollToLatestMessage();
+
+  // Bot's chat stripe
+  const uniqueId = generateUniqueId();
+  const botChatStripe = createChatStripe(true, '', uniqueId);
+  chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
+
+  // Get the message div
+  const messageDiv = document.getElementById(uniqueId);
+
+  // Show the loading indicator
+  loader(messageDiv);
+
+  try {
+    // Simulate AI "thinking" with a shorter delay
+    thinkingTimeout = setTimeout(async () => {
+      try {
+        // Fetch the response from the server
+        const response = await fetch('https://educational-development.onrender.com/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+          }),
+        });
+
+        clearInterval(loadInterval);
+        messageDiv.textContent = '';
+
+        if (response.ok) {
+          const data = await response.json();
+          const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
+
+          // Display the bot's response instantly
+          messageDiv.innerHTML = `
+            <span>${parsedData}</span>
+          `;
+
+          // Scroll to the latest message after rendering the response
+          scrollToLatestMessage();
+
+          // Re-enable the submit button after processing
+          submitButton.disabled = false;
+
+          // Focus on the input field for the next response
+          input.focus();
+
+          // Listen for user feedback on the response
+          listenForFeedback(prompt, parsedData);
+
+          // Start reading the AI output
+          toggleReading(parsedData, botChats.length - 1);
+        } else {
+          const err = await response.text();
+
+          messageDiv.textContent = 'Something went wrong';
+          alert(err);
+
+          // Re-enable the submit button after processing
+          submitButton.disabled = false;
+        }
+      } catch (error) {
+        messageDiv.textContent = 'Something went wrong';
+        console.error(error);
+
+        // Re-enable the submit button after processing
+        submitButton.disabled = false;
+      }
+    }, 60); // Adjust the AI delay duration as needed
+  } catch (error) {
+    messageDiv.textContent = 'Something went wrong';
+    console.error(error);
+
+    // Re-enable the submit button after processing
+    submitButton.disabled = false;
+  }
+};
+
+// Function to listen for user feedback on the AI response
+const listenForFeedback = (prompt, botResponse) => {
+  const feedbackForm = document.createElement('form');
+  const feedbackInput = document.createElement('input');
+  const feedbackSubmitButton = document.createElement('button');
+  const feedbackCancelButton = document.createElement('button');
+
+  feedbackForm.classList.add('feedback-form');
+  feedbackInput.setAttribute('type', 'text');
+  feedbackInput.setAttribute('placeholder', 'Provide feedback');
+  feedbackSubmitButton.setAttribute('type', 'submit');
+  feedbackSubmitButton.textContent = 'Submit';
+  feedbackCancelButton.setAttribute('type', 'button');
+  feedbackCancelButton.textContent = 'Cancel';
+
+  feedbackForm.appendChild(feedbackInput);
+  feedbackForm.appendChild(feedbackSubmitButton);
+  feedbackForm.appendChild(feedbackCancelButton);
+
+  const feedbackContainer = document.createElement('div');
+  feedbackContainer.classList.add('feedback-container');
+  feedbackContainer.appendChild(feedbackForm);
+
+  chatContainer.appendChild(feedbackContainer);
+
+  feedbackForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const feedback = feedbackInput.value.trim();
+
+    if (feedback === '') {
+      return;
+    }
+
+    // Send the feedback to the server for model improvement
+    sendFeedback(prompt, botResponse, feedback);
+
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+
+  feedbackCancelButton.addEventListener('click', () => {
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+};
+
+// Function to send feedback to the server for model improvement
+const sendFeedback = async (prompt, botResponse, feedback) => {
+  try {
+    const response = await fetch('https://educational-development.onrender.com/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        botResponse: botResponse,
+        feedback: feedback,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to send feedback:', response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending feedback:', error);
+  }
 };
 
 form.addEventListener('submit', handleSubmit);
