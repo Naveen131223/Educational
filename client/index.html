@@ -24,14 +24,21 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 
-
     <script type="module" src="script.js"></script>
 
   
 
+<div class="scroll-container"></div>
+	
+	<script>
+    // Select the container element
+    const container = document.querySelector('.scroll-container');
 
-	
-	
+    // Add event listener to detect scrolling
+    container.addEventListener('scroll', function() {
+      container.classList.add('scroll-visible');
+    });
+	</script>
 
 
 
