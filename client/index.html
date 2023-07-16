@@ -24,21 +24,7 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 
-<script>
-    function scrollToBottom() {
-      // Get the form element by its ID
-      const formElement = document.getElementById('myForm');
 
-      // Scroll the page to the bottom where the form is located
-      formElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }
-
-    // Call the scrollToBottom function when the page is loaded or whenever you want to trigger the auto-scrolling
-    // For example, you can call it when the form is submitted to scroll to the bottom after submitting the form.
-    window.onload = function () {
-      scrollToBottom();
-    };
-</script>
     
   
 
@@ -199,13 +185,13 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
       <div id="app">
       <div id="chat_container"></div>
 
-      <form id="myForm" onsubmit="scrollToBottom()">
-    <textarea name="prompt" rows="1" cols="1" placeholder="Ask me any doubts in text as per desired Number of Words for Better❤️ Assistance..."></textarea>
-    <div class="voice-mic" onclick="startSpeechRecognition()">&#128226;</div>
-    <button type="submit">
-      <div class="send-logo"></div>
-    </button>
-      </form>
+      <form>
+  <textarea name="prompt" rows="1" cols="1" placeholder="Ask me any doubts in text as per desired Number of Words for Better❤️ Assistance..."></textarea>
+  <div class="voice-mic" onclick="startSpeechRecognition()">&#128226;</div>
+  <button type="submit">
+    <div class="send-logo"></div>
+  </button>
+</form>
 
     </div>
 
