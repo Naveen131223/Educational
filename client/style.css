@@ -26,35 +26,9 @@ h1 {
 }
 
 
-.scroll-container {
-      height: 300px;
-      overflow: auto;
-      border: 1px solid #ccc;
-      padding: 10px;
-    }
 
-    .scroll-container::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    .scroll-container::-webkit-scrollbar-thumb {
-      background-color: #CCCCCC; /* Light gray color */
-      border-radius: 5px;
-    }
-
-    .scroll-container::-webkit-scrollbar-thumb:hover {
-      background-color: #AAAAAA; /* Darker shade on hover */
-    }
-
-    .scroll-container.scroll-visible::-webkit-scrollbar-thumb {
-      background-color: #AAAAAA; /* Darker shade when scrolling */
-    }
-     
 
     
- .gap {
-      margin-bottom: 12em; /* Adjust this value to your desired distance */
- }   
     
    
 
