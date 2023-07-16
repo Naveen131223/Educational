@@ -54,7 +54,7 @@ function toggleReading(message, index) {
       currentUtteranceIndex = index;
       utterance.voiceURI = 'Google US English';
       utterance.lang = 'en-IN-ta';
-      utterance.volume = 1;
+      utterance.volume = 2;
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
       utterance.onend = () => {
