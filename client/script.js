@@ -14,19 +14,18 @@ let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
 let isReading = false;
 
-// CSS styles for the buttons
+
+
+
 printButton.style.cssText = `
   background-color: #007bff;
   color: #fff;
   padding: 8px 12px;
   border: none;
   border-radius: 4px;
-  position: absolute;
-  bottom: 0;
   margin-top: 10px;
   cursor: pointer;
 `;
-
 
 continueReadingButton.style.cssText = `
   background-color: #28a745;
@@ -34,8 +33,6 @@ continueReadingButton.style.cssText = `
   padding: 8px 12px;
   border: none;
   border-radius: 4px;
-  position: absolute;
-  bottom: 0;
   margin-top: 10px;
   cursor: pointer;
   margin-left: 10px;
