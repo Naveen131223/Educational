@@ -26,34 +26,43 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 <div id="content-container">
 
 <script>
-    function autoScroll() {
-      const scrollStep = 10; // Adjust the scrolling speed (larger value = faster)
-      const scrollDistance = 300; // Adjust the scrolling distance (in pixels)
+  function scrollToSmoothly(scrollY) {
+    const currentScrollY = window.scrollY;
+    const difference = scrollY - currentScrollY;
+    const duration = 800; // Adjust the duration (in milliseconds)
+    const startTime = performance.now();
 
-      let scrollY = window.pageYOffset;
-      const targetY = scrollY + scrollDistance;
-      const direction = scrollY < targetY ? 1 : -1;
+    function step(timestamp) {
+      const progress = (timestamp - startTime) / duration;
+      const ease = easeOutCubic(progress);
+      window.scrollTo(0, currentScrollY + difference * ease);
 
-      const scrollInterval = setInterval(function () {
-        scrollY += direction * scrollStep;
-        window.scrollTo(0, scrollY);
-
-        const currentScrollY = window.pageYOffset;
-        if (
-          (direction === 1 && currentScrollY >= targetY) ||
-          (direction === -1 && currentScrollY <= targetY)
-        ) {
-          clearInterval(scrollInterval);
-        }
-      }, 10); // Adjust the interval (smaller value = smoother but slower)
-
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
     }
 
-    // Call the autoScroll function after the page has loaded
-    window.onload = function () {
-      autoScroll();
-    };
+    requestAnimationFrame(step);
+  }
+
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function autoScroll() {
+    const scrollDistance = 300; // Adjust the scrolling distance (in pixels)
+
+    let scrollY = window.pageYOffset;
+    const targetY = scrollY + scrollDistance;
+    scrollToSmoothly(targetY);
+  }
+
+  // Call the autoScroll function after the page has loaded
+  window.onload = function () {
+    autoScroll();
+  };
 </script>
+
 
 	
 	
