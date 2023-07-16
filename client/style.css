@@ -24,33 +24,9 @@ body {
 
 
 
-     #countdown-banner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 30px;
-      z-index: 9999;
-      background-color: green;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+     
 
-    #countdown-text {
-      color: white;
-      font-family: Arial, sans-serif;
-      font-size: 16px;
-    }
-
-    #countdown-container {
-      margin-top: 50px;
-    }
-
-    table {
-      margin-top: 100px;
-      /* Add any other styles you need for your table */
-    }
+    
     
     
    
