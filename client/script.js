@@ -123,7 +123,7 @@ function createChatStripe(isAi, value, uniqueId) {
     userChats.push(message);
   }
 
-  const chatStripe = `
+  return `
     <div class="wrapper ${isAi ? 'ai' : ''}">
       <div class="chat">
         <div class="profile">
@@ -135,22 +135,6 @@ function createChatStripe(isAi, value, uniqueId) {
       </div>
     </div>
   `;
-
-  if (isAi) {
-    // If it's AI chat, insert at the bottom of the chat container
-    chatContainer.insertAdjacentHTML('beforeend', chatStripe);
-  } else {
-    // If it's user chat, insert just above the AI chat at the bottom
-    const lastBotChat = chatContainer.querySelector('.wrapper.ai:last-child');
-    if (lastBotChat) {
-      lastBotChat.insertAdjacentHTML('beforebegin', chatStripe);
-    } else {
-      // If there are no AI chats, insert at the bottom of the chat container
-      chatContainer.insertAdjacentHTML('beforeend', chatStripe);
-    }
-  }
-
-  return chatStripe;
 }
 
 let thinkingTimeout;
@@ -176,7 +160,7 @@ const handleSubmit = async (e) => {
   form.reset();
 
   // Scroll to the latest message after inserting the user's chat stripe
-  scrollToBottom();
+  scrollToLatestMessage();
 
   // Bot's chat stripe
   const uniqueId = generateUniqueId();
@@ -216,8 +200,8 @@ const handleSubmit = async (e) => {
             <span>${parsedData}</span>
           `;
 
-          // Scroll to the bottom of the chat after rendering the response
-          scrollToBottom();
+          // Scroll to the latest message after rendering the response
+          scrollToLatestMessage();
 
           // Re-enable the submit button after processing
           submitButton.disabled = false;
@@ -334,14 +318,14 @@ form.addEventListener('keyup', (e) => {
 });
 
 // Auto-scroll to the latest message smoothly
-function scrollToBottom() {
+function scrollToLatestMessage() {
   chatContainer.scrollTo({
     top: chatContainer.scrollHeight,
     behavior: 'smooth',
   });
 }
 
-// Scroll to the bottom of the chat on initial load
+// Scroll to the latest message on initial load
 window.addEventListener('load', () => {
-  scrollToBottom();
+  scrollToLatestMessage();
 });
