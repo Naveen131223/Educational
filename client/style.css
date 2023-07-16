@@ -28,30 +28,9 @@ h1 {
 
 
 
-    /* For Webkit browsers (e.g., Chrome, Safari) */
-::-webkit-scrollbar {
-  width: 10px; /* adjust the width as needed */
-}
+    
 
-::-webkit-scrollbar-thumb {
-  background: #888; /* color of the scrollbar thumb */
-}
 
-/* For Firefox */
-::-moz-scrollbar {
-  width: 10px; /* adjust the width as needed */
-}
-
-::-moz-scrollbar-thumb {
-  background: #888; /* color of the scrollbar thumb */
-}
-
-/* For Internet Explorer and Edge */
-/* Note: This is supported in Edge 79 and later versions */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #888; /* color of the scrollbar thumb */
-}
 
     
    
