@@ -25,6 +25,37 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   <body>
 <div id="content-container">
 
+<script>
+    function autoScroll() {
+      const scrollStep = 10; // Adjust the scrolling speed (larger value = faster)
+      const scrollDistance = 300; // Adjust the scrolling distance (in pixels)
+
+      let scrollY = window.pageYOffset;
+      const targetY = scrollY + scrollDistance;
+      const direction = scrollY < targetY ? 1 : -1;
+
+      const scrollInterval = setInterval(function () {
+        scrollY += direction * scrollStep;
+        window.scrollTo(0, scrollY);
+
+        const currentScrollY = window.pageYOffset;
+        if (
+          (direction === 1 && currentScrollY >= targetY) ||
+          (direction === -1 && currentScrollY <= targetY)
+        ) {
+          clearInterval(scrollInterval);
+        }
+      }, 10); // Adjust the interval (smaller value = smoother but slower)
+
+    }
+
+    // Call the autoScroll function after the page has loaded
+    window.onload = function () {
+      autoScroll();
+    };
+</script>
+
+	
 	
 <div id="countdown-banner">
     <div id="countdown-text"></div>
