@@ -84,7 +84,7 @@ printButton.addEventListener('click', () => {
     toggleReading(lastBotChat.value, botChats.length - 1);
   }
 });
-
+chatContainer.appendChild(printButton);
 
 continueReadingButton.addEventListener('click', () => {
   const lastBotChat = botChats[currentUtteranceIndex];
@@ -92,7 +92,7 @@ continueReadingButton.addEventListener('click', () => {
     toggleReading(lastBotChat.value, currentUtteranceIndex);
   }
 });
-
+chatContainer.appendChild(continueReadingButton);
 
 function loader(element) {
   element.textContent = '';
@@ -319,11 +319,6 @@ form.addEventListener('keyup', (e) => {
     handleSubmit(e);
   }
 });
-
-// Append the buttons to the bottom of the chatContainer
-chatContainer.appendChild(printButton);
-chatContainer.appendChild(continueReadingButton);
-
 
 // Auto-scroll to the latest message smoothly
 function scrollToLatestMessage() {
