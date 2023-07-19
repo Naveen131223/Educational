@@ -42,8 +42,6 @@ continueReadingButton.style.cssText = `
 printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
 
-// ... (Existing code)
-
 // Function to toggle reading the AI output
 function toggleReading(message, index) {
   if (isReading && currentUtteranceIndex === index) {
@@ -62,30 +60,23 @@ function toggleReading(message, index) {
       utterance.volume = 2;
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
-
-      // Add a class to the current message to highlight it while reading
-      const currentMessage = document.getElementById(`message-${index}`);
-      currentMessage.classList.add('highlighted');
-
-      // Add event listener to remove the highlight class when reading ends
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
 
-        // Remove the highlight class from the current message
-        currentMessage.classList.remove('highlighted');
+        // Check if there is a next message to continue reading
+        const nextIndex = currentUtteranceIndex + 1;
+        const nextBotChat = botChats[nextIndex];
+        if (nextBotChat) {
+          toggleReading(nextBotChat.value, nextIndex);
+        }
       };
     }
-
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
   }
 }
-
-// ... (Remaining code)
-
-
 
 printButton.addEventListener('click', () => {
   const lastBotChat = botChats[botChats.length - 1];
