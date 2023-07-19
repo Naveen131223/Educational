@@ -24,17 +24,12 @@ body {
       /* You can add more styles here like text color, font-weight, etc. */
     }
 
-.highlighted {
-  background-color: #007bff;
-  color: #fff;
-  transition: background-color 0.2s ease;
-}
-
 .highlighted-word {
   background-color: #007bff;
   color: #fff;
   transition: background-color 0.2s ease;
 }
+
 
 
 
