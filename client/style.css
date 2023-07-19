@@ -24,9 +24,21 @@ body {
       /* You can add more styles here like text color, font-weight, etc. */
     }
 
+
+
+
 h1 {
   font-size: 1.2em; /* Adjust the value as needed */
 }
+
+
+
+
+h1, h2 {
+  padding: 0 1em; /* Adjust the value as needed */
+}
+
+
 
 
 .gap {
