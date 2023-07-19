@@ -44,6 +44,8 @@ continueReadingButton.textContent = 'Continue Reading';
 
 // ... (Existing code)
 
+// ... (Existing code)
+
 // Function to toggle reading the AI output
 function toggleReading(message, index) {
   if (isReading && currentUtteranceIndex === index) {
@@ -51,12 +53,6 @@ function toggleReading(message, index) {
     window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
-
-    // Remove the blue highlighter once reading stops
-    const highlightedMessage = document.querySelector('.highlighted');
-    if (highlightedMessage) {
-      highlightedMessage.classList.remove('highlighted');
-    }
   } else {
     // Start reading the AI output
     if (currentUtteranceIndex !== index) {
@@ -69,52 +65,45 @@ function toggleReading(message, index) {
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
 
-      // Manually control the highlighting while reading
       let words = message.split(' ');
       let currentIndex = 0;
-      utterance.onstart = () => {
-        // Add the blue highlighter when reading starts
-        const currentMessage = document.getElementById(`message-${index}`);
-        currentMessage.classList.add('highlighted');
 
-        // Highlight each word as it is being read
-        loadInterval = setInterval(() => {
-          if (currentIndex < words.length) {
-            const currentWord = currentMessage.querySelector(`span[data-index="${currentIndex}"]`);
-            if (currentWord) {
-              currentWord.classList.add('highlighted-word');
-              currentIndex++;
-            }
-          } else {
-            clearInterval(loadInterval);
+      // Update the utterance's onboundary event to handle word highlighting
+      utterance.onboundary = (event) => {
+        if (event.name === 'word') {
+          const currentMessage = document.getElementById(`message-${index}`);
+          let currentWordIndex = event.charIndex;
+          const highlightedWord = currentMessage.querySelector(`span[data-index="${currentWordIndex}"]`);
+
+          // Remove the highlight from the previous word
+          const prevWordIndex = currentIndex > 0 ? currentIndex - 1 : 0;
+          const prevHighlightedWord = currentMessage.querySelector(`span[data-index="${prevWordIndex}"]`);
+          if (prevHighlightedWord) {
+            prevHighlightedWord.classList.remove('highlighted-word');
           }
-        }, 200);
+
+          // Add the highlight to the current word
+          if (highlightedWord) {
+            highlightedWord.classList.add('highlighted-word');
+          }
+
+          currentIndex = currentWordIndex;
+        }
       };
 
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
 
-        // Check if there is a next message to continue reading
-        const nextIndex = currentUtteranceIndex + 1;
-        const nextBotChat = botChats[nextIndex];
-        if (nextBotChat) {
-          toggleReading(nextBotChat.value, nextIndex);
+        // Remove the highlight from the last word
+        const currentMessage = document.getElementById(`message-${index}`);
+        const lastHighlightedWord = currentMessage.querySelector(`span[data-index="${currentIndex}"]`);
+        if (lastHighlightedWord) {
+          lastHighlightedWord.classList.remove('highlighted-word');
         }
-
-        // Remove the blue highlighter once reading ends
-        const highlightedMessage = document.querySelector('.highlighted');
-        if (highlightedMessage) {
-          highlightedMessage.classList.remove('highlighted');
-        }
-
-        // Clear the word highlighters
-        const highlightedWords = document.querySelectorAll('.highlighted-word');
-        highlightedWords.forEach((word) => {
-          word.classList.remove('highlighted-word');
-        });
       };
     }
+
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
