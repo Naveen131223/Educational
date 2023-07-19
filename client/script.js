@@ -42,7 +42,6 @@ continueReadingButton.style.cssText = `
 printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
 
-// Function to toggle reading the AI output
 // ... (Existing code)
 
 // Function to toggle reading the AI output
@@ -92,11 +91,14 @@ function toggleReading(message, index) {
         }
       };
     }
+    // Workaround to detect the end of speech synthesis
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
   }
 }
+
+// ... (Remaining code)
 
 // ... (Remaining code)
 
