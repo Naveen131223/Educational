@@ -43,12 +43,21 @@ printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
 
 // Function to toggle reading the AI output
+// ... (Existing code)
+
+// Function to toggle reading the AI output
 function toggleReading(message, index) {
   if (isReading && currentUtteranceIndex === index) {
     // Stop reading if currently reading the same message
     window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
+
+    // Remove the blue highlighter once reading stops
+    const highlightedMessage = document.querySelector('.highlighted');
+    if (highlightedMessage) {
+      highlightedMessage.classList.remove('highlighted');
+    }
   } else {
     // Start reading the AI output
     if (currentUtteranceIndex !== index) {
@@ -60,6 +69,11 @@ function toggleReading(message, index) {
       utterance.volume = 2;
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
+      utterance.onstart = () => {
+        // Add the blue highlighter when reading starts
+        const currentMessage = document.getElementById(`message-${index}`);
+        currentMessage.classList.add('highlighted');
+      };
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
@@ -70,6 +84,12 @@ function toggleReading(message, index) {
         if (nextBotChat) {
           toggleReading(nextBotChat.value, nextIndex);
         }
+
+        // Remove the blue highlighter once reading ends
+        const highlightedMessage = document.querySelector('.highlighted');
+        if (highlightedMessage) {
+          highlightedMessage.classList.remove('highlighted');
+        }
       };
     }
     window.speechSynthesis.speak(utterance);
@@ -77,6 +97,9 @@ function toggleReading(message, index) {
     printButton.textContent = 'Stop Reading';
   }
 }
+
+// ... (Remaining code)
+
 
 printButton.addEventListener('click', () => {
   const lastBotChat = botChats[botChats.length - 1];
