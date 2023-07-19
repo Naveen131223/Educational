@@ -68,11 +68,29 @@ function toggleReading(message, index) {
       utterance.volume = 2;
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
+
+      // Manually control the highlighting while reading
+      let words = message.split(' ');
+      let currentIndex = 0;
       utterance.onstart = () => {
         // Add the blue highlighter when reading starts
         const currentMessage = document.getElementById(`message-${index}`);
         currentMessage.classList.add('highlighted');
+
+        // Highlight each word as it is being read
+        loadInterval = setInterval(() => {
+          if (currentIndex < words.length) {
+            const currentWord = currentMessage.querySelector(`span[data-index="${currentIndex}"]`);
+            if (currentWord) {
+              currentWord.classList.add('highlighted-word');
+              currentIndex++;
+            }
+          } else {
+            clearInterval(loadInterval);
+          }
+        }, 200);
       };
+
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
@@ -89,16 +107,19 @@ function toggleReading(message, index) {
         if (highlightedMessage) {
           highlightedMessage.classList.remove('highlighted');
         }
+
+        // Clear the word highlighters
+        const highlightedWords = document.querySelectorAll('.highlighted-word');
+        highlightedWords.forEach((word) => {
+          word.classList.remove('highlighted-word');
+        });
       };
     }
-    // Workaround to detect the end of speech synthesis
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
   }
 }
-
-// ... (Remaining code)
 
 // ... (Remaining code)
 
