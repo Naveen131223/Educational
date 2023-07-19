@@ -44,8 +44,6 @@ continueReadingButton.textContent = 'Continue Reading';
 
 // ... (Existing code)
 
-// ... (Existing code)
-
 // Function to toggle reading the AI output
 function toggleReading(message, index) {
   if (isReading && currentUtteranceIndex === index) {
@@ -65,42 +63,17 @@ function toggleReading(message, index) {
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
 
-      let words = message.split(' ');
-      let currentIndex = 0;
+      // Add a class to the current message to highlight it while reading
+      const currentMessage = document.getElementById(`message-${index}`);
+      currentMessage.classList.add('highlighted');
 
-      // Update the utterance's onboundary event to handle word highlighting
-      utterance.onboundary = (event) => {
-        if (event.name === 'word') {
-          const currentMessage = document.getElementById(`message-${index}`);
-          let currentWordIndex = event.charIndex;
-          const highlightedWord = currentMessage.querySelector(`span[data-index="${currentWordIndex}"]`);
-
-          // Remove the highlight from the previous word
-          const prevWordIndex = currentIndex > 0 ? currentIndex - 1 : 0;
-          const prevHighlightedWord = currentMessage.querySelector(`span[data-index="${prevWordIndex}"]`);
-          if (prevHighlightedWord) {
-            prevHighlightedWord.classList.remove('highlighted-word');
-          }
-
-          // Add the highlight to the current word
-          if (highlightedWord) {
-            highlightedWord.classList.add('highlighted-word');
-          }
-
-          currentIndex = currentWordIndex;
-        }
-      };
-
+      // Add event listener to remove the highlight class when reading ends
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
 
-        // Remove the highlight from the last word
-        const currentMessage = document.getElementById(`message-${index}`);
-        const lastHighlightedWord = currentMessage.querySelector(`span[data-index="${currentIndex}"]`);
-        if (lastHighlightedWord) {
-          lastHighlightedWord.classList.remove('highlighted-word');
-        }
+        // Remove the highlight class from the current message
+        currentMessage.classList.remove('highlighted');
       };
     }
 
@@ -111,6 +84,7 @@ function toggleReading(message, index) {
 }
 
 // ... (Remaining code)
+
 
 
 printButton.addEventListener('click', () => {
