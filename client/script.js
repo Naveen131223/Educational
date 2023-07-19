@@ -332,3 +332,13 @@ function scrollToLatestMessage() {
 window.addEventListener('load', () => {
   scrollToLatestMessage();
 });
+
+// ... Your existing JavaScript code ...
+
+const printButtonContainer = document.getElementById('printButtonContainer');
+const continueReadingButtonContainer = document.getElementById('continueReadingButtonContainer');
+
+printButtonContainer.appendChild(printButton);
+continueReadingButtonContainer.appendChild(continueReadingButton);
+
+// ... The rest of your existing JavaScript code ...
