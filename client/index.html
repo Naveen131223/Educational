@@ -37,15 +37,12 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </div>
 
 <script>	  
-// JavaScript code
+
+    // JavaScript code
 function showWebsiteContents() {
   // Check if the image has been shown before in this session
-  if (sessionStorage.getItem('imageShown')) {
-    // If the image has been shown before, show the loaded content immediately
-    document.querySelector('.loading-screen').classList.add('loaded');
-    document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
-  } else {
-    // If the image is shown for the first time in this session, set the flag in sessionStorage
+  if (!sessionStorage.getItem('imageShown')) {
+    // If the image has not been shown before, set the flag in sessionStorage
     sessionStorage.setItem('imageShown', 'true');
 
     // Show the loading screen with the image for 5 seconds
@@ -58,11 +55,17 @@ function showWebsiteContents() {
       document.querySelector('.loading-screen').style.display = 'none';
       document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
     }, 5000);
+  } else {
+    // If the image has been shown before, show the loaded content immediately
+    document.querySelector('.loading-screen').classList.add('loaded');
+    document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
   }
 }
 
 // Call the function when the page is loaded
 window.addEventListener('load', showWebsiteContents);
+
+  
 
 </script>
     
