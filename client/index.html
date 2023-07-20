@@ -24,7 +24,64 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
        
-<script type="module" src="script.js"></script>
+<!-- Enhanced version of the script tag with error handling and fallback -->
+<script>
+  function loadModule(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = src;
+
+      script.addEventListener('load', () => {
+        resolve();
+      });
+
+      script.addEventListener('error', (event) => {
+        reject(new Error(`Error loading script: ${event.target.src}`));
+      });
+
+      document.head.appendChild(script);
+    });
+  }
+
+  function loadFallback(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+
+      script.addEventListener('load', () => {
+        resolve();
+      });
+
+      script.addEventListener('error', (event) => {
+        reject(new Error(`Error loading fallback script: ${event.target.src}`));
+      });
+
+      document.head.appendChild(script);
+    });
+  }
+
+  function loadScript() {
+    const moduleSrc = 'script.js';
+    const fallbackSrc = 'fallback-script.js';
+
+    loadModule(moduleSrc)
+      .catch((error) => {
+        console.error(error);
+        console.log('Loading the fallback script...');
+        return loadFallback(fallbackSrc);
+      })
+      .then(() => {
+        console.log('Script loaded successfully!');
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  loadScript();
+</script>
+
 
 	
 
