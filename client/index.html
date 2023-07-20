@@ -27,9 +27,25 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	  <script type="module" src="script.js?v=v2" async></script> 
 
 
-	
+	<!-- Image Loading -->
+  <div class="loading-screen">
+    <!-- Replace 'path/to/your/image.jpg' with the URL or path of the image you want to display -->
+    <img src="image.jpg" alt="Loading Image" class="bring-closer" onload="showWebsiteContents()">
+  </div>
 
+<script>
+    // Function to show the website contents and remove the image
+    function showWebsiteContents() {
+      document.querySelector('.loading-screen').classList.add('loaded');
+      const imgElement = document.querySelector('img');
+      imgElement.classList.add('bring-closer');
 
+      setTimeout(function() {
+        document.querySelector('.loading-screen').style.display = 'none';
+        document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
+      }, 5000); // Hide the loading screen after 5 seconds
+    }
+  </script>
 
 
 
