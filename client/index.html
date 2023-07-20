@@ -38,24 +38,25 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 <script>	  
 
-   // JavaScript code
+   
+// JavaScript code
 function showWebsiteContents() {
   // Check if the image has been shown before in this session
   if (!sessionStorage.getItem('imageShown')) {
     // If the image has not been shown before, set the flag in sessionStorage
     sessionStorage.setItem('imageShown', 'true');
 
-    // Show the loading screen with the image for 5 seconds
+    // Show the loading screen with the image for 3 seconds
     document.querySelector('.loading-screen').classList.add('loaded');
     const imgElement = document.querySelector('img');
     imgElement.classList.add('bring-closer');
 
     setTimeout(function () {
-      // Hide the loading screen and show the main content after 5 seconds
+      // Hide the loading screen and show the main content after 3 seconds
       document.querySelector('.loading-screen').style.display = 'none';
       document.querySelector('.main-content').style.display = 'block';
       document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
-    }, 5000);
+    }, 3000);
   } else {
     // If the image has been shown before, show the main content immediately
     document.querySelector('.main-content').style.display = 'block';
@@ -68,9 +69,18 @@ window.addEventListener('load', showWebsiteContents);
 // Your button click event handling code (example):
 const myButton = document.getElementById('myButton'); // Replace 'myButton' with the actual ID of your button
 
-myButton.addEventListener('click', function () {
-  // Handle button click actions here
+myButton.addEventListener('click', function (event) {
+  // Check if the image has been shown before in this session
+  if (!sessionStorage.getItem('imageShown')) {
+    // If the image has not been shown before, prevent the button action and show the image
+    event.preventDefault();
+    showWebsiteContents();
+  } else {
+    // If the image has been shown before, allow the button action to proceed
+    // Add your button handling code here
+  }
 });
+
 
 
 
