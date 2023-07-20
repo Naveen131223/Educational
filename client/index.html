@@ -24,46 +24,12 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 
-	 
-      
-    <script>
-  // Feature detection for dynamic import support
-  function loadScript(url) {
-    if ('import' in document.createElement('script')) {
-      return import(url);
-    } else {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = url;
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-  }
-
-  // Load the script asynchronously
-  loadScript('script.js?v=v2')
-    .then(() => {
-      // The script is loaded and executed (only if dynamic import is supported)
-      console.log('Script loaded successfully.');
-      // Add any additional code that depends on the loaded script here.
-    })
-    .catch((error) => {
-      // Handle errors if the script fails to load or execute
-      console.error('Error loading script:', error);
-    });
+<script type="module">
+  (async () => {
+    const module = await import("./script.js?v=v2");
+    // You can use 'module' here if the script exports something, e.g., module.someFunction();
+  })();
 </script>
-
-
-
-
-
-
-
-
-
 
 
   
