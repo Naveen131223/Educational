@@ -24,7 +24,68 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 
-	  <script type="module" src="script.js?v=v2" async></script> 
+	  <script type="module">
+  // Caching strategy options: 'no-cache' or 'cache'
+  const cachingStrategy = 'cache'; // Change this to 'no-cache' to disable caching.
+
+  function loadScriptOnce() {
+    const scriptUrl = 'script.js?v=v2';
+
+    // Check if the script is already loaded.
+    const scriptExists = document.querySelector(`script[src="${scriptUrl}"]`);
+
+    if (!scriptExists) {
+      // If caching is enabled, check if the script is already cached in the browser.
+      if (cachingStrategy === 'cache' && 'caches' in window) {
+        window.caches.match(scriptUrl).then((response) => {
+          if (response) {
+            // If the script is cached, load it directly from the cache.
+            response.blob().then((blob) => {
+              const script = document.createElement('script');
+              script.type = 'module';
+              script.src = URL.createObjectURL(blob);
+              document.head.appendChild(script);
+            });
+          } else {
+            // If not cached, fetch and cache the script.
+            fetchAndCacheScript(scriptUrl);
+          }
+        });
+      } else {
+        // If caching is disabled or not supported, simply fetch the script.
+        fetchAndCacheScript(scriptUrl);
+      }
+    }
+  }
+
+  function fetchAndCacheScript(url) {
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = URL.createObjectURL(blob);
+        document.head.appendChild(script);
+        if (cachingStrategy === 'cache' && 'caches' in window) {
+          // Cache the script for future use if caching is enabled and supported.
+          caches.open('scriptCache').then((cache) => cache.put(url, new Response(blob)));
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to fetch the script:', error);
+        // Implement fallback solution or notify the user here.
+      });
+  }
+
+  // Call the function to load the script asynchronously (only if not loaded yet).
+  loadScriptOnce();
+</script>
+
 
 
   
