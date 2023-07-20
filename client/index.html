@@ -26,12 +26,23 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 	 
       
-    <script type="module">
-  (async () => {
-    const module = await import("./script.js?v=v2");
-    // You can use 'module' here if the script exports something, e.g., module.someFunction();
-  })();
+    <script>
+  // Check if the browser supports 'async' and 'module'
+  if ('noModule' in HTMLScriptElement.prototype) {
+    // For older browsers that do not support 'async' and 'module'
+    const script = document.createElement('script');
+    script.src = 'script.js?v=v2';
+    document.head.appendChild(script);
+  } else {
+    // For modern browsers that support 'async' attribute and 'module' type
+    const moduleScript = document.createElement('script');
+    moduleScript.type = 'module';
+    moduleScript.src = 'script.js?v=v2';
+    moduleScript.async = true;
+    document.head.appendChild(moduleScript);
+  }
 </script>
+
 
 
 
