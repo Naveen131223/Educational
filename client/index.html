@@ -26,20 +26,13 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 	 
       <script type="module">
-  // Check if dynamic import is supported
-  if ('noModule' in HTMLScriptElement.prototype) {
-    // If supported, use dynamic import
-    (async () => {
-      const module = await import("./script.js?v=v2");
-      // You can use 'module' here if the script exports something, e.g., module.someFunction();
-    })();
-  } else {
-    // If not supported, use traditional script tag with 'defer' attribute
-    // This will maintain the order of execution after the HTML document has been fully parsed.
-    // If 'async' attribute is preferred, you can replace 'defer' with 'async'.
-    document.write('<script type="module" src="script.js?v=v2" defer></script>');
-  }
+  (async () => {
+    const module = await import("./script.js?v=v2");
+    // You can use 'module' here if the script exports something, e.g., module.someFunction();
+  })();
 </script>
+
+
 
 
 
