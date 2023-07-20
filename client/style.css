@@ -7,65 +7,17 @@
   font-family: "Alegreya Sans", sans-serif;
 }
 
-    body {
-      overflow-x: hidden;
-      background-image: url("galaxy.jpg");  
-      background-color: white;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      height: 100vh;
-      margin: 0;
-      padding: 0;
-    }
-
-    .loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #f0f0f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 1;
-      visibility: visible;
-      z-index: 9999;
-      transition: opacity 1s, visibility 1s;
-    }
-
-    .loaded .loading-screen {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    img {
-      width: 100vw; /* Use viewport width to cover the entire width of the screen */
-      height: 100vh; /* Use viewport height to cover the entire height of the screen */
-      object-fit: cover; /* Keep the image's aspect ratio and cover the entire container */
-    }
-
-    /* Keyframe animation to bring the image closer */
-    @keyframes bringCloser {
-      0% {
-        transform: scale(1);
-      }
-      100% {
-        transform: scale(4); /* Increase the scale to bring the image closer */
-      }
-    }
-
-    /* Apply the animation to the image */
-    .bring-closer {
-      animation: bringCloser 5s forwards; /* 'forwards' keeps the scale after animation ends */
-    }
-
-
-
-
-
-
+body {
+  overflow-x: hidden;
+  background-image: url("galaxy.jpg");  
+  background-color: white;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+        }
 
 .highlight {
       background-color: yellow; /* Change this to the desired highlight color */
