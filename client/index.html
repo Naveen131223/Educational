@@ -31,9 +31,34 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 
 
+<div class="loading-screen" id="loadingScreen">
+    <!-- Replace 'path/to/your/image.jpg' with the URL or path of the image you want to display -->
+    <img src="image.jpg" alt="Loading Image" class="bring-closer" onload="showWebsiteContents()">
+  </div>
 
+<script>
+    // Function to show the website contents and remove the image
+    function showWebsiteContents() {
+      document.querySelector('.loading-screen').classList.add('loaded');
+      const imgElement = document.querySelector('img');
+      imgElement.classList.add('bring-closer');
 
+      setTimeout(function() {
+        document.querySelector('.loading-screen').style.display = 'none';
+        document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
+      }, 5000); // Hide the loading screen after 5 seconds
 
+      // Check if the image has been shown before in this session
+      if (sessionStorage.getItem('imageShown')) {
+        // If the image has been shown, remove the loading screen immediately
+        document.querySelector('.loading-screen').style.display = 'none';
+        document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
+      } else {
+        // If the image is shown for the first time in this session, set the flag in sessionStorage
+        sessionStorage.setItem('imageShown', 'true');
+      }
+    }
+  </script>
 
 	
   
