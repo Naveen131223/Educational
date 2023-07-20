@@ -36,29 +36,34 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
     <img src="image.jpg" alt="Loading Image" class="bring-closer" onload="showWebsiteContents()">
   </div>
 
-<script>
-    // Function to show the website contents and remove the image
-    function showWebsiteContents() {
-      document.querySelector('.loading-screen').classList.add('loaded');
-      const imgElement = document.querySelector('img');
-      imgElement.classList.add('bring-closer');
+<script>	  
+// JavaScript code
+function showWebsiteContents() {
+  // Check if the image has been shown before in this session
+  if (sessionStorage.getItem('imageShown')) {
+    // If the image has been shown before, show the loaded content immediately
+    document.querySelector('.loading-screen').classList.add('loaded');
+    document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
+  } else {
+    // If the image is shown for the first time in this session, set the flag in sessionStorage
+    sessionStorage.setItem('imageShown', 'true');
 
-      setTimeout(function() {
-        document.querySelector('.loading-screen').style.display = 'none';
-        document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
-      }, 5000); // Hide the loading screen after 5 seconds
+    // Show the loading screen with the image
+    document.querySelector('.loading-screen').classList.add('loaded');
+    const imgElement = document.querySelector('img');
+    imgElement.classList.add('bring-closer');
 
-      // Check if the image has been shown before in this session
-      if (sessionStorage.getItem('imageShown')) {
-        // If the image has been shown, remove the loading screen immediately
-        document.querySelector('.loading-screen').style.display = 'none';
-        document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
-      } else {
-        // If the image is shown for the first time in this session, set the flag in sessionStorage
-        sessionStorage.setItem('imageShown', 'true');
-      }
-    }
-  </script>
+    setTimeout(function () {
+      document.querySelector('.loading-screen').style.display = 'none';
+      document.body.style.overflow = 'auto'; // Allow scrolling after content is shown
+    }, 5000); // Hide the loading screen after 5 seconds
+  }
+}
+
+// Call the function when the page is loaded
+window.addEventListener('load', showWebsiteContents);
+</script>
+    
 
 	
   
