@@ -64,10 +64,20 @@ body {
 
 
 
-/* Style for the language dropdown */
+/* Hide Google Translate feedback banner */
+  .goog-te-banner-frame {
+    display: none !important;
+  }
+
+  /* Hide Google Translate loading icon */
+  .goog-te-spinner-pos {
+    display: none !important;
+  }
+
+  /* Style for the language dropdown */
   .goog-te-combo {
-    color: red; /* Text color */
-    background-color: yellow; /* Background color */
+    color: white; /* Text color */
+    background-color: green; /* Background color */
     border: none; /* Remove border if you wish */
     font-size: 16px; /* Adjust font size */
     padding: 10px 20px; /* Adjust padding for top/bottom and left/right */
@@ -76,7 +86,7 @@ body {
     overflow-y: auto; /* Enable vertical scrolling */
   }
 
-  /* Style for the arrow icon inside the dropdown */
+/* Style for the arrow icon inside the dropdown */
   .goog-te-gadget-simple .goog-te-menu-value span {
     color: white; /* Icon color */
   }
