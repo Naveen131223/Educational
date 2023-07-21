@@ -1,5 +1,5 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 
@@ -24,13 +24,12 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Simple in-memory cache to store API responses with a TTL of 1 millisecond
+// Simple in-memory cache to store API responses
 const responseCache = {};
-const cacheTTL = 1; // 1 millisecond
 
 app.get('/', async (req, res) => {
   res.status(200).send({
-    message: 'Hello from CodeX!',
+    message: 'Hello from CodeX!'
   });
 });
 
@@ -42,20 +41,14 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
     }
 
-    // Ensure prompt length is within a reasonable limit (e.g., <= 1024 characters)
-    const maxPromptLength = 1024;
-    if (prompt.length > maxPromptLength) {
-      return res.status(400).send({ error: 'Prompt is too long. Please keep it within the character limit.' });
-    }
-
-    // Check if the response is cached and return the cached response
+    // Check if the response is cached
     if (responseCache[prompt]) {
       console.log('Cache hit for prompt:', prompt);
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Send the request to the AI model with a timeout of 15 seconds
-    const responsePromise = openai.createCompletion({
+    // Send the request to the AI model asynchronously with a timeout
+    const aiRequestPromise = openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
@@ -65,31 +58,26 @@ app.post('/', async (req, res) => {
       presence_penalty: 0,
     });
 
-    const timeoutPromise = new Promise((resolve) =>
-      setTimeout(() => resolve({ error: 'AI response timeout' }), 15000)
-    );
+    // Set a timeout for the AI request to ensure a 1-second response time
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Wait for the AI request or timeout to complete, whichever happens first
-    const { data } = await Promise.race([responsePromise, timeoutPromise]);
+    // Wait for both the AI request and the timeout to complete
+    const [response] = await Promise.all([aiRequestPromise, timeoutPromise]);
 
-    if (data && data.choices && data.choices.length > 0) {
-      const botResponse = data.choices[0].text;
-      responseCache[prompt] = botResponse;
-      setTimeout(() => delete responseCache[prompt], cacheTTL); // Add TTL for cached responses
-      return res.status(200).send({ bot: botResponse });
-    } else {
-      return res.status(500).send({ error: 'AI response error' });
-    }
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
+
+    res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ error: 'Something went wrong' });
+    res.status(500).send('Something went wrong');
   }
 });
 
 // Error handler middleware
 app.use((err, req, res, next) => {
   console.error(err);
-  return res.status(500).send({ error: 'Something went wrong' });
+  res.status(500).send('Something went wrong');
 });
 
 // Start the server and handle graceful shutdown
