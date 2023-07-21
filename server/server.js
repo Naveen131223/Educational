@@ -58,8 +58,8 @@ app.post('/', async (req, res) => {
       presence_penalty: 0,
     });
 
-    // Set a timeout for the AI request to ensure a 1-second response time
-    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1000));
+    // Set a timeout for the AI request to ensure a 2-second response time
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Wait for both the AI request and the timeout to complete
     const [response] = await Promise.all([aiRequestPromise, timeoutPromise]);
