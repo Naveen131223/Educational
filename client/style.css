@@ -25,6 +25,44 @@ body {
     }
 
 
+#readerContainer {
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 80%;
+    }
+
+    #sentenceInput {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    #readButton,
+    #stopButton {
+      width: 100%;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+
+    #stopButton {
+      background-color: #f44336;
+      display: none;
+    }
+
+
+
+
 
 /* Style for the language dropdown */
   .goog-te-combo {
