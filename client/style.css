@@ -69,6 +69,13 @@ body {
     display: none !important;
   }
 
+/* Style for the translated text container */
+#translatedTextContainer {
+  cursor: pointer; /* Show pointer cursor when hovering over the text */
+  /* Add any other desired styles for the container, e.g., font-size, color, etc. */
+}
+
+
   /* Hide Google Translate loading icon */
   .goog-te-spinner-pos {
     display: none !important;
