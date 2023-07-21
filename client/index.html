@@ -26,17 +26,38 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => {
-          console.log('Service Worker registered successfully:', registration.scope);
-        })
-        .catch(error => {
-          console.error('Service Worker registration failed:', error);
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                console.log('A new version of the app is available. Please reload the page to update.');
+                // You can add a notification to inform the user about the update.
+              } else {
+                console.log('The app is now available offline.');
+                // You can add a notification to inform the user that the app is ready to use offline.
+              }
+            }
+          });
         });
+
+        console.log('Service Worker registered successfully:', registration.scope);
+        // You can add a notification to inform the user that the service worker is installed successfully.
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+        // You can add a notification to inform the user that the service worker registration failed.
+      }
     });
+  } else {
+    console.log('Service Worker is not supported in this browser.');
+    // You can add a notification to inform the user that their browser does not support service workers.
   }
 </script>
+
 
 
 
