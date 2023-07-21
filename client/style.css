@@ -29,11 +29,13 @@ body {
 /* Style for the language dropdown */
   .goog-te-combo {
     color: white; /* Text color */
-    background-color: pink; /* Background color */
+    background-color: green; /* Background color */
     border: none; /* Remove border if you wish */
     font-size: 16px; /* Adjust font size */
     padding: 10px 20px; /* Adjust padding for top/bottom and left/right */
     border-radius: 5px; /* Add some border radius for rounded corners */
+    max-height: 200px; /* Set a maximum height for the dropdown */
+    overflow-y: auto; /* Enable vertical scrolling */
   }
 
   /* Style for the arrow icon inside the dropdown */
