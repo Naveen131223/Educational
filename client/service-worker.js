@@ -1,5 +1,8 @@
-const CACHE_NAME = 'my-website-cache-v3';
+const CACHE_NAME = 'my-website-cache-v4';
+const OFFLINE_FALLBACK_PAGE = '/offline.html';
+
 const urlsToCache = [
+  '/',
   '/index.html',
   '/css/style.css',
   '/js/script.js',
@@ -21,7 +24,7 @@ self.addEventListener('activate', event => {
         cacheNames.filter(cacheName => cacheName !== CACHE_NAME)
           .map(cacheName => caches.delete(cacheName))
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
@@ -29,22 +32,25 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        if (response) {
-          return response;
-        }
+        // Cache, falling back to network strategy
+        return response || fetch(event.request)
+          .then(fetchResponse => {
+            // Check if we received a valid response
+            if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+              return fetchResponse;
+            }
 
-        // If the request is not cached, fetch it from the network
-        return fetch(event.request)
-          .then(response => {
             // Clone the response to cache and return the original response
-            const clonedResponse = response.clone();
+            const clonedResponse = fetchResponse.clone();
             caches.open(CACHE_NAME)
               .then(cache => cache.put(event.request, clonedResponse));
-            return response;
+            return fetchResponse;
           })
           .catch(error => {
+            // Show the offline fallback page if the request is not in cache and fails to fetch
             console.error('Fetch error:', error);
+            return caches.match(OFFLINE_FALLBACK_PAGE);
           });
       })
   );
-}); 
+});
