@@ -198,7 +198,57 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	  <div id="printButtonContainer"></div>
   <div id="continueReadingButtonContainer"></div>
 <div id="google_translate_element"></div>
+<div id="readerContainer">
+    <label for="sentenceInput">Enter a sentence:</label>
+    <input type="text" id="sentenceInput" placeholder="Type your sentence here...">
+    <button id="readButton">Read</button>
+    <button id="stopButton">Stop</button>
+</div>
 
+<script>
+    const sentenceInput = document.getElementById('sentenceInput');
+    const readButton = document.getElementById('readButton');
+    const stopButton = document.getElementById('stopButton');
+    let utterance = null;
+
+    readButton.addEventListener('click', () => {
+      const sentence = sentenceInput.value;
+      readSentence(sentence);
+    });
+
+    stopButton.addEventListener('click', () => {
+      stopReading();
+    });
+
+    function readSentence(sentence) {
+      if ('speechSynthesis' in window) {
+        utterance = new SpeechSynthesisUtterance(sentence);
+        utterance.onend = () => {
+          readButton.style.display = 'block';
+          stopButton.style.display = 'none';
+        };
+	      readButton.style.display = 'none';
+        stopButton.style.display = 'block';
+
+        speechSynthesis.cancel(); // Stop any previous reading
+        speechSynthesis.speak(utterance);
+      } else {
+        alert('Text-to-speech is not supported in this browser. Please try a different browser.');
+      }
+    }
+
+    function stopReading() {
+      if ('speechSynthesis' in window && utterance) {
+        speechSynthesis.cancel();
+        stopButton.style.display = 'none';
+        readButton.style.display = 'block';
+      }
+    }
+  </script>
+	  
+
+
+	  
 <script type="text/javascript">
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
