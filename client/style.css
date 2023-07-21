@@ -28,7 +28,7 @@ body {
 
 /* Style for the language dropdown */
   .goog-te-combo {
-    color: white; /* Text color */
+    color: red; /* Text color */
     background-color: yellow; /* Background color */
     border: none; /* Remove border if you wish */
     font-size: 16px; /* Adjust font size */
