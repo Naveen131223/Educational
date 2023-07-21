@@ -47,8 +47,8 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Send the request to the AI model
-    const responsePromise = openai.createCompletion({
+    // Send the request to the AI model asynchronously
+    const aiRequestPromise = openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
@@ -58,18 +58,13 @@ app.post('/', async (req, res) => {
       presence_penalty: 0,
     });
 
-    // If there are concurrent requests with the same prompt,
-    // wait for the first response and serve it to all of them
-    let response;
-    if (!responseCache[prompt]) {
-      response = await responsePromise;
-      const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-      responseCache[prompt] = botResponse;
-    } else {
-      response = await responsePromise;
-    }
+    // Handle concurrent requests with the same prompt
+    const [response] = await Promise.all([aiRequestPromise]);
 
-    res.status(200).send({ bot: response.data.choices[0]?.text || 'No response from the AI model.' });
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
+
+    res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something went wrong');
