@@ -62,23 +62,8 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 
 	  
- <script>
-  // Feature detection for ES6 modules support
-  var supportsModules = 'noModule' in HTMLScriptElement.prototype;
-
-  if (supportsModules) {
-    // If the browser supports modules, dynamically create an import element
-    var scriptElem = document.createElement('script');
-    scriptElem.type = 'module';
-    scriptElem.src = 'script.js';
-    document.body.appendChild(scriptElem);
-  } else {
-    // If the browser does not support modules, create a regular script tag
-    var fallbackScriptElem = document.createElement('script');
-    fallbackScriptElem.src = 'script.js';
-    document.body.appendChild(fallbackScriptElem);
-  }
-</script>
+ <script type="module" src="script.js" defer></script>
+  
 
 
 
