@@ -58,21 +58,16 @@ app.post('/', async (req, res) => {
       presence_penalty: 0,
     });
 
-    // Set a timeout for the AI request to ensure a 0.5-second response time
-    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 500));
+    // Set a timeout for the AI request to ensure a 1-second response time
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Wait for both the AI request and the timeout to complete
-    const [response] = await Promise.race([aiRequestPromise, timeoutPromise]);
+    const [response] = await Promise.all([aiRequestPromise, timeoutPromise]);
 
-    if (response) {
-      const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-      responseCache[prompt] = botResponse;
-      return res.status(200).send({ bot: botResponse });
-    } else {
-      // If the AI request took longer than 0.5 seconds, respond with a cached response or default message
-      const cachedResponse = responseCache[prompt] || 'No response from the AI model.';
-      return res.status(200).send({ bot: cachedResponse });
-    }
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
+
+    res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something went wrong');
