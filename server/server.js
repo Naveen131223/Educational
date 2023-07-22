@@ -27,6 +27,24 @@ const openai = new OpenAIApi(configuration);
 // Simple in-memory cache to store AI responses
 const responseCache = {};
 
+async function preloadModel() {
+  try {
+    const prompt = 'Preloading AI model...'; // A placeholder prompt for preloading
+    const aiResponse = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0,
+      max_tokens: 1,
+    });
+
+    console.log('AI model preloaded successfully!');
+  } catch (error) {
+    console.error('Failed to preload AI model:', error);
+  }
+}
+
+preloadModel(); // Preload the AI model asynchronously during server startup
+
 app.post('/', async (req, res) => {
   try {
     const { prompt } = req.body;
