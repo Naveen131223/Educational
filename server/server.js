@@ -2,6 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
+import fetch from 'node-fetch';
 
 dotenv.config();
 
@@ -29,7 +30,7 @@ const responseCache = {};
 
 async function preloadModel() {
   try {
-    const prompt = 'Preloading AI model...'; // A placeholder prompt for preloading
+    const prompt = 'Preloading AI model...';
     const aiResponse = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
@@ -43,41 +44,39 @@ async function preloadModel() {
   }
 }
 
-preloadModel(); // Preload the AI model asynchronously during server startup
+preloadModel();
+
+// Function to send the dummy message
+function sendDummyMessage() {
+  fetch('http://your-ai-model-endpoint', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ prompt: 'Hi Sister' }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('AI Response:', data);
+    })
+    .catch((error) => console.error('Error sending dummy message:', error));
+}
+
+// Call the function to start the loop
+function startDummyMessageLoop() {
+  // Send the dummy message immediately when the loop starts
+  sendDummyMessage();
+
+  // Repeat the dummy message every 10 minutes
+  const TEN_MINUTES = 10 * 60 * 1000; // 10 minutes in milliseconds
+  setInterval(sendDummyMessage, TEN_MINUTES);
+}
+
+// Call the function to start the loop
+startDummyMessageLoop();
 
 app.post('/', async (req, res) => {
-  try {
-    const { prompt } = req.body;
-
-    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
-      return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
-    }
-
-    // Check if the response is cached
-    if (responseCache[prompt]) {
-      console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: responseCache[prompt] });
-    }
-
-    // Send the request to the AI model asynchronously
-    const aiResponse = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: `${prompt}`,
-      temperature: 0,
-      max_tokens: 3000,
-      top_p: 1,
-      frequency_penalty: 0.5,
-      presence_penalty: 0,
-    });
-
-    const botResponse = aiResponse.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[prompt] = botResponse;
-
-    res.status(200).send({ bot: botResponse });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Something went wrong');
-  }
+  // ... (existing code for handling AI model requests)
 });
 
 // Error handler middleware
