@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-import cache from 'memory-cache'; // Add the memory-cache library (you can install it with "npm install memory-cache")
 
 dotenv.config();
 
@@ -25,7 +24,8 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const ONE_HOUR = 60 * 60 * 1000; // Cache responses for 1 hour (you can adjust this value if needed)
+// Simple in-memory cache to store AI responses
+const responseCache = {};
 
 app.post('/', async (req, res) => {
   try {
@@ -36,10 +36,9 @@ app.post('/', async (req, res) => {
     }
 
     // Check if the response is cached
-    const cachedResponse = cache.get(prompt);
-    if (cachedResponse) {
+    if (responseCache[prompt]) {
       console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: cachedResponse });
+      return res.status(200).send({ bot: responseCache[prompt] });
     }
 
     // Send the request to the AI model asynchronously
@@ -54,7 +53,7 @@ app.post('/', async (req, res) => {
     });
 
     const botResponse = aiResponse.data.choices[0]?.text || 'No response from the AI model.';
-    cache.put(prompt, botResponse, ONE_HOUR); // Cache the response for one hour
+    responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
