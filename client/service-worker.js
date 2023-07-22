@@ -1,4 +1,4 @@
-const CACHE_NAME = 'my-website-cache-v5';
+const CACHE_NAME = 'my-website-cache-v6';
 const OFFLINE_FALLBACK_PAGE = '/offline.html';
 
 const urlsToCache = [
@@ -34,7 +34,11 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
       .then(response => {
         // Cache-first strategy
-        return response || fetch(event.request)
+        if (response) {
+          return response; // Return the cached response if available
+        }
+
+        return fetch(event.request) // Otherwise, fetch from the network
           .then(fetchResponse => {
             // Check if we received a valid response
             if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
@@ -48,7 +52,7 @@ self.addEventListener('fetch', event => {
             return fetchResponse;
           })
           .catch(error => {
-            // Show the offline fallback page if the request is not in cache and fails to fetch
+            // Show the offline fallback page if the request fails to fetch
             console.error('Fetch error:', error);
             return caches.match(OFFLINE_FALLBACK_PAGE);
           });
