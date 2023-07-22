@@ -4,9 +4,9 @@ const OFFLINE_FALLBACK_PAGE = '/offline.html';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/style.css',
-  '/js/script.js',
-  '/js/server.js',
+  '/style.css',
+  '/script.js',
+  '/server/server.js',
   'https://educational-umber.vercel.app/'
 ];
 
