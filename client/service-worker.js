@@ -6,6 +6,7 @@ const urlsToCache = [
   '/index.html',
   '/css/style.css',
   '/js/script.js',
+  '/js/server.js',
   'https://educational-umber.vercel.app/'
 ];
 
