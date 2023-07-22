@@ -24,6 +24,18 @@ body {
       /* You can add more styles here like text color, font-weight, etc. */
     }
 
+.ExportChatButton {
+    background-color: #2ecc71; /* Change this hexadecimal value to your desired color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+
 
 #readerContainer {
       border: 2px solid #ccc;
