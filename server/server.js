@@ -33,7 +33,7 @@ app.get('/', async (req, res) => {
   });
 });
 
-app.post('/', async (req, res) => {
+app.post('/', async (req, res, next) => {
   try {
     const { prompt } = req.body;
 
@@ -69,8 +69,7 @@ app.post('/', async (req, res) => {
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Something went wrong');
+    next(error);
   }
 });
 
@@ -83,12 +82,4 @@ app.use((err, req, res, next) => {
 // Start the server and handle graceful shutdown
 const server = app.listen(port, () => {
   console.log(`AI server started on http://localhost:${port}`);
-});
-
-process.on('SIGTERM', () => {
-  console.log('Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server has been closed.');
-    process.exit(0);
-  });
 });
