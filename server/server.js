@@ -1,11 +1,14 @@
 import express from 'express';
+import * as dotenv from 'dotenv';
+import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const model = process.env.OPENAI_MODEL || 'text-davinci-003';
-const maxTokens = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 const apiKey = process.env.OPENAI_API_KEY;
@@ -15,38 +18,42 @@ if (!apiKey) {
   process.exit(1);
 }
 
-const configuration = new Configuration({ apiKey });
+const configuration = new Configuration({
+  apiKey,
+});
+
 const openai = new OpenAIApi(configuration);
 
-// Simple in-memory cache to store AI responses' choices
+// Simple in-memory cache to store AI responses
 const responseCache = {};
 
 async function preloadModel() {
   try {
     const prompt = 'Preloading AI model...'; // A placeholder prompt for preloading
-    await openai.createCompletion({ model, prompt, temperature: 0, max_tokens: 1 });
+    const aiResponse = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0,
+      max_tokens: 1,
+    });
+
     console.log('AI model preloaded successfully!');
   } catch (error) {
     console.error('Failed to preload AI model:', error);
-    process.exit(1);
   }
 }
 
 preloadModel(); // Preload the AI model asynchronously during server startup
 
-function validatePrompt(prompt) {
-  return typeof prompt === 'string' && prompt.trim() !== '';
-}
-
 app.post('/', async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    if (!validatePrompt(prompt)) {
+    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
     }
 
-    // Check if the response choices are cached
+    // Check if the response is cached
     if (responseCache[prompt]) {
       console.log('Cache hit for prompt:', prompt);
       return res.status(200).send({ bot: responseCache[prompt] });
@@ -54,17 +61,17 @@ app.post('/', async (req, res) => {
 
     // Send the request to the AI model asynchronously
     const aiResponse = await openai.createCompletion({
-      model,
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
-      max_tokens: maxTokens,
+      max_tokens: 3000,
       top_p: 1,
       frequency_penalty: 0.5,
       presence_penalty: 0,
     });
 
-    const botResponse = aiResponse.data.choices?.[0]?.text || 'No response from the AI model.';
-    responseCache[prompt] = aiResponse.data.choices; // Cache the model's choices array
+    const botResponse = aiResponse.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
