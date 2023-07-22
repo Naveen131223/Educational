@@ -235,6 +235,36 @@ exportChatButton.addEventListener("click", function() {
 document.body.appendChild(exportChatButton);
 
 
+
+	var printButton = document.createElement("button");
+printButton.textContent = "Print Chat"; // Updating the button text to "Print"
+printButton.className = "add-course-button-1";
+printButton.addEventListener("click", function() {
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
+
+  // Apply styling to the printed content
+  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head><title>Print Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
+
+  // Execute the print function
+  printWindow.print();
+});
+
+document.body.appendChild(printButton);
+
+	var shareButton = document.createElement("button");
+        shareButton.innerHTML = "Share";
+        shareButton.className = "add-course-button-3";
+        shareButton.onclick = sharePage;
+        document.body.appendChild(shareButton);
 </script>
 
 	  
@@ -589,29 +619,7 @@ recognition.lang = 'zu-ZA'; // Zulu
 
 
   
-  var printButton = document.createElement("button");
-printButton.textContent = "Print"; // Updating the button text to "Print"
-printButton.className = "add-course-button-1";
-printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
-
-  // Apply styling to the printed content
-  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write("<html><head><title>Print Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
-  printWindow.document.close();
-
-  // Execute the print function
-  printWindow.print();
-});
-
-document.body.appendChild(printButton);
+  
 
 
 
@@ -647,11 +655,7 @@ document.body.appendChild(printButton);
         document.body.appendChild(youtubeButton_1);
 
 
-        var shareButton = document.createElement("button");
-        shareButton.innerHTML = "Share";
-        shareButton.className = "add-course-button-3";
-        shareButton.onclick = sharePage;
-        document.body.appendChild(shareButton);
+        
 		  
 
 
