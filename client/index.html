@@ -216,24 +216,18 @@ var exportChatButton = document.createElement("button");
 exportChatButton.textContent = "Export Chat";
 exportChatButton.className = "ExportChatButton";
 exportChatButton.addEventListener("click", function() {
-  var appDiv = document.getElementById("app");
   var chatContainer = document.getElementById("chat_container");
-  var appContent = appDiv.innerHTML;
   var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the exported content
   var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
-
-  // Remove the microphone logo and small text
-  appContent = appContent.replace('<span class="user-input"> 🎙️</span>', '');
-  appContent = appContent.replace('<span class="small">Press Enter to send</span>', '');
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
   var exportWindow = window.open("", "_blank");
   exportWindow.document.open();
-  exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + appContent + chatContent + "</body></html>");
+  exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
   exportWindow.document.close();
 });
 
