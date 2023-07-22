@@ -209,6 +209,38 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
     <button id="stopButton">Stop</button>
 </div>
 
+
+
+<script>
+var ExportChat = document.createElement("button");
+ExportChat.textContent = "Print";
+ExportChat.className = "ExportChatButton";
+ExportChat.addEventListener("click", function() {
+var appDiv = document.getElementById("app");
+var chatContainer = document.getElementById("chat_container");
+var appContent = appDiv.innerHTML;
+var chatContent = chatContainer.innerHTML;
+
+// Apply styling to the printed content
+var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+
+// Remove the microphone logo and small text
+appContent = appContent.replace('<span class="user-input"> 🎙️</span>', '');
+appContent = appContent.replace('<span class="small">Press Enter to send</span>', '');
+
+// Remove user input keyboard printout
+chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+var printWindow = window.open("", "_blank");
+printWindow.document.open();
+printWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + appContent + "</body></html>");
+});
+
+document.body.appendChild(ExportChat);
+
+</script>
+
+	  
 <script>
     const sentenceInput = document.getElementById('sentenceInput');
     const readButton = document.getElementById('readButton');
