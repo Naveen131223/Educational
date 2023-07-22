@@ -27,7 +27,22 @@ const openai = new OpenAIApi(configuration);
 // Simple in-memory cache to store API responses
 const responseCache = {};
 
+// Flag to track if the initial AI response is cached
+let isInitialAICached = false;
+
+// Function to add a 1-second delay
+async function addDelay() {
+  return new Promise((resolve) => setTimeout(resolve, 1000));
+}
+
 app.get('/', async (req, res) => {
+  // Check if the initial AI response is cached
+  if (!isInitialAICached) {
+    // Add a 1-second delay before responding to the first request
+    await addDelay();
+    isInitialAICached = true;
+  }
+
   res.status(200).send({
     message: 'Hello from CodeX!'
   });
@@ -47,8 +62,8 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Send the request to the AI model asynchronously with a timeout
-    const aiRequestPromise = openai.createCompletion({
+    // Send the request to the AI model asynchronously
+    const aiResponse = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
@@ -58,13 +73,7 @@ app.post('/', async (req, res) => {
       presence_penalty: 0,
     });
 
-    // Set a timeout for the AI request to ensure a 1-second response time
-    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Wait for both the AI request and the timeout to complete
-    const [response] = await Promise.all([aiRequestPromise, timeoutPromise]);
-
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    const botResponse = aiResponse.data.choices[0]?.text || 'No response from the AI model.';
     responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
