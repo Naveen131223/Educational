@@ -47,8 +47,8 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Send the request to the AI model asynchronously with a timeout
-    const aiRequestPromise = openai.createCompletion({
+    // Send the request to the AI model asynchronously
+    const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
@@ -57,12 +57,6 @@ app.post('/', async (req, res) => {
       frequency_penalty: 0.5,
       presence_penalty: 0,
     });
-
-    // Set a timeout for the AI request to ensure a 1-second response time
-    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Wait for both the AI request and the timeout to complete
-    const [response] = await Promise.all([aiRequestPromise, timeoutPromise]);
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
     responseCache[prompt] = botResponse;
