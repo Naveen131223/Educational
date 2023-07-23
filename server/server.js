@@ -40,10 +40,31 @@ async function preloadModel() {
     console.log('AI model preloaded successfully!');
   } catch (error) {
     console.error('Failed to preload AI model:', error);
+    process.exit(1); // If the model preload fails, exit the process
   }
 }
 
-preloadModel(); // Preload the AI model asynchronously during server startup
+async function startServer() {
+  try {
+    await preloadModel(); // Preload the AI model asynchronously during server startup
+    const server = app.listen(port, () => {
+      console.log(`AI server started on http://localhost:${port}`);
+    });
+
+    process.on('SIGTERM', () => {
+      console.log('Shutting down gracefully...');
+      server.close(() => {
+        console.log('Server has been closed.');
+        process.exit(0);
+      });
+    });
+  } catch (error) {
+    console.error('Failed to start the server:', error);
+    process.exit(1); // If an error occurs during server startup, exit the process
+  }
+}
+
+startServer(); // Start the server after the AI model is preloaded
 
 app.post('/', async (req, res) => {
   try {
@@ -85,16 +106,3 @@ app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send('Something went wrong');
 });
-
-// Start the server and handle graceful shutdown
-const server = app.listen(port, () => {
-  console.log(`AI server started on http://localhost:${port}`);
-});
-
-process.on('SIGTERM', () => {
-  console.log('Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server has been closed.');
-    process.exit(0);
-  });
-}); 
