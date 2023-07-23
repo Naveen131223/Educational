@@ -27,6 +27,31 @@ const openai = new OpenAIApi(configuration);
 // Simple in-memory cache to store AI responses
 const responseCache = {};
 
+// Request Validation Middleware
+function validateRequest(req, res, next) {
+  const { prompt } = req.body;
+
+  if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
+    return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
+  }
+
+  // If the request is valid, continue to the next middleware or route handler
+  next();
+}
+
+// Error Logging Middleware
+function logErrors(err, req, res, next) {
+  console.error(err.stack);
+  // Log the error using your preferred logging mechanism (e.g., logging to a file or a centralized service)
+  next(err);
+}
+
+// Error handler middleware
+function errorHandler(err, req, res, next) {
+  console.error(err);
+  res.status(500).send('Something went wrong');
+}
+
 async function preloadModel() {
   try {
     const prompt = 'Preloading AI model...'; // A placeholder prompt for preloading
@@ -66,13 +91,12 @@ async function startServer() {
 
 startServer(); // Start the server after the AI model is preloaded
 
+// Apply Request Validation Middleware to all routes
+app.use(validateRequest);
+
 app.post('/', async (req, res) => {
   try {
     const { prompt } = req.body;
-
-    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
-      return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
-    }
 
     // Check if the response is cached
     if (responseCache[prompt]) {
@@ -101,8 +125,8 @@ app.post('/', async (req, res) => {
   }
 });
 
-// Error handler middleware
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send('Something went wrong');
-});
+// Apply Error Logging Middleware
+app.use(logErrors);
+
+// Apply Error Handler Middleware
+app.use(errorHandler);
