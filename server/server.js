@@ -24,17 +24,21 @@ const openai = new OpenAIApi(configuration);
 // Simple in-memory cache to store API responses
 const responseCache = {};
 let isAIModelReady = false; // Flag to check if the AI model is ready
+const WARM_UP_PROMPT = 'Warm-up prompt';
+
+// Initialize the AI model asynchronously during server startup
+const modelInitializationPromise = initializeAIModel();
 
 async function initializeAIModel() {
   try {
     console.log('Initializing AI model...');
     const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: 'Warm-up prompt',
+      prompt: WARM_UP_PROMPT,
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache['warm-up-prompt'] = botResponse;
+    responseCache[WARM_UP_PROMPT] = botResponse;
 
     console.log('AI model is ready!');
     isAIModelReady = true;
@@ -43,15 +47,39 @@ async function initializeAIModel() {
   }
 }
 
-// Initialize the AI model asynchronously during server startup
-initializeAIModel();
+app.use((req, res, next) => {
+  // If the AI model is not ready and the request is not for the initial warm-up prompt,
+  // send a message indicating that the AI model is initializing.
+  if (!isAIModelReady && req.body.prompt !== WARM_UP_PROMPT) {
+    res.status(200).send({
+      message: 'Initializing AI model, please wait...',
+    });
+  } else {
+    next();
+  }
+});
+
+// Endpoint to provide information on the AI model's initialization status
+app.get('/status', (req, res) => {
+  if (isAIModelReady) {
+    res.status(200).send({
+      status: 'AI model is ready!',
+    });
+  } else {
+    res.status(200).send({
+      status: 'AI model is initializing...',
+    });
+  }
+});
 
 app.get('/', (req, res) => {
   if (isAIModelReady) {
+    // If the AI model is ready, return the cached warm-up response immediately
     res.status(200).send({
-      message: 'Hi Sister',
+      bot: responseCache[WARM_UP_PROMPT],
     });
   } else {
+    // If the AI model is still initializing, send a message indicating the same
     res.status(200).send({
       message: 'Initializing AI model, please wait...',
     });
@@ -102,16 +130,18 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong');
 });
 
-// Start the server
-const server = app.listen(port, () => {
-  console.log(`AI server started on http://localhost:${port}`);
-});
+// Start the server after the AI model is initialized
+modelInitializationPromise.then(() => {
+  const server = app.listen(port, () => {
+    console.log(`AI server started on http://localhost:${port}`);
+  });
 
-process.on('SIGTERM', () => {
-  console.log('Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server has been closed.');
-    process.exit(0);
+  process.on('SIGTERM', () => {
+    console.log('Shutting down gracefully...');
+    server.close(() => {
+      console.log('Server has been closed.');
+      process.exit(0);
+    });
   });
 });
 
