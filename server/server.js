@@ -64,6 +64,30 @@ async function initializeAIModelAndCacheResponse() {
 // Warm-up the AI model when starting the server
 initializeAIModelAndCacheResponse();
 
+// Function to send a dummy message to the AI model
+async function sendDummyMessage() {
+  try {
+    console.log('Sending dummy message...');
+    const response = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: 'Hi Sister',
+      temperature: 0,
+      max_tokens: 3000,
+      top_p: 1,
+      frequency_penalty: 0.5,
+      presence_penalty: 0,
+    });
+
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    console.log('Dummy message response:', botResponse);
+  } catch (error) {
+    console.error('Error sending dummy message:', error);
+  }
+}
+
+// Schedule the function to run every 10 minutes (600,000 milliseconds)
+setInterval(sendDummyMessage, 600000);
+
 app.get('/', (req, res) => {
   if (isAIModelReady) {
     res.status(200).send({
