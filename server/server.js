@@ -23,11 +23,19 @@ const openai = new OpenAIApi(configuration);
 
 // Simple in-memory cache to store API responses
 const responseCache = {};
+let isAIModelReady = false; // Flag to check if the AI model is ready
 
-app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: 'Hi Sister',
-  });
+// Placeholder response for the first request
+app.get('/', (req, res) => {
+  if (isAIModelReady) {
+    res.status(200).send({
+      message: 'Hi Sister',
+    });
+  } else {
+    res.status(200).send({
+      message: 'Initializing AI model, please wait...',
+    });
+  }
 });
 
 app.post('/', async (req, res) => {
@@ -75,8 +83,20 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server and handle graceful shutdown
-const server = app.listen(port, () => {
+const server = app.listen(port, async () => {
   console.log(`AI server started on http://localhost:${port}`);
+  // Load AI model here if needed (optional)
+  try {
+    console.log('Initializing AI model...');
+    await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: 'Initialization prompt',
+    });
+    console.log('AI model is ready!');
+    isAIModelReady = true;
+  } catch (error) {
+    console.error('Error initializing AI model:', error);
+  }
 });
 
 process.on('SIGTERM', () => {
