@@ -1,15 +1,12 @@
 import express from 'express';
-import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 const apiKey = process.env.OPENAI_API_KEY;
 
@@ -29,17 +26,20 @@ const responseCache = {};
 
 app.get('/', async (req, res) => {
   res.status(200).send({
-    message: 'Hi Sister'
+    message: 'Hi Sister',
   });
 });
 
 app.post('/', async (req, res) => {
   try {
-    const { prompt } = req.body;
+    let { prompt } = req.body;
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
     }
+
+    // Sanitize and escape the input prompt to prevent XSS attacks
+    prompt = sanitizeInput(prompt);
 
     // Check if the response is cached
     if (responseCache[prompt]) {
@@ -92,3 +92,26 @@ process.on('SIGTERM', () => {
     process.exit(0);
   });
 });
+
+function sanitizeInput(input) {
+  // Function to sanitize and escape input to prevent XSS attacks
+  // Replace any potentially dangerous characters with their HTML entity representation
+  return input.replace(/[&<>"'\/]/g, (char) => {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#39;';
+      case '/':
+        return '&#x2F;';
+      default:
+        return char;
+    }
+  });
+}
