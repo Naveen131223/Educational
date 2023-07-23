@@ -29,7 +29,7 @@ const responseCache = {};
 
 app.get('/', async (req, res) => {
   res.status(200).send({
-    message: 'Hello from CodeX!'
+    message: 'Hi Sister'
   });
 });
 
