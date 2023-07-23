@@ -25,14 +25,18 @@ const openai = new OpenAIApi(configuration);
 const responseCache = {};
 let isAIModelReady = false; // Flag to check if the AI model is ready
 
-// Initialize the AI model when starting the server
-async function initializeAIModel() {
+// Initialize the AI model and cache the first response
+async function initializeAIModelAndCacheResponse() {
   try {
     console.log('Initializing AI model...');
-    await openai.createCompletion({
+    const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: 'Initialization prompt',
+      prompt: 'Warm-up prompt',
     });
+
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache['warm-up-prompt'] = botResponse;
+
     console.log('AI model is ready!');
     isAIModelReady = true;
   } catch (error) {
@@ -40,7 +44,8 @@ async function initializeAIModel() {
   }
 }
 
-initializeAIModel(); // Call the function to pre-warm the AI model
+// Warm-up the AI model when starting the server
+initializeAIModelAndCacheResponse();
 
 app.get('/', (req, res) => {
   if (isAIModelReady) {
@@ -55,12 +60,48 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-  // The rest of the code remains the same as before
-  // ...
+  try {
+    let { prompt } = req.body;
+
+    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
+      return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
+    }
+
+    // Sanitize and escape the input prompt to prevent XSS attacks
+    prompt = sanitizeInput(prompt);
+
+    // Check if the response is cached
+    if (responseCache[prompt]) {
+      console.log('Cache hit for prompt:', prompt);
+      return res.status(200).send({ bot: responseCache[prompt] });
+    }
+
+    // Send the request to the AI model asynchronously
+    const response = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0,
+      max_tokens: 3000,
+      top_p: 1,
+      frequency_penalty: 0.5,
+      presence_penalty: 0,
+    });
+
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
+
+    res.status(200).send({ bot: botResponse });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
 });
 
-// The error handler and server shutdown code also remain the same
-// ...
+// Error handler middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send('Something went wrong');
+});
 
 // Start the server
 const server = app.listen(port, () => {
