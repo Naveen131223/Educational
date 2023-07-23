@@ -2,6 +2,8 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -23,9 +25,6 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
-
-// Simple in-memory cache to store AI responses
-const responseCache = {};
 
 // Request Validation Middleware
 function validateRequest(req, res, next) {
@@ -52,10 +51,11 @@ function errorHandler(err, req, res, next) {
   res.status(500).send('Something went wrong');
 }
 
+// Preload the AI model before starting the server and store it in a file
 async function preloadModel() {
   try {
     const prompt = 'Preloading AI model...'; // A placeholder prompt for preloading
-    const aiResponse = await openai.createCompletion({
+    await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
@@ -69,9 +69,12 @@ async function preloadModel() {
   }
 }
 
+// Start the server after the AI model is preloaded
 async function startServer() {
   try {
-    await preloadModel(); // Preload the AI model asynchronously during server startup
+    await preloadModel(); // Preload the AI model before starting the server
+
+    // Rest of the code remains the same
     const server = app.listen(port, () => {
       console.log(`AI server started on http://localhost:${port}`);
     });
@@ -89,14 +92,45 @@ async function startServer() {
   }
 }
 
-startServer(); // Start the server after the AI model is preloaded
+startServer();
 
 // Apply Request Validation Middleware to all routes
 app.use(validateRequest);
 
+// Apply Error Logging Middleware
+app.use(logErrors);
+
+// Apply Error Handler Middleware
+app.use(errorHandler);
+
+// File path for the cache
+const cacheFilePath = path.join(__dirname, 'ai_responses_cache.json');
+
+// Read the cache from the file
+function readCache() {
+  try {
+    const cacheData = fs.readFileSync(cacheFilePath, 'utf-8');
+    return JSON.parse(cacheData);
+  } catch (error) {
+    return {};
+  }
+}
+
+// Write the cache to the file
+function writeCache(cache) {
+  try {
+    fs.writeFileSync(cacheFilePath, JSON.stringify(cache, null, 2), 'utf-8');
+  } catch (error) {
+    console.error('Error writing cache:', error);
+  }
+}
+
 app.post('/', async (req, res) => {
   try {
     const { prompt } = req.body;
+
+    // Read the cached responses from the file
+    const responseCache = readCache();
 
     // Check if the response is cached
     if (responseCache[prompt]) {
@@ -118,15 +152,12 @@ app.post('/', async (req, res) => {
     const botResponse = aiResponse.data.choices[0]?.text || 'No response from the AI model.';
     responseCache[prompt] = botResponse;
 
+    // Cache the response in the file
+    writeCache(responseCache);
+
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something went wrong');
   }
 });
-
-// Apply Error Logging Middleware
-app.use(logErrors);
-
-// Apply Error Handler Middleware
-app.use(errorHandler);
