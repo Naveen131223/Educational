@@ -72,9 +72,10 @@ async function preloadModel() {
 // Start the server after the AI model is preloaded
 async function startServer() {
   try {
-    await preloadModel(); // Preload the AI model before starting the server
+    // Start the AI model preload in the background
+    preloadModel();
 
-    // Rest of the code remains the same
+    // Start the server and listen for incoming requests
     const server = app.listen(port, () => {
       console.log(`AI server started on http://localhost:${port}`);
     });
@@ -161,3 +162,6 @@ app.post('/', async (req, res) => {
     res.status(500).send('Something went wrong');
   }
 });
+
+// Apply Error Logging Middleware and other middleware remains the same
+// ...
