@@ -51,34 +51,16 @@ function errorHandler(err, req, res, next) {
   res.status(500).send('Something went wrong');
 }
 
-// Preload the AI model before starting the server and store it in a file
-async function preloadModel() {
-  try {
-    const prompt = 'Preloading AI model...'; // A placeholder prompt for preloading
-    await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: `${prompt}`,
-      temperature: 0,
-      max_tokens: 1,
-    });
-
-    console.log('AI model preloaded successfully!');
-  } catch (error) {
-    console.error('Failed to preload AI model:', error);
-    process.exit(1); // If the model preload fails, exit the process
-  }
-}
-
-// Start the server after the AI model is preloaded
+// Start the server and preload the AI model in the background
 async function startServer() {
   try {
-    // Start the AI model preload in the background
-    preloadModel();
-
     // Start the server and listen for incoming requests
     const server = app.listen(port, () => {
       console.log(`AI server started on http://localhost:${port}`);
     });
+
+    // Preload the AI model in the background
+    preloadModel();
 
     process.on('SIGTERM', () => {
       console.log('Shutting down gracefully...');
