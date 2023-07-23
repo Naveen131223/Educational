@@ -29,30 +29,33 @@ let isAIModelReady = false; // Flag to check if the AI model is ready
 async function initializeAIModelAndCacheResponse() {
   try {
     console.log('Initializing AI model...');
-    const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: 'Warm-up prompt',
-    });
+    const warmUpPrompts = [
+      { prompt: 'Warm-up prompt 1' },
+      { prompt: 'Warm-up prompt 2' },
+      // Add more warm-up prompts here as needed
+    ];
 
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache['warm-up-prompt'] = botResponse;
+    const responses = await Promise.all(
+      warmUpPrompts.map((prompt) =>
+        openai.createCompletion({
+          model: process.env.OPENAI_MODEL || 'text-davinci-003',
+          prompt: prompt.prompt,
+          temperature: 0,
+          max_tokens: 3000,
+          top_p: 1,
+          frequency_penalty: 0.5,
+          presence_penalty: 0,
+        })
+      )
+    );
+
+    for (let i = 0; i < responses.length; i++) {
+      const botResponse = responses[i].data.choices[0]?.text || 'No response from the AI model.';
+      responseCache[warmUpPrompts[i].prompt] = botResponse;
+    }
 
     console.log('AI model is ready!');
     isAIModelReady = true;
-
-    // Start the server after the AI model is ready
-    const server = app.listen(port, () => {
-      console.log(`AI server started on http://localhost:${port}`);
-    });
-
-    // Graceful shutdown
-    process.on('SIGTERM', () => {
-      console.log('Shutting down gracefully...');
-      server.close(() => {
-        console.log('Server has been closed.');
-        process.exit(0);
-      });
-    });
   } catch (error) {
     console.error('Error initializing AI model:', error);
   }
@@ -74,14 +77,60 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-  // The rest of the code remains the same as before
-  // ...
+  try {
+    let { prompt } = req.body;
+
+    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
+      return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
+    }
+
+    // Sanitize and escape the input prompt to prevent XSS attacks
+    prompt = sanitizeInput(prompt);
+
+    // Check if the response is cached
+    if (responseCache[prompt]) {
+      console.log('Cache hit for prompt:', prompt);
+      return res.status(200).send({ bot: responseCache[prompt] });
+    }
+
+    // Send the request to the AI model asynchronously
+    const response = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0,
+      max_tokens: 3000,
+      top_p: 1,
+      frequency_penalty: 0.5,
+      presence_penalty: 0,
+    });
+
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
+
+    res.status(200).send({ bot: botResponse });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
 });
 
 // Error handler middleware
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send('Something went wrong');
+});
+
+// Start the server
+const server = app.listen(port, () => {
+  console.log(`AI server started on http://localhost:${port}`);
+});
+
+process.on('SIGTERM', () => {
+  console.log('Shutting down gracefully...');
+  server.close(() => {
+    console.log('Server has been closed.');
+    process.exit(0);
+  });
 });
 
 function sanitizeInput(input) {
