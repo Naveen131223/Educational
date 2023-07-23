@@ -2,8 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 
@@ -26,94 +24,22 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Request Validation Middleware
-function validateRequest(req, res, next) {
-  const { prompt } = req.body;
+// Simple in-memory cache to store API responses
+const responseCache = {};
 
-  if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
-    return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
-  }
+app.get('/', async (req, res) => {
+  res.status(200).send({
+    message: 'Hello from CodeX!'
+  });
+});
 
-  // If the request is valid, continue to the next middleware or route handler
-  next();
-}
-
-// Error Logging Middleware
-function logErrors(err, req, res, next) {
-  console.error(err.stack);
-  // Log the error using your preferred logging mechanism (e.g., logging to a file or a centralized service)
-  next(err);
-}
-
-// Error handler middleware
-function errorHandler(err, req, res, next) {
-  console.error(err);
-  res.status(500).send('Something went wrong');
-}
-
-// Start the server and preload the AI model in the background
-async function startServer() {
-  try {
-    // Start the server and listen for incoming requests
-    const server = app.listen(port, () => {
-      console.log(`AI server started on http://localhost:${port}`);
-    });
-
-    // Preload the AI model in the background
-    preloadModel();
-
-    process.on('SIGTERM', () => {
-      console.log('Shutting down gracefully...');
-      server.close(() => {
-        console.log('Server has been closed.');
-        process.exit(0);
-      });
-    });
-  } catch (error) {
-    console.error('Failed to start the server:', error);
-    process.exit(1); // If an error occurs during server startup, exit the process
-  }
-}
-
-startServer();
-
-// Apply Request Validation Middleware to all routes
-app.use(validateRequest);
-
-// Apply Error Logging Middleware
-app.use(logErrors);
-
-// Apply Error Handler Middleware
-app.use(errorHandler);
-
-// File path for the cache
-const cacheFilePath = path.join(__dirname, 'ai_responses_cache.json');
-
-// Read the cache from the file
-function readCache() {
-  try {
-    const cacheData = fs.readFileSync(cacheFilePath, 'utf-8');
-    return JSON.parse(cacheData);
-  } catch (error) {
-    return {};
-  }
-}
-
-// Write the cache to the file
-function writeCache(cache) {
-  try {
-    fs.writeFileSync(cacheFilePath, JSON.stringify(cache, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error writing cache:', error);
-  }
-}
-
-app.post('/', async (req, res) => {
+app.post('/', async (req, res, next) => {
   try {
     const { prompt } = req.body;
 
-    // Read the cached responses from the file
-    const responseCache = readCache();
+    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
+      return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
+    }
 
     // Check if the response is cached
     if (responseCache[prompt]) {
@@ -121,8 +47,8 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Send the request to the AI model asynchronously
-    const aiResponse = await openai.createCompletion({
+    // Send the request to the AI model asynchronously with a timeout
+    const aiRequestPromise = openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
@@ -132,18 +58,28 @@ app.post('/', async (req, res) => {
       presence_penalty: 0,
     });
 
-    const botResponse = aiResponse.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[prompt] = botResponse;
+    // Set a timeout for the AI request to ensure a 1-second response time
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Cache the response in the file
-    writeCache(responseCache);
+    // Wait for both the AI request and the timeout to complete
+    const [response] = await Promise.all([aiRequestPromise, timeoutPromise]);
+
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Something went wrong');
+    next(error);
   }
 });
 
-// Apply Error Logging Middleware and other middleware remains the same
-// ...
+// Error handler middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send('Something went wrong');
+});
+
+// Start the server and handle graceful shutdown
+const server = app.listen(port, () => {
+  console.log(`AI server started on http://localhost:${port}`);
+});
