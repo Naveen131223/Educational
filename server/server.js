@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-import fetch from 'node-fetch'; // Import 'node-fetch' to use it in Node.js environment
 
 dotenv.config();
 
@@ -45,38 +44,6 @@ async function preloadModel() {
 }
 
 preloadModel(); // Preload the AI model asynchronously during server startup
-
-// Function to send the dummy message
-function sendDummyMessage() {
-  // Modify this function to send the dummy message to the AI model endpoint
-  // Replace 'http://your-ai-model-endpoint' with the actual URL of your AI model
-  fetch('http://your-ai-model-endpoint', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ prompt: 'Hi Sister' }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle the AI response here if needed
-      console.log('AI Response:', data);
-    })
-    .catch((error) => console.error('Error sending dummy message:', error));
-}
-
-// Call the function to start the loop
-function startDummyMessageLoop() {
-  // Send the dummy message immediately when the loop starts
-  sendDummyMessage();
-
-  // Repeat the dummy message every 5 minutes
-  const FIVE_MINUTES = 5 * 60 * 1000; // 5 minutes in milliseconds
-  setInterval(sendDummyMessage, FIVE_MINUTES);
-}
-
-// Call the function to start the loop
-startDummyMessageLoop();
 
 app.post('/', async (req, res) => {
   try {
@@ -130,4 +97,4 @@ process.on('SIGTERM', () => {
     console.log('Server has been closed.');
     process.exit(0);
   });
-});
+}); 
