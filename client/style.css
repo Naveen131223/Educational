@@ -37,6 +37,63 @@ body {
 
 
 
+
+.box-container {
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+#fileInput {
+  display: none;
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upload-container label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.download-container {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #007bff;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#downloadLink p {
+  margin: 0;
+}
+
+#copyButton {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#copyButton.copied {
+  background-color: #ffd700; /* Yellow color when pressed */
+}
+
+
+
 #readerContainer {
       border: 2px solid #ccc;
       border-radius: 8px;
