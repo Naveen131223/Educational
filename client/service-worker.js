@@ -1,13 +1,14 @@
-const CACHE_NAME = 'my-website-cache-v6';
+const CACHE_NAME = 'my-website-cache-v7';
 const OFFLINE_FALLBACK_PAGE = '/offline.html';
+
+const allowedHosts = ['yourdomain.com', 'educational-umber.vercel.app'];
 
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/script.js',
-  '/server/server.js',
-  'https://educational-umber.vercel.app/'
+  // Only cache public assets, avoid sensitive resources
 ];
 
 self.addEventListener('install', event => {
@@ -30,6 +31,18 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const requestURL = new URL(event.request.url);
+
+  // 1. Scope Limitation: Limit the service worker scope to specific directories or paths
+  if (!requestURL.pathname.startsWith('/your/specific/path/')) {
+    return; // Skip handling for requests outside the specific path
+  }
+
+  // 2. Origin Validation: Only cache resources from allowed origins
+  if (!allowedHosts.includes(requestURL.host)) {
+    return; // Skip caching requests from untrusted origins
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {
@@ -38,10 +51,20 @@ self.addEventListener('fetch', event => {
           return response; // Return the cached response if available
         }
 
+        // 3. Check for HTTPS: Ensure the service worker runs on a secure origin
+        if (!requestURL.protocol.startsWith('https')) {
+          return fetch(event.request); // Fetch non-secure requests directly
+        }
+
         return fetch(event.request) // Otherwise, fetch from the network
           .then(fetchResponse => {
-            // Check if we received a valid response
-            if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+            // 4. Fetch Event Validation: Validate request origin and method
+            if (
+              !fetchResponse ||
+              !fetchResponse.ok ||
+              fetchResponse.type !== 'basic' ||
+              event.request.method !== 'GET'
+            ) {
               return fetchResponse;
             }
 
