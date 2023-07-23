@@ -219,7 +219,71 @@ const module = await import("./script.js?v=v2");
     <button id="stopButton">Stop Reading</button>
 </div>
 
+  <div class="box-container">
+    <div class="upload-container">
+      <div>
+        <h1>Upload a PDF File</h1>
+        <label for="fileInput">Upload PDF</label>
+        <input type="file" id="fileInput" accept=".pdf" />
+      </div>
+    </div>
+  </div>
 
+  <div class="download-container" id="downloadLink">
+    <div>
+      <p id="linkText">Link will appear here after upload</p>
+      <button id="copyButton">Copy Link</button>
+    </div>
+  </div>
+
+	  
+
+<script>
+	const fileInput = document.getElementById("fileInput");
+const downloadLinkContainer = document.getElementById("downloadLink");
+const copyButton = document.getElementById("copyButton");
+const linkText = document.getElementById("linkText");
+
+fileInput.addEventListener("change", handleFileSelect);
+
+function handleFileSelect(event) {
+  const file = event.target.files[0];
+  if (!file || !file.type.match("application/pdf")) {
+    linkText.textContent = "Please select a valid PDF file.";
+    downloadLinkContainer.style.display = "none";
+    return;
+  }
+
+  // Read the file and create a data URL
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const pdfDataUrl = event.target.result;
+
+    // Show the download link as plain text
+    linkText.textContent = pdfDataUrl;
+    downloadLinkContainer.style.display = "flex"; // Changed to "flex" to ensure the container is visible
+    copyButton.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+}
+
+copyButton.addEventListener("click", function () {
+  const textArea = document.createElement("textarea");
+  textArea.value = linkText.textContent;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textArea);
+
+  // Change button color when clicked
+  copyButton.classList.add("copied");
+  setTimeout(function () {
+    copyButton.classList.remove("copied");
+  }, 1000); // Remove the class after 1000ms (1 second)
+});
+</script>
+
+	  
 
 <script>
 var exportChatButton = document.createElement("button");
