@@ -25,34 +25,16 @@ const openai = new OpenAIApi(configuration);
 const responseCache = {};
 let isAIModelReady = false; // Flag to check if the AI model is ready
 
-// Initialize the AI model and cache the first response
-async function initializeAIModelAndCacheResponse() {
+async function initializeAIModel() {
   try {
     console.log('Initializing AI model...');
-    const warmUpPrompts = [
-      { prompt: 'Warm-up prompt 1' },
-      { prompt: 'Warm-up prompt 2' },
-      // Add more warm-up prompts here as needed
-    ];
+    const response = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: 'Warm-up prompt',
+    });
 
-    const responses = await Promise.all(
-      warmUpPrompts.map((prompt) =>
-        openai.createCompletion({
-          model: process.env.OPENAI_MODEL || 'text-davinci-003',
-          prompt: prompt.prompt,
-          temperature: 0,
-          max_tokens: 3000,
-          top_p: 1,
-          frequency_penalty: 0.5,
-          presence_penalty: 0,
-        })
-      )
-    );
-
-    for (let i = 0; i < responses.length; i++) {
-      const botResponse = responses[i].data.choices[0]?.text || 'No response from the AI model.';
-      responseCache[warmUpPrompts[i].prompt] = botResponse;
-    }
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache['warm-up-prompt'] = botResponse;
 
     console.log('AI model is ready!');
     isAIModelReady = true;
@@ -61,32 +43,8 @@ async function initializeAIModelAndCacheResponse() {
   }
 }
 
-// Warm-up the AI model when starting the server
-initializeAIModelAndCacheResponse();
-
-// Function to send a dummy message to the AI model
-async function sendDummyMessage() {
-  try {
-    console.log('Sending dummy message...');
-    const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: 'Hi Sister',
-      temperature: 0,
-      max_tokens: 3000,
-      top_p: 1,
-      frequency_penalty: 0.5,
-      presence_penalty: 0,
-    });
-
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    console.log('Dummy message response:', botResponse);
-  } catch (error) {
-    console.error('Error sending dummy message:', error);
-  }
-}
-
-// Schedule the function to run every 10 minutes (600,000 milliseconds)
-setInterval(sendDummyMessage, 600000);
+// Initialize the AI model asynchronously during server startup
+initializeAIModel();
 
 app.get('/', (req, res) => {
   if (isAIModelReady) {
