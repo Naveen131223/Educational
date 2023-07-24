@@ -1,11 +1,11 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
-import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { body, validationResult } from 'express-validator';
+import NodeCache from 'node-cache';
 
 dotenv.config();
 
@@ -16,19 +16,10 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const app = express();
+const cache = new NodeCache({ stdTTL: 60 }); // Cache responses for 60 seconds
 
 // Enable gzip compression
 app.use(compression());
-
-// Set up rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
-
-app.use(cors());
-app.use(express.json());
 
 // Set up Content Security Policy (CSP)
 app.use(
@@ -51,6 +42,15 @@ app.use(
   })
 );
 
+// Set up rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
+app.use(express.json());
+
 // Validate user input
 app.post(
   '/',
@@ -62,17 +62,27 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    try {
-      const prompt = req.body.prompt;
+    const prompt = req.body.prompt;
 
+    // Check if the response is cached
+    const cachedResponse = cache.get(prompt);
+    if (cachedResponse) {
+      return res.status(200).send(cachedResponse);
+    }
+
+    try {
       // Your existing code to interact with OpenAI API...
+      const botResponse = await openai.someFunction(prompt);
+
+      // Cache the response
+      cache.set(prompt, { bot: botResponse });
 
       res.status(200).send({
         bot: botResponse,
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send(error || 'Something went wrong');
+      res.status(500).send('Something went wrong');
     }
   }
 );
