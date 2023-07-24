@@ -5,6 +5,7 @@
      crossorigin="anonymous"></script> 
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.min.js"></script>
 	  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+	  <script src="https://unpkg.com/html-docx-js@0.5.0/dist/html-docx.js"></script>
 	  <meta name="google-site-verification" content="-6KZXHe6S_sLMkKow-xFPO9VgiCu7ZRc6suedaarfj8" />
 	  
 	  
@@ -278,11 +279,6 @@ document.body.appendChild(printButton);
 </script>
 
 
-<!-- Include the docxtemplater library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.17.1/docxtemplater.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.js"></script>
-
 <script>
   var wordButton = document.createElement("button");
   wordButton.textContent = "Generate Word"; // Updating the button text
@@ -297,33 +293,14 @@ document.body.appendChild(printButton);
     // Remove user input keyboard printout
     chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-    // Create a template for the Word document
-    var template = "<html><head><title>Print Chat</title>" + style + "</head><body>{{chatContent}}</body></html>";
+    // Create the final HTML content to convert to Word
+    var htmlContent = "<html><head><title>Chat</title>" + style + "</head><body>" + chatContent + "</body></html>";
 
-    // Prepare the data to be passed to the template
-    var data = {
-      chatContent: chatContent
-    };
-
-    // Process the template using docxtemplater
-    var docx = new Docxtemplater();
-    docx.loadZip(new JSZip(template));
-    docx.setData(data);
-    try {
-      docx.render();
-    } catch (error) {
-      console.log(error);
-      return;
-    }
-
-    // Generate the Word document as a Blob
-    var out = docx.getZip().generate({
-      type: "blob",
-      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    });
+    // Convert HTML to Word
+    var docx = htmlDocx.asBlob(htmlContent);
 
     // Save the Word document as a file
-    saveAs(out, "chat.docx");
+    saveAs(docx, "chat.docx");
   });
 
   document.body.appendChild(wordButton);
