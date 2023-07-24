@@ -79,47 +79,58 @@ app.get('/', (req, res) => {
 
 app.post('/', async (req, res) => {
   try {
-    let { prompt } = req.body;
+    let { prompt, api } = req.body;
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
+    }
+
+    if (!api || typeof api !== 'string' || api.trim() === '') {
+      return res.status(400).send({ error: 'Invalid or missing API name in the request body.' });
     }
 
     // Sanitize and escape the input prompt to prevent XSS attacks
     prompt = sanitizeInput(prompt);
 
     // Check if the response is cached
-    if (responseCache[prompt]) {
+    if (responseCache[api] && responseCache[api][prompt]) {
       console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: responseCache[prompt] });
+      return res.status(200).send({ bot: responseCache[api][prompt] });
     }
 
-    // Generate the response from the AI model
-    const maxTokens = 13000; // Maximum number of tokens to generate per API call (adjust as needed)
-    let botResponse = '';
-
-    while (botResponse.length < maxTokens) {
-      const response = await openai.createCompletion({
-        model: process.env.OPENAI_MODEL || 'text-davinci-003',
-        prompt: `${prompt}`,
-        temperature: 0.7,
-        max_tokens: maxTokens - botResponse.length, // Adjust max_tokens for pagination
-        top_p: 0.7,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
-        n: 1, // Set n=1 to get a single response for each API call
-      });
-
-      const chunk = response.data.choices[0]?.text || 'No response from the AI model.';
-      botResponse += chunk;
-      
-      // If the response is truncated, break the loop
-      if (response.data.choices[0]?.finish_reason === 'incomplete') {
+    // Execute the requested API call based on the 'api' parameter
+    let response;
+    switch (api) {
+      case 'createCompletion':
+        response = await openai.createCompletion({
+          model: process.env.OPENAI_MODEL || 'text-davinci-003',
+          prompt: `${prompt}`,
+          temperature: 0.7,
+          max_tokens: 4096,
+          top_p: 0.7,
+          frequency_penalty: 0.0,
+          presence_penalty: 0.0,
+        });
         break;
-      }
+
+      // Add more cases for different API calls as needed
+      // For example:
+      // case 'classifyText':
+      //   response = await openai.classifyText({ prompt: `${prompt}`, ... });
+      //   break;
+
+      default:
+        return res.status(400).send({ error: 'Invalid or unsupported API requested.' });
     }
 
-    responseCache[prompt] = botResponse;
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+
+    // Cache the response based on the 'api' parameter
+    if (!responseCache[api]) {
+      responseCache[api] = {};
+    }
+    responseCache[api][prompt] = botResponse;
+
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
