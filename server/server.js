@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-import redis from 'redis'; // Make sure to install 'redis' npm package
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -22,14 +21,12 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Initialize Redis client (Update with your Redis connection details)
-const redisClient = redis.createClient({
-  host: 'localhost', // Replace with your Redis server host
-  port: 6379, // Replace with your Redis server port
-});
+const MAX_CACHE_SIZE = 100; // Adjust the cache size as needed
+let isAIModelReady = false; // Flag to check if the AI model is ready
+const responseCache = new Map();
+const WARM_UP_PROMPT = 'Warm-up prompt';
 
 // Pre-warm the AI Model during server startup
-const WARM_UP_PROMPT = 'Warm-up prompt';
 initializeAIModel();
 
 async function initializeAIModel() {
@@ -41,12 +38,23 @@ async function initializeAIModel() {
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[WARM_UP_PROMPT] = botResponse;
-
-    // Store the response in Redis for persistent caching
-    redisClient.set(WARM_UP_PROMPT, botResponse);
+    responseCache.set(WARM_UP_PROMPT, botResponse);
 
     console.log('AI model is ready!');
+    isAIModelReady = true;
+
+    // Start the server after the AI model is initialized
+    const server = app.listen(port, () => {
+      console.log(`AI server started on http://localhost:${port}`);
+    });
+
+    process.on('SIGTERM', () => {
+      console.log('Shutting down gracefully...');
+      server.close(() => {
+        console.log('Server has been closed.');
+        process.exit(0);
+      });
+    });
   } catch (error) {
     console.error('Error initializing AI model:', error);
     process.exit(1); // Exit the server if there's an error during initialization
@@ -66,9 +74,9 @@ app.use((req, res, next) => {
 // Middleware to handle cache lookup
 app.use((req, res, next) => {
   const { prompt } = req.body;
-  if (responseCache[prompt]) {
+  if (responseCache.has(prompt)) {
     console.log('Cache hit for prompt:', prompt);
-    return res.status(200).send({ bot: responseCache[prompt] });
+    return res.status(200).send({ bot: responseCache.get(prompt) });
   }
   next();
 });
@@ -95,46 +103,42 @@ app.post('/', async (req, res) => {
     // Sanitize and escape the input prompt to prevent XSS attacks
     prompt = sanitizeInput(prompt);
 
-    // Check if the response is cached in Redis
-    redisClient.get(prompt, async (error, cachedResponse) => {
-      if (error) {
-        console.error('Error fetching from cache:', error);
-      }
+    // Check if the response is cached
+    if (responseCache.has(prompt)) {
+      console.log('Cache hit for prompt:', prompt);
+      return res.status(200).send({ bot: responseCache.get(prompt) });
+    }
 
-      if (cachedResponse) {
-        console.log('Cache hit for prompt:', prompt);
-        responseCache[prompt] = cachedResponse;
-        return res.status(200).send({ bot: cachedResponse });
-      }
-
-      // Set a timeout for generating the response to avoid long waiting times
-      const timeoutMs = 5000; // Adjust this value as needed
-      const responsePromise = openai.createCompletion({
-        model: process.env.OPENAI_MODEL || 'text-davinci-003',
-        prompt: `${prompt}`,
-        temperature: 0.7,
-        max_tokens: 200,
-        top_p: 0.7,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
-      });
-
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error('AI model response timeout'));
-        }, timeoutMs);
-      });
-
-      const response = await Promise.race([responsePromise, timeoutPromise]);
-
-      const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-      responseCache[prompt] = botResponse;
-
-      // Store the response in Redis for persistent caching
-      redisClient.set(prompt, botResponse);
-
-      res.status(200).send({ bot: botResponse });
+    // Set a timeout for generating the response to avoid long waiting times
+    const timeoutMs = 5000; // Adjust this value as needed
+    const responsePromise = openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0.7,
+      max_tokens: 200,
+      top_p: 0.7,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
     });
+
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('AI model response timeout'));
+      }, timeoutMs);
+    });
+
+    const response = await Promise.race([responsePromise, timeoutPromise]);
+
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+
+    // Add the response to the cache
+    if (responseCache.size >= MAX_CACHE_SIZE) {
+      const oldestPrompt = responseCache.keys().next().value;
+      responseCache.delete(oldestPrompt);
+    }
+    responseCache.set(prompt, botResponse);
+
+    res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something went wrong');
@@ -159,9 +163,6 @@ process.on('SIGTERM', () => {
     process.exit(0);
   });
 });
-
-let isAIModelReady = false; // Flag to check if the AI model is ready
-const responseCache = {};
 
 function sanitizeInput(input) {
   return input.replace(/[&<>"'\/]/g, (char) => {
