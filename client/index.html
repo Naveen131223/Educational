@@ -280,11 +280,13 @@ document.body.appendChild(printButton);
 
 <!-- Include the docxtemplater library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.17.1/docxtemplater.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.js"></script>
 
 <script>
   var wordButton = document.createElement("button");
   wordButton.textContent = "Generate Word"; // Updating the button text
-  wordButton.className = "generate";
+  wordButton.className = "add-course-button-1";
   wordButton.addEventListener("click", function() {
     var chatContainer = document.getElementById("chat_container");
     var chatContent = chatContainer.innerHTML;
@@ -320,21 +322,13 @@ document.body.appendChild(printButton);
       mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     });
 
-    // Create a URL for the Blob and initiate a file download
-    var url = window.URL.createObjectURL(out);
-    var link = document.createElement("a");
-    link.href = url;
-    link.download = "chat.docx"; // Set the desired file name
-    document.body.appendChild(link);
-    link.click();
-
-    // Clean up the URL and remove the link element
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(link);
+    // Save the Word document as a file
+    saveAs(out, "chat.docx");
   });
 
   document.body.appendChild(wordButton);
 </script>
+
 
 
 
