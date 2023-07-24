@@ -25,7 +25,6 @@ const openai = new OpenAIApi(configuration);
 const responseCache = {};
 let isAIModelReady = false; // Flag to check if the AI model is ready
 const WARM_UP_PROMPT = 'Warm-up prompt';
-const MAX_CACHE_SIZE = 1000; // Maximum number of cached responses
 
 // Initialize the AI model asynchronously during server startup
 const modelInitializationPromise = initializeAIModel();
@@ -93,13 +92,10 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Use a faster AI model with fewer parameters, if available
-    const modelName = process.env.OPENAI_MODEL || 'text-davinci-003';
-
     // Set a timeout for generating the response to avoid long waiting times
-    const timeoutMs = 1000; // Adjust this value as needed
+    const timeoutMs = 5000; // Adjust this value as needed
     const responsePromise = openai.createCompletion({
-      model: modelName,
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0.7,
       max_tokens: 200,
@@ -117,11 +113,7 @@ app.post('/', async (req, res) => {
     const response = await Promise.race([responsePromise, timeoutPromise]);
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-
-    // Cache the response for future use
-    if (Object.keys(responseCache).length < MAX_CACHE_SIZE) {
-      responseCache[prompt] = botResponse;
-    }
+    responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
