@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { body, validationResult } from 'express-validator';
 import NodeCache from 'node-cache';
+import WebSocket from 'ws'; // Import WebSocket library
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const openai = new OpenAIApi(configuration);
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 60 }); // Cache responses for 60 seconds
+const clients = new Set(); // Store WebSocket clients
 
 // Enable gzip compression
 app.use(compression());
@@ -51,6 +53,26 @@ app.use(limiter);
 
 app.use(express.json());
 
+// Websocket endpoint for clients to connect
+const wss = new WebSocket.Server({ noServer: true });
+wss.on('connection', (ws) => {
+  clients.add(ws);
+
+  ws.on('close', () => {
+    clients.delete(ws);
+  });
+});
+
+// Function to send response to all connected clients
+const sendResponseToClients = (prompt, botResponse) => {
+  const payload = { prompt, botResponse };
+  const serializedPayload = JSON.stringify(payload);
+
+  for (const client of clients) {
+    client.send(serializedPayload);
+  }
+};
+
 // Validate user input
 app.post(
   '/',
@@ -77,6 +99,9 @@ app.post(
       // Cache the response
       cache.set(prompt, { bot: botResponse });
 
+      // Send the response to all connected clients (real-time update)
+      sendResponseToClients(prompt, botResponse);
+
       res.status(200).send({
         bot: botResponse,
       });
@@ -87,20 +112,12 @@ app.post(
   }
 );
 
-// Pre-warm the server by sending a dummy request
-const preWarm = async () => {
-  try {
-    const dummyPrompt = "Hi Sister";
-    const response = await openai.someFunction(dummyPrompt);
-    cache.set(dummyPrompt, { bot: response });
-    console.log('Server pre-warmed successfully.');
-  } catch (error) {
-    console.error('Error while pre-warming server:', error);
-  }
-};
+// Create HTTP server
+const server = app.listen(5000, () => console.log('AI server started on http://localhost:5000'));
 
-// Call the preWarm function when the server starts
-app.listen(5000, async () => {
-  console.log('AI server started on http://localhost:5000');
-  await preWarm();
+// Upgrade HTTP server to WebSocket server
+server.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
 });
