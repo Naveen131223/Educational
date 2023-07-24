@@ -72,13 +72,10 @@ app.post(
 
     try {
       // Fetch the bot response from OpenAI API asynchronously
-      const fetchBotResponse = openai.someFunction(prompt);
+      const botResponse = await openai.someFunction(prompt);
 
-      // Set the cache to avoid unnecessary API calls for the same prompt
-      cache.set(prompt, fetchBotResponse);
-
-      // Wait for the API response to complete
-      const botResponse = await fetchBotResponse;
+      // Cache the response
+      cache.set(prompt, { bot: botResponse });
 
       res.status(200).send({
         bot: botResponse,
