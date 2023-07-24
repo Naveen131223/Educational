@@ -97,7 +97,7 @@ app.post('/', async (req, res) => {
     const modelName = process.env.OPENAI_MODEL || 'text-davinci-003';
 
     // Set a timeout for generating the response to avoid long waiting times
-    const timeoutMs = 3000; // Adjust this value as needed
+    const timeoutMs = 1000; // Adjust this value as needed
     const responsePromise = openai.createCompletion({
       model: modelName,
       prompt: `${prompt}`,
