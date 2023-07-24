@@ -21,7 +21,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const MAX_CACHE_SIZE = 100; // Adjust the cache size as needed
+const MAX_CACHE_SIZE = 10000; // Adjust the cache size as needed
 let isAIModelReady = false; // Flag to check if the AI model is ready
 const responseCache = new Map();
 const WARM_UP_PROMPT = 'Warm-up prompt';
