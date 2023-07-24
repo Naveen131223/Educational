@@ -227,54 +227,7 @@ const module = await import("./script.js?v=v2");
 	  
 
 <script>
-var exportChatButton = document.createElement("button");
-exportChatButton.textContent = "Export Chat";
-exportChatButton.className = "ExportChatButton";
-exportChatButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
-
-  // Apply styling to the exported content
-  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var exportWindow = window.open("", "_blank");
-  exportWindow.document.open();
-  exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
-  exportWindow.document.close();
-});
-
-document.body.appendChild(exportChatButton);
-
-
-
-	var printButton = document.createElement("button");
-printButton.textContent = "Print Chat"; // Updating the button text to "Print"
-printButton.className = "add-course-button-1";
-printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
-
-  // Apply styling to the printed content
-  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write("<html><head><title>Print Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
-  printWindow.document.close();
-
-  // Execute the print function
-  printWindow.print();
-});
-
-document.body.appendChild(printButton);
-
-  
+var _0x6905f=_0x4913;function _0x4913(_0x338f84,_0x1ec845){var _0x1bfcb3=_0x1bfc();return _0x4913=function(_0x491331,_0x4ed9e4){_0x491331=_0x491331-0xec;var _0x4b6b53=_0x1bfcb3[_0x491331];return _0x4b6b53;},_0x4913(_0x338f84,_0x1ec845);}function _0x1bfc(){var _0x3c89a4=['document','2HTyyRn','5260jkFxMu','add-course-button-1','innerHTML','ExportChatButton','541203AxQjXj','button','close','791682SsAYdA','print','2551970NtgmhY','Print\x20Chat','write','</head><body>','className','</body></html>','1216193hKrmlZ','<style>\x20.question\x20{\x20color:\x20blue;\x20}\x20.answer\x20{\x20color:\x20red;\x20}\x20</style>','_blank','appendChild','Export\x20Chat','chat_container','addEventListener','click','body','24OKAumU','open','70112DYGjAs','<html><head><title>Print\x20Chat</title>','getElementById','20fMkkMI','6435bDEOql','replace','textContent','createElement','302242ZRWjJb','752ayIugs'];_0x1bfc=function(){return _0x3c89a4;};return _0x1bfc();}(function(_0x57faf1,_0x30b674){var _0x3b88d0=_0x4913,_0x43516d=_0x57faf1();while(!![]){try{var _0x240c7a=parseInt(_0x3b88d0(0xf9))/0x1*(-parseInt(_0x3b88d0(0xf6))/0x2)+parseInt(_0x3b88d0(0xfe))/0x3*(-parseInt(_0x3b88d0(0xf1))/0x4)+parseInt(_0x3b88d0(0x103))/0x5+parseInt(_0x3b88d0(0x101))/0x6+-parseInt(_0x3b88d0(0xee))/0x7*(-parseInt(_0x3b88d0(0xf7))/0x8)+-parseInt(_0x3b88d0(0xf2))/0x9*(-parseInt(_0x3b88d0(0xfa))/0xa)+parseInt(_0x3b88d0(0x109))/0xb*(-parseInt(_0x3b88d0(0xec))/0xc);if(_0x240c7a===_0x30b674)break;else _0x43516d['push'](_0x43516d['shift']());}catch(_0x143103){_0x43516d['push'](_0x43516d['shift']());}}}(_0x1bfc,0x82822));var exportChatButton=document['createElement']('button');exportChatButton['textContent']=_0x6905f(0x10d),exportChatButton[_0x6905f(0x107)]=_0x6905f(0xfd),exportChatButton[_0x6905f(0x10f)]('click',function(){var _0x1db221=_0x6905f,_0x194d5=document[_0x1db221(0xf0)](_0x1db221(0x10e)),_0x375885=_0x194d5[_0x1db221(0xfc)],_0x1fec3a='<style>\x20.question\x20{\x20color:\x20blue;\x20}\x20.answer\x20{\x20color:\x20red;\x20}\x20</style>';_0x375885=_0x375885[_0x1db221(0xf3)](/<span class="user-input">.+?<\/span>/g,'');var _0x29d5e3=window[_0x1db221(0xed)]('',_0x1db221(0x10b));_0x29d5e3[_0x1db221(0xf8)]['open'](),_0x29d5e3[_0x1db221(0xf8)][_0x1db221(0x105)]('<html><head><title>Export\x20Chat</title>'+_0x1fec3a+_0x1db221(0x106)+_0x375885+'</body></html>'),_0x29d5e3[_0x1db221(0xf8)]['close']();}),document[_0x6905f(0x111)][_0x6905f(0x10c)](exportChatButton);var printButton=document[_0x6905f(0xf5)](_0x6905f(0xff));printButton[_0x6905f(0xf4)]=_0x6905f(0x104),printButton[_0x6905f(0x107)]=_0x6905f(0xfb),printButton['addEventListener'](_0x6905f(0x110),function(){var _0x44ffdd=_0x6905f,_0x11bfd0=document['getElementById'](_0x44ffdd(0x10e)),_0x5d078d=_0x11bfd0['innerHTML'],_0x321671=_0x44ffdd(0x10a);_0x5d078d=_0x5d078d[_0x44ffdd(0xf3)](/<span class="user-input">.+?<\/span>/g,'');var _0x1d7388=window['open']('',_0x44ffdd(0x10b));_0x1d7388[_0x44ffdd(0xf8)][_0x44ffdd(0xed)](),_0x1d7388[_0x44ffdd(0xf8)][_0x44ffdd(0x105)](_0x44ffdd(0xef)+_0x321671+_0x44ffdd(0x106)+_0x5d078d+_0x44ffdd(0x108)),_0x1d7388['document'][_0x44ffdd(0x100)](),_0x1d7388[_0x44ffdd(0x102)]();}),document[_0x6905f(0x111)][_0x6905f(0x10c)](printButton);
 </script>
 
 
