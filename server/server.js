@@ -9,6 +9,7 @@ app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
 const apiKey = process.env.OPENAI_API_KEY;
+const warmUpPrompt = process.env.WARM_UP_PROMPT || 'Warm-up prompt'; // Warm-up prompt configuration
 
 if (!apiKey) {
   console.error('Please provide an OPENAI_API_KEY in your environment variables.');
@@ -24,7 +25,6 @@ const openai = new OpenAIApi(configuration);
 // Simple in-memory cache to store API responses
 const responseCache = {};
 let isAIModelReady = false; // Flag to check if the AI model is ready
-const WARM_UP_PROMPT = 'Warm-up prompt';
 
 // Initialize the AI model asynchronously during server startup
 initializeAIModel();
@@ -34,11 +34,11 @@ async function initializeAIModel() {
     console.log('Initializing AI model...');
     const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: WARM_UP_PROMPT,
+      prompt: warmUpPrompt, // Use the warm-up prompt from the configuration
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[WARM_UP_PROMPT] = botResponse;
+    responseCache[warmUpPrompt] = botResponse;
 
     console.log('AI model is ready!');
     isAIModelReady = true;
@@ -85,7 +85,7 @@ app.get('/status', (req, res) => {
 app.get('/', (req, res) => {
   // If the AI model is ready, return the cached warm-up response immediately
   return res.status(200).send({
-    bot: responseCache[WARM_UP_PROMPT],
+    bot: responseCache[warmUpPrompt],
   });
 });
 
