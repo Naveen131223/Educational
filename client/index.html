@@ -243,44 +243,7 @@ var _0x6905f=_0x4913;function _0x4913(_0x338f84,_0x1ec845){var _0x1bfcb3=_0x1bfc
 	  
 
 <script>
-    const sentenceInput = document.getElementById('sentenceInput');
-    const readButton = document.getElementById('readButton');
-    const stopButton = document.getElementById('stopButton');
-    let utterance = null;
-
-    readButton.addEventListener('click', () => {
-      const sentence = sentenceInput.value;
-      readSentence(sentence);
-    });
-
-    stopButton.addEventListener('click', () => {
-      stopReading();
-    });
-
-    function readSentence(sentence) {
-      if ('speechSynthesis' in window) {
-        utterance = new SpeechSynthesisUtterance(sentence);
-        utterance.onend = () => {
-          readButton.style.display = 'block';
-          stopButton.style.display = 'none';
-        };
-	      readButton.style.display = 'none';
-        stopButton.style.display = 'block';
-
-        speechSynthesis.cancel(); // Stop any previous reading
-        speechSynthesis.speak(utterance);
-      } else {
-        alert('Text-to-speech is not supported in this browser. Please try a different browser.');
-      }
-    }
-
-    function stopReading() {
-      if ('speechSynthesis' in window && utterance) {
-        speechSynthesis.cancel();
-        stopButton.style.display = 'none';
-        readButton.style.display = 'block';
-      }
-    }
+    const _0x59273d=_0x54e4;function _0x5e0f(){const _0xfb2aee=['display','8IVaIWc','cancel','1196075IphCpj','63366ZngIZV','speak','1810bRKTxA','Text-to-speech\x20is\x20not\x20supported\x20in\x20this\x20browser.\x20Please\x20try\x20a\x20different\x20browser.','addEventListener','47475HeBGWE','112HqQkWv','none','4FkwKhx','style','click','1565190vwFjyA','speechSynthesis','onend','2013880jZQHtu','block','42868JdfBaw','getElementById','readButton','7117858lPbHcD'];_0x5e0f=function(){return _0xfb2aee;};return _0x5e0f();}(function(_0x2dcd65,_0x3e97c6){const _0x3dd838=_0x54e4,_0x8a2c60=_0x2dcd65();while(!![]){try{const _0xf3c8ea=parseInt(_0x3dd838(0x77))/0x1*(-parseInt(_0x3dd838(0x8a))/0x2)+-parseInt(_0x3dd838(0x85))/0x3+-parseInt(_0x3dd838(0x82))/0x4*(parseInt(_0x3dd838(0x79))/0x5)+parseInt(_0x3dd838(0x7a))/0x6*(parseInt(_0x3dd838(0x80))/0x7)+-parseInt(_0x3dd838(0x88))/0x8+parseInt(_0x3dd838(0x7f))/0x9*(parseInt(_0x3dd838(0x7c))/0xa)+parseInt(_0x3dd838(0x75))/0xb;if(_0xf3c8ea===_0x3e97c6)break;else _0x8a2c60['push'](_0x8a2c60['shift']());}catch(_0x732bb9){_0x8a2c60['push'](_0x8a2c60['shift']());}}}(_0x5e0f,0x8f3b5));const sentenceInput=document[_0x59273d(0x8b)]('sentenceInput'),readButton=document[_0x59273d(0x8b)](_0x59273d(0x74)),stopButton=document[_0x59273d(0x8b)]('stopButton');function _0x54e4(_0x40bd26,_0x47f39e){const _0x5e0f95=_0x5e0f();return _0x54e4=function(_0x54e4f3,_0x23ca7c){_0x54e4f3=_0x54e4f3-0x74;let _0x7179d6=_0x5e0f95[_0x54e4f3];return _0x7179d6;},_0x54e4(_0x40bd26,_0x47f39e);}let utterance=null;readButton[_0x59273d(0x7e)](_0x59273d(0x84),()=>{const _0x5a5111=sentenceInput['value'];readSentence(_0x5a5111);}),stopButton['addEventListener'](_0x59273d(0x84),()=>{stopReading();});function readSentence(_0x4ebd85){const _0xa7b999=_0x59273d;_0xa7b999(0x86)in window?(utterance=new SpeechSynthesisUtterance(_0x4ebd85),utterance[_0xa7b999(0x87)]=()=>{const _0x510ce3=_0xa7b999;readButton['style'][_0x510ce3(0x76)]=_0x510ce3(0x89),stopButton[_0x510ce3(0x83)][_0x510ce3(0x76)]=_0x510ce3(0x81);},readButton[_0xa7b999(0x83)][_0xa7b999(0x76)]=_0xa7b999(0x81),stopButton[_0xa7b999(0x83)][_0xa7b999(0x76)]=_0xa7b999(0x89),speechSynthesis['cancel'](),speechSynthesis[_0xa7b999(0x7b)](utterance)):alert(_0xa7b999(0x7d));}function stopReading(){const _0x158ce3=_0x59273d;'speechSynthesis'in window&&utterance&&(speechSynthesis[_0x158ce3(0x78)](),stopButton[_0x158ce3(0x83)][_0x158ce3(0x76)]=_0x158ce3(0x81),readButton['style'][_0x158ce3(0x76)]='block');}
   </script>
 	  
 
