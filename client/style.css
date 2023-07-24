@@ -19,6 +19,29 @@ body {
   padding: 0;
         }
 
+.generate {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid #007bff;
+  color: #007bff;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.generate:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+
+
+
 .highlight {
       background-color: yellow; /* Change this to the desired highlight color */
       /* You can add more styles here like text color, font-weight, etc. */
