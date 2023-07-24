@@ -228,7 +228,54 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	  
 
 <script>
-var _0x1a5412=_0x3a73;(function(_0x4d0d98,_0x37d6c3){var _0x3e2e34=_0x3a73,_0x477213=_0x4d0d98();while(!![]){try{var _0x32c39f=parseInt(_0x3e2e34(0x197))/0x1*(parseInt(_0x3e2e34(0x187))/0x2)+parseInt(_0x3e2e34(0x19a))/0x3+parseInt(_0x3e2e34(0x18f))/0x4*(parseInt(_0x3e2e34(0x19d))/0x5)+parseInt(_0x3e2e34(0x18b))/0x6*(-parseInt(_0x3e2e34(0x1a0))/0x7)+-parseInt(_0x3e2e34(0x189))/0x8+parseInt(_0x3e2e34(0x191))/0x9+parseInt(_0x3e2e34(0x19c))/0xa*(parseInt(_0x3e2e34(0x183))/0xb);if(_0x32c39f===_0x37d6c3)break;else _0x477213['push'](_0x477213['shift']());}catch(_0x61e863){_0x477213['push'](_0x477213['shift']());}}}(_0x496a,0xcc0e6));function _0x496a(){var _0x3d2bba=['<html><head><title>Export\x20Chat</title>','109978JtVVRs','_blank','13168104XvpUeq','open','12oWSzkk','chat_container','close','Export\x20Chat','861372IojWfc','document','8959860yBBDtZ','addEventListener','<style>\x20.question\x20{\x20color:\x20blue;\x20}\x20.answer\x20{\x20color:\x20red;\x20}\x20</style>','textContent','click','</body></html>','29MryFcy','body','className','90375KUBCWN','replace','22460LAKDyM','5kUGVTo','</head><body>','write','2425528hgRxEH','1661SOeKZC','button','getElementById'];_0x496a=function(){return _0x3d2bba;};return _0x496a();}var exportChatButton=document['createElement'](_0x1a5412(0x184));function _0x3a73(_0x15ce6c,_0x36c3d8){var _0x496a43=_0x496a();return _0x3a73=function(_0x3a7308,_0x31c50b){_0x3a7308=_0x3a7308-0x183;var _0x868cdf=_0x496a43[_0x3a7308];return _0x868cdf;},_0x3a73(_0x15ce6c,_0x36c3d8);}exportChatButton['textContent']=_0x1a5412(0x18e),exportChatButton[_0x1a5412(0x199)]='ExportChatButton',exportChatButton[_0x1a5412(0x192)](_0x1a5412(0x195),function(){var _0x22d7e8=_0x1a5412,_0x403f1d=document[_0x22d7e8(0x185)](_0x22d7e8(0x18c)),_0x51b6fa=_0x403f1d['innerHTML'],_0x54058a=_0x22d7e8(0x193);_0x51b6fa=_0x51b6fa[_0x22d7e8(0x19b)](/<span class="user-input">.+?<\/span>/g,'');var _0x15eaaa=window[_0x22d7e8(0x18a)]('',_0x22d7e8(0x188));_0x15eaaa['document'][_0x22d7e8(0x18a)](),_0x15eaaa[_0x22d7e8(0x190)]['write'](_0x22d7e8(0x186)+_0x54058a+'</head><body>'+_0x51b6fa+_0x22d7e8(0x196)),_0x15eaaa[_0x22d7e8(0x190)][_0x22d7e8(0x18d)]();}),document['body']['appendChild'](exportChatButton);var printButton=document['createElement'](_0x1a5412(0x184));printButton[_0x1a5412(0x194)]='Print\x20Chat',printButton[_0x1a5412(0x199)]='add-course-button-1',printButton[_0x1a5412(0x192)](_0x1a5412(0x195),function(){var _0x121291=_0x1a5412,_0x5b22bc=document['getElementById'](_0x121291(0x18c)),_0x5ea69b=_0x5b22bc['innerHTML'],_0x10c53d=_0x121291(0x193);_0x5ea69b=_0x5ea69b[_0x121291(0x19b)](/<span class="user-input">.+?<\/span>/g,'');var _0x3c3179=window[_0x121291(0x18a)]('','_blank');_0x3c3179[_0x121291(0x190)][_0x121291(0x18a)](),_0x3c3179[_0x121291(0x190)][_0x121291(0x19f)]('<html><head><title>Print\x20Chat</title>'+_0x10c53d+_0x121291(0x19e)+_0x5ea69b+_0x121291(0x196)),_0x3c3179[_0x121291(0x190)][_0x121291(0x18d)](),_0x3c3179['print']();}),document[_0x1a5412(0x198)]['appendChild'](printButton);
+var exportChatButton = document.createElement("button");
+exportChatButton.textContent = "Export Chat";
+exportChatButton.className = "ExportChatButton";
+exportChatButton.addEventListener("click", function() {
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
+
+  // Apply styling to the exported content
+  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  var exportWindow = window.open("", "_blank");
+  exportWindow.document.open();
+  exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
+  exportWindow.document.close();
+});
+
+document.body.appendChild(exportChatButton);
+
+
+
+	var printButton = document.createElement("button");
+printButton.textContent = "Print Chat"; // Updating the button text to "Print"
+printButton.className = "add-course-button-1";
+printButton.addEventListener("click", function() {
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
+
+  // Apply styling to the printed content
+  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head><title>Print Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
+
+  // Execute the print function
+  printWindow.print();
+});
+
+document.body.appendChild(printButton);
+
+
 </script>
 
 	  
