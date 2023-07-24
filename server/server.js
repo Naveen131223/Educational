@@ -71,11 +71,14 @@ app.post(
     }
 
     try {
-      // Your existing code to interact with OpenAI API...
-      const botResponse = await openai.someFunction(prompt);
+      // Fetch the bot response from OpenAI API asynchronously
+      const fetchBotResponse = openai.someFunction(prompt);
 
-      // Cache the response
-      cache.set(prompt, { bot: botResponse });
+      // Set the cache to avoid unnecessary API calls for the same prompt
+      cache.set(prompt, fetchBotResponse);
+
+      // Wait for the API response to complete
+      const botResponse = await fetchBotResponse;
 
       res.status(200).send({
         bot: botResponse,
