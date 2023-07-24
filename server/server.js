@@ -27,7 +27,7 @@ let isAIModelReady = false; // Flag to check if the AI model is ready
 const WARM_UP_PROMPT = 'Warm-up prompt';
 
 // Initialize the AI model asynchronously during server startup
-const modelInitializationPromise = initializeAIModel();
+initializeAIModel();
 
 async function initializeAIModel() {
   try {
@@ -42,8 +42,22 @@ async function initializeAIModel() {
 
     console.log('AI model is ready!');
     isAIModelReady = true;
+
+    // Start the server after the AI model is initialized
+    const server = app.listen(port, () => {
+      console.log(`AI server started on http://localhost:${port}`);
+    });
+
+    process.on('SIGTERM', () => {
+      console.log('Shutting down gracefully...');
+      server.close(() => {
+        console.log('Server has been closed.');
+        process.exit(0);
+      });
+    });
   } catch (error) {
     console.error('Error initializing AI model:', error);
+    process.exit(1); // Exit the server if there's an error during initialization
   }
 }
 
@@ -126,21 +140,6 @@ app.post('/', async (req, res) => {
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send('Something went wrong');
-});
-
-// Start the server after the AI model is initialized
-modelInitializationPromise.then(() => {
-  const server = app.listen(port, () => {
-    console.log(`AI server started on http://localhost:${port}`);
-  });
-
-  process.on('SIGTERM', () => {
-    console.log('Shutting down gracefully...');
-    server.close(() => {
-      console.log('Server has been closed.');
-      process.exit(0);
-    });
-  });
 });
 
 function sanitizeInput(input) {
