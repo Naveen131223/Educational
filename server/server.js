@@ -27,9 +27,7 @@ let isAIModelReady = false; // Flag to check if the AI model is ready
 const WARM_UP_PROMPT = 'Warm-up prompt';
 
 // Initialize the AI model asynchronously during server startup
-initializeAIModel();
-
-async function initializeAIModel() {
+const initializeAIModel = async () => {
   try {
     console.log('Initializing AI model...');
     const response = await openai.createCompletion({
@@ -42,24 +40,14 @@ async function initializeAIModel() {
 
     console.log('AI model is ready!');
     isAIModelReady = true;
-
-    // Start the server after the AI model is initialized
-    const server = app.listen(port, () => {
-      console.log(`AI server started on http://localhost:${port}`);
-    });
-
-    process.on('SIGTERM', () => {
-      console.log('Shutting down gracefully...');
-      server.close(() => {
-        console.log('Server has been closed.');
-        process.exit(0);
-      });
-    });
   } catch (error) {
     console.error('Error initializing AI model:', error);
     process.exit(1); // Exit the server if there's an error during initialization
   }
-}
+};
+
+// Warm-up the AI model during server startup
+initializeAIModel();
 
 // Middleware to check if the AI model is ready before processing requests
 app.use((req, res, next) => {
@@ -106,9 +94,8 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Set a timeout for generating the response to avoid long waiting times
-    const timeoutMs = 6000; // Adjust this value as needed
-    const responsePromise = openai.createCompletion({
+    // Generate the response from the AI model
+    const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0.7,
@@ -117,14 +104,6 @@ app.post('/', async (req, res) => {
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
     });
-
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error('AI model response timeout'));
-      }, timeoutMs);
-    });
-
-    const response = await Promise.race([responsePromise, timeoutPromise]);
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
     responseCache[prompt] = botResponse;
@@ -162,3 +141,16 @@ function sanitizeInput(input) {
     }
   });
 }
+
+// Start the server after the AI model is initialized
+const server = app.listen(port, () => {
+  console.log(`AI server started on http://localhost:${port}`);
+});
+
+process.on('SIGTERM', () => {
+  console.log('Shutting down gracefully...');
+  server.close(() => {
+    console.log('Server has been closed.');
+    process.exit(0);
+  });
+});
