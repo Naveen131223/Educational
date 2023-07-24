@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
+import LRU from 'lru-cache';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -21,8 +22,8 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Simple in-memory cache to store API responses
-const responseCache = {};
+// Use an LRU cache to store API responses
+const responseCache = new LRU({ max: 100 }); // You can adjust the cache size as needed
 let isAIModelReady = false; // Flag to check if the AI model is ready
 const WARM_UP_PROMPT = 'Warm-up prompt';
 
@@ -38,7 +39,7 @@ async function initializeAIModel() {
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[WARM_UP_PROMPT] = botResponse;
+    responseCache.set(WARM_UP_PROMPT, botResponse);
 
     console.log('AI model is ready!');
     isAIModelReady = true;
@@ -47,13 +48,16 @@ async function initializeAIModel() {
   }
 }
 
+// Default warm-up response when the AI model is not ready
+const DEFAULT_WARM_UP_RESPONSE = {
+  bot: responseCache.get(WARM_UP_PROMPT),
+};
+
 app.use((req, res, next) => {
   // If the AI model is not ready and the request is not for the initial warm-up prompt,
-  // send a message indicating that the AI model is initializing.
+  // send the default warm-up response.
   if (!isAIModelReady && req.body.prompt !== WARM_UP_PROMPT) {
-    res.status(200).send({
-      message: 'Initializing AI model, please wait...',
-    });
+    res.status(200).send(DEFAULT_WARM_UP_RESPONSE);
   } else {
     next();
   }
@@ -75,14 +79,10 @@ app.get('/status', (req, res) => {
 app.get('/', (req, res) => {
   if (isAIModelReady) {
     // If the AI model is ready, return the cached warm-up response immediately
-    res.status(200).send({
-      bot: responseCache[WARM_UP_PROMPT],
-    });
+    res.status(200).send(DEFAULT_WARM_UP_RESPONSE);
   } else {
-    // If the AI model is still initializing, send a message indicating the same
-    res.status(200).send({
-      message: 'Initializing AI model, please wait...',
-    });
+    // If the AI model is still initializing, send the default warm-up response
+    res.status(200).send(DEFAULT_WARM_UP_RESPONSE);
   }
 });
 
@@ -98,9 +98,9 @@ app.post('/', async (req, res) => {
     prompt = sanitizeInput(prompt);
 
     // Check if the response is cached
-    if (responseCache[prompt]) {
+    if (responseCache.has(prompt)) {
       console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: responseCache[prompt] });
+      return res.status(200).send({ bot: responseCache.get(prompt) });
     }
 
     // Send the request to the AI model asynchronously
@@ -108,14 +108,14 @@ app.post('/', async (req, res) => {
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0,
-      max_tokens: 3000,
+      max_tokens: 300, // Adjust the value based on your requirements
       top_p: 1,
       frequency_penalty: 0.5,
       presence_penalty: 0,
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[prompt] = botResponse;
+    responseCache.set(prompt, botResponse);
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
@@ -166,4 +166,4 @@ function sanitizeInput(input) {
         return char;
     }
   });
-      }
+}
