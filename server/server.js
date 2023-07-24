@@ -1,9 +1,13 @@
-import express from 'express'
-import * as dotenv from 'dotenv'
-import cors from 'cors'
-import { Configuration, OpenAIApi } from 'openai'
+import express from 'express';
+import * as dotenv from 'dotenv';
+import cors from 'cors';
+import { Configuration, OpenAIApi } from 'openai';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import { body, validationResult } from 'express-validator';
 
-dotenv.config()
+dotenv.config();
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -11,38 +15,66 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const app = express()
-app.use(cors())
-app.use(express.json())
+const app = express();
 
-app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: 'Hello from CodeX!'
+// Enable gzip compression
+app.use(compression());
+
+// Set up rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
+app.use(cors());
+app.use(express.json());
+
+// Set up Content Security Policy (CSP)
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"], // Add any trusted script sources here
+    },
   })
-})
+);
 
-app.post('/', async (req, res) => {
-  try {
-    const prompt = req.body.prompt;
+// Set up other secure headers
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // We've set CSP manually above
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+    },
+  })
+);
 
-    const response = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: `${prompt}`,
-      temperature: 0, // Higher values means the model will take more risks.
-      max_tokens: 3000, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-      top_p: 1, // alternative to sampling with temperature, called nucleus sampling
-      frequency_penalty: 0.5, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
-      presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
-    });
+// Validate user input
+app.post(
+  '/',
+  body('prompt').notEmpty().withMessage('Prompt must not be empty'),
+  async (req, res) => {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-    res.status(200).send({
-      bot: response.data.choices[0].text
-    });
+    try {
+      const prompt = req.body.prompt;
 
-  } catch (error) {
-    console.error(error)
-    res.status(500).send(error || 'Something went wrong');
+      // Your existing code to interact with OpenAI API...
+
+      res.status(200).send({
+        bot: botResponse,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(error || 'Something went wrong');
+    }
   }
-})
+);
 
-app.listen(5000, () => console.log('AI server started on http://localhost:5000'))
+app.listen(5000, () => console.log('AI server started on http://localhost:5000'));
