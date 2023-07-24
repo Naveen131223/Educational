@@ -71,7 +71,7 @@ app.post(
     }
 
     try {
-      // Fetch the bot response from OpenAI API asynchronously
+      // Your existing code to interact with OpenAI API...
       const botResponse = await openai.someFunction(prompt);
 
       // Cache the response
@@ -87,4 +87,20 @@ app.post(
   }
 );
 
-app.listen(5000, () => console.log('AI server started on http://localhost:5000'));
+// Pre-warm the server by sending a dummy request
+const preWarm = async () => {
+  try {
+    const dummyPrompt = "Hi Sister";
+    const response = await openai.someFunction(dummyPrompt);
+    cache.set(dummyPrompt, { bot: response });
+    console.log('Server pre-warmed successfully.');
+  } catch (error) {
+    console.error('Error while pre-warming server:', error);
+  }
+};
+
+// Call the preWarm function when the server starts
+app.listen(5000, async () => {
+  console.log('AI server started on http://localhost:5000');
+  await preWarm();
+});
