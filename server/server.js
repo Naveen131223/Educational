@@ -27,7 +27,9 @@ let isAIModelReady = false; // Flag to check if the AI model is ready
 const WARM_UP_PROMPT = 'Warm-up prompt';
 
 // Initialize the AI model asynchronously during server startup
-const initializeAIModel = async () => {
+initializeAIModel();
+
+async function initializeAIModel() {
   try {
     console.log('Initializing AI model...');
     const response = await openai.createCompletion({
@@ -40,14 +42,24 @@ const initializeAIModel = async () => {
 
     console.log('AI model is ready!');
     isAIModelReady = true;
+
+    // Start the server after the AI model is initialized
+    const server = app.listen(port, () => {
+      console.log(`AI server started on http://localhost:${port}`);
+    });
+
+    process.on('SIGTERM', () => {
+      console.log('Shutting down gracefully...');
+      server.close(() => {
+        console.log('Server has been closed.');
+        process.exit(0);
+      });
+    });
   } catch (error) {
     console.error('Error initializing AI model:', error);
     process.exit(1); // Exit the server if there's an error during initialization
   }
-};
-
-// Warm-up the AI model during server startup
-initializeAIModel();
+}
 
 // Middleware to check if the AI model is ready before processing requests
 app.use((req, res, next) => {
@@ -79,57 +91,43 @@ app.get('/', (req, res) => {
 
 app.post('/', async (req, res) => {
   try {
-    let { prompt, api } = req.body;
+    let { prompt } = req.body;
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
-    }
-
-    if (!api || typeof api !== 'string' || api.trim() === '') {
-      return res.status(400).send({ error: 'Invalid or missing API name in the request body.' });
     }
 
     // Sanitize and escape the input prompt to prevent XSS attacks
     prompt = sanitizeInput(prompt);
 
     // Check if the response is cached
-    if (responseCache[api] && responseCache[api][prompt]) {
+    if (responseCache[prompt]) {
       console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: responseCache[api][prompt] });
+      return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Execute the requested API call based on the 'api' parameter
-    let response;
-    switch (api) {
-      case 'createCompletion':
-        response = await openai.createCompletion({
-          model: process.env.OPENAI_MODEL || 'text-davinci-003',
-          prompt: `${prompt}`,
-          temperature: 0.7,
-          max_tokens: 4096,
-          top_p: 0.7,
-          frequency_penalty: 0.0,
-          presence_penalty: 0.0,
-        });
-        break;
+    // Set a timeout for generating the response to avoid long waiting times
+    const timeoutMs = 6000; // Adjust this value as needed
+    const responsePromise = openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0.7,
+      max_tokens: 200,
+      top_p: 0.7,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+    });
 
-      // Add more cases for different API calls as needed
-      // For example:
-      // case 'classifyText':
-      //   response = await openai.classifyText({ prompt: `${prompt}`, ... });
-      //   break;
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('AI model response timeout'));
+      }, timeoutMs);
+    });
 
-      default:
-        return res.status(400).send({ error: 'Invalid or unsupported API requested.' });
-    }
+    const response = await Promise.race([responsePromise, timeoutPromise]);
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-
-    // Cache the response based on the 'api' parameter
-    if (!responseCache[api]) {
-      responseCache[api] = {};
-    }
-    responseCache[api][prompt] = botResponse;
+    responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
@@ -164,16 +162,3 @@ function sanitizeInput(input) {
     }
   });
 }
-
-// Start the server after the AI model is initialized
-const server = app.listen(port, () => {
-  console.log(`AI server started on http://localhost:${port}`);
-});
-
-process.on('SIGTERM', () => {
-  console.log('Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server has been closed.');
-    process.exit(0);
-  });
-});
