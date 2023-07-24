@@ -21,12 +21,12 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const MAX_CACHE_SIZE = 10000; // Adjust the cache size as needed
+// Simple in-memory cache to store API responses
+const responseCache = {};
 let isAIModelReady = false; // Flag to check if the AI model is ready
-const responseCache = new Map();
 const WARM_UP_PROMPT = 'Warm-up prompt';
 
-// Pre-warm the AI Model during server startup
+// Initialize the AI model asynchronously during server startup
 initializeAIModel();
 
 async function initializeAIModel() {
@@ -38,7 +38,7 @@ async function initializeAIModel() {
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache.set(WARM_UP_PROMPT, botResponse);
+    responseCache[WARM_UP_PROMPT] = botResponse;
 
     console.log('AI model is ready!');
     isAIModelReady = true;
@@ -71,16 +71,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware to handle cache lookup
-app.use((req, res, next) => {
-  const { prompt } = req.body;
-  if (responseCache.has(prompt)) {
-    console.log('Cache hit for prompt:', prompt);
-    return res.status(200).send({ bot: responseCache.get(prompt) });
-  }
-  next();
-});
-
 app.get('/status', (req, res) => {
   if (isAIModelReady) {
     return res.status(200).send({
@@ -89,6 +79,13 @@ app.get('/status', (req, res) => {
   }
   res.status(200).send({
     status: 'AI model is initializing...',
+  });
+});
+
+app.get('/', (req, res) => {
+  // If the AI model is ready, return the cached warm-up response immediately
+  return res.status(200).send({
+    bot: responseCache[WARM_UP_PROMPT],
   });
 });
 
@@ -104,13 +101,13 @@ app.post('/', async (req, res) => {
     prompt = sanitizeInput(prompt);
 
     // Check if the response is cached
-    if (responseCache.has(prompt)) {
+    if (responseCache[prompt]) {
       console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: responseCache.get(prompt) });
+      return res.status(200).send({ bot: responseCache[prompt] });
     }
 
     // Set a timeout for generating the response to avoid long waiting times
-    const timeoutMs = 5000; // Adjust this value as needed
+    const timeoutMs = 6000; // Adjust this value as needed
     const responsePromise = openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
@@ -130,13 +127,7 @@ app.post('/', async (req, res) => {
     const response = await Promise.race([responsePromise, timeoutPromise]);
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-
-    // Add the response to the cache
-    if (responseCache.size >= MAX_CACHE_SIZE) {
-      const oldestPrompt = responseCache.keys().next().value;
-      responseCache.delete(oldestPrompt);
-    }
-    responseCache.set(prompt, botResponse);
+    responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
@@ -149,19 +140,6 @@ app.post('/', async (req, res) => {
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send('Something went wrong');
-});
-
-// Start the server
-const server = app.listen(port, () => {
-  console.log(`AI server started on http://localhost:${port}`);
-});
-
-process.on('SIGTERM', () => {
-  console.log('Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server has been closed.');
-    process.exit(0);
-  });
 });
 
 function sanitizeInput(input) {
