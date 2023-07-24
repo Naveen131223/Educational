@@ -6,8 +6,7 @@
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.min.js"></script>
 	  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 	  <meta name="google-site-verification" content="-6KZXHe6S_sLMkKow-xFPO9VgiCu7ZRc6suedaarfj8" />
-	  <!-- Include the docxtemplater library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.17.1/docxtemplater.js"></script>
+	  
 	  
 
 	  
@@ -275,11 +274,14 @@ printButton.addEventListener("click", function() {
 
 document.body.appendChild(printButton);
 
+  
+</script>
 
 
-	
+<!-- Include the docxtemplater library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.17.1/docxtemplater.js"></script>
 
-
+<script>
   var wordButton = document.createElement("button");
   wordButton.textContent = "Generate Word"; // Updating the button text
   wordButton.className = "generate";
@@ -302,8 +304,8 @@ document.body.appendChild(printButton);
     };
 
     // Process the template using docxtemplater
-    var docx = new window.Docxtemplater();
-    docx.loadZip(template);
+    var docx = new Docxtemplater();
+    docx.loadZip(new JSZip(template));
     docx.setData(data);
     try {
       docx.render();
@@ -332,9 +334,12 @@ document.body.appendChild(printButton);
   });
 
   document.body.appendChild(wordButton);
-
-
 </script>
+
+
+
+
+
 
 	  
 
