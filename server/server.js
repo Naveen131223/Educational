@@ -95,19 +95,31 @@ app.post('/', async (req, res) => {
     }
 
     // Generate the response from the AI model
-    const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: `${prompt}`,
-      temperature: 0.7,
-      max_tokens: 200,
-      top_p: 0.7,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
-    });
+    const maxTokens = 4096; // Maximum number of tokens to generate per API call (adjust as needed)
+    let botResponse = '';
 
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    while (botResponse.length < maxTokens) {
+      const response = await openai.createCompletion({
+        model: process.env.OPENAI_MODEL || 'text-davinci-003',
+        prompt: `${prompt}`,
+        temperature: 0.7,
+        max_tokens: maxTokens - botResponse.length, // Adjust max_tokens for pagination
+        top_p: 0.7,
+        frequency_penalty: 0.0,
+        presence_penalty: 0.0,
+        n: 1, // Set n=1 to get a single response for each API call
+      });
+
+      const chunk = response.data.choices[0]?.text || 'No response from the AI model.';
+      botResponse += chunk;
+      
+      // If the response is truncated, break the loop
+      if (response.data.choices[0]?.finish_reason === 'incomplete') {
+        break;
+      }
+    }
+
     responseCache[prompt] = botResponse;
-
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
