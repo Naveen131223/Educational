@@ -51,39 +51,36 @@ app.use((req, res, next) => {
   // If the AI model is not ready and the request is not for the initial warm-up prompt,
   // send a message indicating that the AI model is initializing.
   if (!isAIModelReady && req.body.prompt !== WARM_UP_PROMPT) {
-    res.status(200).send({
+    return res.status(200).send({
       message: 'Initializing AI model, please wait...',
     });
-  } else {
-    next();
   }
+  next();
 });
 
 // Endpoint to provide information on the AI model's initialization status
 app.get('/status', (req, res) => {
   if (isAIModelReady) {
-    res.status(200).send({
+    return res.status(200).send({
       status: 'AI model is ready!',
     });
-  } else {
-    res.status(200).send({
-      status: 'AI model is initializing...',
-    });
   }
+  res.status(200).send({
+    status: 'AI model is initializing...',
+  });
 });
 
 app.get('/', (req, res) => {
   if (isAIModelReady) {
     // If the AI model is ready, return the cached warm-up response immediately
-    res.status(200).send({
+    return res.status(200).send({
       bot: responseCache[WARM_UP_PROMPT],
     });
-  } else {
-    // If the AI model is still initializing, send a message indicating the same
-    res.status(200).send({
-      message: 'Initializing AI model, please wait...',
-    });
   }
+  // If the AI model is still initializing, send a message indicating the same
+  res.status(200).send({
+    message: 'Initializing AI model, please wait...',
+  });
 });
 
 app.post('/', async (req, res) => {
@@ -107,11 +104,11 @@ app.post('/', async (req, res) => {
     const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
-      temperature: 0,
-      max_tokens: 3000,
-      top_p: 1,
-      frequency_penalty: 0.5,
-      presence_penalty: 0,
+      temperature: 0.7, // Adjust the temperature to control the randomness of the response
+      max_tokens: 200, // Reduce the number of max tokens for faster response
+      top_p: 0.7, // Adjust the top_p value for more controlled response generation
+      frequency_penalty: 0.0, // Adjust the penalty values as needed
+      presence_penalty: 0.0,
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
