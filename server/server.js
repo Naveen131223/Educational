@@ -1,12 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
+import compression from 'compression';
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
+app.use(compression()); // Enable compression for responses
 
 const apiKey = process.env.OPENAI_API_KEY;
 
@@ -27,7 +29,9 @@ let isAIModelReady = false; // Flag to check if the AI model is ready
 const WARM_UP_PROMPT = 'Warm-up prompt';
 
 // Initialize the AI model asynchronously during server startup
-const initializeAIModel = async () => {
+initializeAIModel();
+
+async function initializeAIModel() {
   try {
     console.log('Initializing AI model...');
     const response = await openai.createCompletion({
@@ -44,10 +48,7 @@ const initializeAIModel = async () => {
     console.error('Error initializing AI model:', error);
     process.exit(1); // Exit the server if there's an error during initialization
   }
-};
-
-// Warm-up the AI model during server startup
-initializeAIModel();
+}
 
 // Middleware to check if the AI model is ready before processing requests
 app.use((req, res, next) => {
@@ -94,8 +95,8 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    // Generate the response from the AI model
-    const response = await openai.createCompletion({
+    // Generate the response from the AI model asynchronously
+    const responsePromise = openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0.7,
@@ -104,6 +105,8 @@ app.post('/', async (req, res) => {
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
     });
+
+    const response = await responsePromise;
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
     responseCache[prompt] = botResponse;
