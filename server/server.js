@@ -112,10 +112,10 @@ app.post('/', async (req, res) => {
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0.7,
-      max_tokens: 200,
-      top_p: 0.7,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
+      max_tokens: 150, // Limit response length for more concise and relevant answers
+      top_p: 0.9, // Adjust the top_p to influence response randomness
+      frequency_penalty: 0.2, // Apply a small penalty to reduce repeated phrases
+      presence_penalty: 0.3, // Increase presence penalty to make responses more focused
     });
 
     const timeoutPromise = new Promise((_, reject) => {
@@ -162,3 +162,8 @@ function sanitizeInput(input) {
     }
   });
 }
+
+// Start the server
+app.listen(port, () => {
+  console.log(`AI server started on http://localhost:${port}`);
+});
