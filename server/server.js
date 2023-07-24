@@ -1,13 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import { Configuration, OpenAIApi } from 'openai';
-import LRU from 'lru-cache';
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
+app.use(compression());
 
 const apiKey = process.env.OPENAI_API_KEY;
 
@@ -22,8 +23,10 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Use an LRU cache to store API responses
-const responseCache = new LRU({ max: 100 }); // You can adjust the cache size as needed
+// Simple in-memory cache to store API responses
+const responseCache = new Map();
+const MAX_CACHE_SIZE = 1000; // Limit the number of cached responses
+
 let isAIModelReady = false; // Flag to check if the AI model is ready
 const WARM_UP_PROMPT = 'Warm-up prompt';
 
@@ -36,28 +39,30 @@ async function initializeAIModel() {
     const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: WARM_UP_PROMPT,
+      max_tokens: 1, // Only requesting one token to reduce unnecessary response data
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache.set(WARM_UP_PROMPT, botResponse);
-
-    console.log('AI model is ready!');
-    isAIModelReady = true;
+    if (botResponse.toLowerCase() === 'ok') {
+      // Check if the AI model's response is satisfactory for warm-up prompt
+      console.log('AI model is ready!');
+      isAIModelReady = true;
+    } else {
+      console.error('AI model warm-up response is not satisfactory:', botResponse);
+    }
   } catch (error) {
     console.error('Error initializing AI model:', error);
+    // You may want to retry the initialization in case of failure
   }
 }
 
-// Default warm-up response when the AI model is not ready
-const DEFAULT_WARM_UP_RESPONSE = {
-  bot: responseCache.get(WARM_UP_PROMPT),
-};
-
 app.use((req, res, next) => {
   // If the AI model is not ready and the request is not for the initial warm-up prompt,
-  // send the default warm-up response.
+  // send a message indicating that the AI model is initializing.
   if (!isAIModelReady && req.body.prompt !== WARM_UP_PROMPT) {
-    res.status(200).send(DEFAULT_WARM_UP_RESPONSE);
+    res.status(200).send({
+      message: 'Initializing AI model, please wait...',
+    });
   } else {
     next();
   }
@@ -79,10 +84,14 @@ app.get('/status', (req, res) => {
 app.get('/', (req, res) => {
   if (isAIModelReady) {
     // If the AI model is ready, return the cached warm-up response immediately
-    res.status(200).send(DEFAULT_WARM_UP_RESPONSE);
+    res.status(200).send({
+      bot: responseCache.get(WARM_UP_PROMPT),
+    });
   } else {
-    // If the AI model is still initializing, send the default warm-up response
-    res.status(200).send(DEFAULT_WARM_UP_RESPONSE);
+    // If the AI model is still initializing, send a message indicating the same
+    res.status(200).send({
+      message: 'Initializing AI model, please wait...',
+    });
   }
 });
 
@@ -107,15 +116,21 @@ app.post('/', async (req, res) => {
     const response = await openai.createCompletion({
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
-      temperature: 0,
-      max_tokens: 300, // Adjust the value based on your requirements
-      top_p: 1,
-      frequency_penalty: 0.5,
-      presence_penalty: 0,
+      temperature: 0.7, // Higher temperature can make the output more diverse
+      max_tokens: 200, // Limit the response length to 200 tokens for faster output
+      top_p: 0.8, // Adjust the top-p parameter to control the response randomness
+      frequency_penalty: 0.2,
+      presence_penalty: 0.2,
     });
 
     const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
     responseCache.set(prompt, botResponse);
+
+    // Limit the cache size by removing the least recently used entry
+    if (responseCache.size > MAX_CACHE_SIZE) {
+      const leastRecentlyUsedKey = responseCache.keys().next().value;
+      responseCache.delete(leastRecentlyUsedKey);
+    }
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
