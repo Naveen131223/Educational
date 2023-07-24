@@ -26,9 +26,8 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 <script type="module">
 (async () => {
-  const currentTimestamp = Date.now();
-  const module = await import(`./script.js?v=${currentTimestamp}`);
-  // You can use 'module' here if the script exports something, e.g., module.someFunction();
+const module = await import("./script.js?v=v2");
+// You can use 'module' here if the script exports something, e.g., module.someFunction();
 })();
 </script>
 
