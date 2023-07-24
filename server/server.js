@@ -44,35 +44,7 @@ async function initializeAIModel() {
     isAIModelReady = true;
   } catch (error) {
     console.error('Error initializing AI model:', error);
-  } finally {
-    // Close the server once the AI model is successfully initialized
-    if (isAIModelReady) {
-      console.log('AI Model Successfully Launched.');
-      process.exit(0);
-    }
   }
-}
-
-// Function to generate the CSS style based on the current AI model readiness percentage
-function generateStatusCSS(percentage) {
-  return `
-    .progress-container {
-      width: 100px;
-      height: 100px;
-      position: relative;
-      border: 2px solid #000;
-    }
-    .progress {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: ${percentage}%;
-      height: 100%;
-      background-color: #00f;
-    }
-  `;
 }
 
 app.use((req, res, next) => {
@@ -94,24 +66,9 @@ app.get('/status', (req, res) => {
       status: 'AI model is ready!',
     });
   } else {
-    const percentage = Math.round((Object.keys(responseCache).length / 100) * 100);
-    const statusCSS = generateStatusCSS(percentage);
-    const html = `
-      <html>
-        <head>
-          <style>
-            ${statusCSS}
-          </style>
-        </head>
-        <body>
-          <div class="progress-container">
-            <div class="progress"></div>
-          </div>
-          <p>Initializing AI model: ${percentage}%</p>
-        </body>
-      </html>
-    `;
-    res.status(200).send(html);
+    res.status(200).send({
+      status: 'AI model is initializing...',
+    });
   }
 });
 
@@ -173,17 +130,18 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong');
 });
 
-// Start the server
-const server = app.listen(port, () => {
-  console.log(`AI server started on http://localhost:${port}`);
-});
+// Start the server after the AI model is initialized
+modelInitializationPromise.then(() => {
+  const server = app.listen(port, () => {
+    console.log(`AI server started on http://localhost:${port}`);
+  });
 
-// Gracefully handle server shutdown
-process.on('SIGTERM', () => {
-  console.log('Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server has been closed.');
-    process.exit(0);
+  process.on('SIGTERM', () => {
+    console.log('Shutting down gracefully...');
+    server.close(() => {
+      console.log('Server has been closed.');
+      process.exit(0);
+    });
   });
 });
 
