@@ -5,7 +5,6 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { body, validationResult } from 'express-validator';
-import NodeCache from 'node-cache';
 
 dotenv.config();
 
@@ -16,7 +15,6 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 60 }); // Cache responses for 60 seconds
 
 // Enable gzip compression
 app.use(compression());
@@ -62,20 +60,10 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const prompt = req.body.prompt;
-
-    // Check if the response is cached
-    const cachedResponse = cache.get(prompt);
-    if (cachedResponse) {
-      return res.status(200).send(cachedResponse);
-    }
-
     try {
-      // Your existing code to interact with OpenAI API...
-      const botResponse = await openai.someFunction(prompt);
+      const prompt = req.body.prompt;
 
-      // Cache the response
-      cache.set(prompt, { bot: botResponse });
+      // Your existing code to interact with OpenAI API...
 
       res.status(200).send({
         bot: botResponse,
@@ -84,7 +72,7 @@ app.post(
       console.error(error);
       res.status(500).send('Something went wrong');
     }
-  } 
+  }
 );
 
 app.listen(5000, () => console.log('AI server started on http://localhost:5000'));
