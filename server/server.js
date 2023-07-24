@@ -95,7 +95,7 @@ app.post('/', async (req, res) => {
     }
 
     // Generate the response from the AI model
-    const maxTokens = 4096; // Maximum number of tokens to generate per API call (adjust as needed)
+    const maxTokens = 13000; // Maximum number of tokens to generate per API call (adjust as needed)
     let botResponse = '';
 
     while (botResponse.length < maxTokens) {
