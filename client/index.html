@@ -6,6 +6,8 @@
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.min.js"></script>
 	  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 	  <meta name="google-site-verification" content="-6KZXHe6S_sLMkKow-xFPO9VgiCu7ZRc6suedaarfj8" />
+	  <!-- Include the docxtemplater library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.17.1/docxtemplater.js"></script>
 	  
 
 	  
@@ -272,6 +274,64 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+
+
+
+	
+
+
+  var wordButton = document.createElement("button");
+  wordButton.textContent = "Generate Word"; // Updating the button text
+  wordButton.className = "generate";
+  wordButton.addEventListener("click", function() {
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerHTML;
+
+    // Apply styling to the printed content
+    var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+
+    // Remove user input keyboard printout
+    chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+    // Create a template for the Word document
+    var template = "<html><head><title>Print Chat</title>" + style + "</head><body>{{chatContent}}</body></html>";
+
+    // Prepare the data to be passed to the template
+    var data = {
+      chatContent: chatContent
+    };
+
+    // Process the template using docxtemplater
+    var docx = new window.Docxtemplater();
+    docx.loadZip(template);
+    docx.setData(data);
+    try {
+      docx.render();
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+
+    // Generate the Word document as a Blob
+    var out = docx.getZip().generate({
+      type: "blob",
+      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    });
+
+    // Create a URL for the Blob and initiate a file download
+    var url = window.URL.createObjectURL(out);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "chat.docx"; // Set the desired file name
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up the URL and remove the link element
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+  });
+
+  document.body.appendChild(wordButton);
 
 
 </script>
