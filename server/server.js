@@ -1,5 +1,6 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
+import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
@@ -18,6 +19,16 @@ const app = express();
 
 // Enable gzip compression
 app.use(compression());
+
+// Set up rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
+app.use(cors());
+app.use(express.json());
 
 // Set up Content Security Policy (CSP)
 app.use(
@@ -40,15 +51,6 @@ app.use(
   })
 );
 
-// Set up rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
-
-app.use(express.json());
-
 // Validate user input
 app.post(
   '/',
@@ -70,7 +72,7 @@ app.post(
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send('Something went wrong');
+      res.status(500).send(error || 'Something went wrong');
     }
   }
 );
