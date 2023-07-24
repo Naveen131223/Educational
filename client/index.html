@@ -5,7 +5,6 @@
      crossorigin="anonymous"></script> 
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.min.js"></script>
 	  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-	  <script src="https://unpkg.com/html-docx-js@0.5.0/dist/html-docx.js"></script>
 	  <meta name="google-site-verification" content="-6KZXHe6S_sLMkKow-xFPO9VgiCu7ZRc6suedaarfj8" />
 	  
 	  
@@ -279,32 +278,6 @@ document.body.appendChild(printButton);
 </script>
 
 
-<script>
-  var wordButton = document.createElement("button");
-  wordButton.textContent = "Generate Word"; // Updating the button text
-  wordButton.className = "add-course-button-1";
-  wordButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerHTML;
-
-    // Apply styling to the printed content
-    var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
-
-    // Remove user input keyboard printout
-    chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-    // Create the final HTML content to convert to Word
-    var htmlContent = "<html><head><title>Chat</title>" + style + "</head><body>" + chatContent + "</body></html>";
-
-    // Convert HTML to Word
-    var docx = htmlDocx.asBlob(htmlContent);
-
-    // Save the Word document as a file
-    saveAs(docx, "chat.docx");
-  });
-
-  document.body.appendChild(wordButton);
-</script>
 
 
 
