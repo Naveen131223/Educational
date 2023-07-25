@@ -1,11 +1,9 @@
-import express from 'express';
-import * as dotenv from 'dotenv';
-import cors from 'cors';
-import helmet from 'helmet'; // Added Helmet for security headers
-import rateLimit from 'express-rate-limit'; // Added rate limiting
-import { Configuration, OpenAIApi } from 'openai';
+import express from 'express'
+import * as dotenv from 'dotenv'
+import cors from 'cors'
+import { Configuration, OpenAIApi } from 'openai'
 
-dotenv.config();
+dotenv.config()
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -13,66 +11,38 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Use Helmet middleware to set appropriate security headers
-app.use(helmet());
-
-// Implement rate limiting to prevent abuse
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
-
-// Store the last response to be reused if the same prompt is requested again.
-let lastResponse = null;
+const app = express()
+app.use(cors())
+app.use(express.json())
 
 app.get('/', async (req, res) => {
   res.status(200).send({
-    message: 'Hello from CodeX!',
-  });
-});
+    message: 'Hi Sister'
+  })
+})
 
 app.post('/', async (req, res) => {
   try {
     const prompt = req.body.prompt;
 
-    // Validate and sanitize the input prompt
-    if (!prompt || typeof prompt !== 'string') {
-      return res.status(400).send({
-        error: 'Invalid prompt',
-      });
-    }
-
-    // Check if the same prompt was requested recently, and reuse the response.
-    if (lastResponse && lastResponse.prompt === prompt) {
-      return res.status(200).send({
-        bot: lastResponse.bot,
-      });
-    }
-
     const response = await openai.createCompletion({
-      model: 'text-davinci-003',
+      model: "text-davinci-003",
       prompt: `${prompt}`,
-      temperature: 0.7, // Using a slightly higher temperature for more creative responses.
-      max_tokens: 150, // Limiting the response length to improve speed.
+      temperature: 0, // Higher values means the model will take more risks.
+      max_tokens: 3000, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
+      top_p: 1, // alternative to sampling with temperature, called nucleus sampling
+      frequency_penalty: 0.5, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
+      presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
     });
-
-    const botResponse = response.data.choices[0].text;
-
-    // Cache the current response for reuse.
-    lastResponse = { prompt, bot: botResponse };
 
     res.status(200).send({
-      bot: botResponse,
+      bot: response.data.choices[0].text
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Something went wrong');
-  }
-});
 
-app.listen(5000, () => console.log('AI server started on http://localhost:5000'));
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(error || 'Something went wrong');
+  }
+})
+
+app.listen(5000, () => console.log('AI server started on http://localhost:5000'))
