@@ -175,6 +175,8 @@ const module = await import("./script.js?v=v7");
 
     </div>
 
+	  <div id="response"></div>
+
 	  <div id="printButtonContainer"></div>
   <div id="continueReadingButtonContainer"></div>
 	  
@@ -191,7 +193,29 @@ const module = await import("./script.js?v=v7");
 </div>
 
   
-        
+  <script>
+    document.getElementById('promptForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const prompt = document.getElementById('promptInput').value;
+
+      try {
+        const response = await fetch('/api/process', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await response.json();
+        document.getElementById('response').innerText = data.bot;
+      } catch (error) {
+        console.error(error);
+        document.getElementById('response').innerText = 'Something went wrong';
+      }
+    });
+  </script>      
 
 
 	  
