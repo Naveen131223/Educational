@@ -1,6 +1,10 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 import { Configuration, OpenAIApi } from 'openai';
+import bodyParser from 'body-parser';
+import rateLimit from 'express-rate-limit';
+import validator from 'validator';
+import { promisify } from 'util';
 
 dotenv.config();
 
@@ -12,8 +16,15 @@ const openai = new OpenAIApi(configuration);
 
 const app = express();
 
-// Middleware to parse JSON body
-app.use(express.json());
+// Middleware to parse JSON body and limit request size
+app.use(bodyParser.json({ limit: '1mb' }));
+
+// Rate Limiting (Limit to 100 requests per 10 minutes)
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 100,
+});
+app.use(limiter);
 
 // Simple in-memory cache for responses
 const responseCache = new Map();
@@ -24,15 +35,18 @@ app.post('/api/process', async (req, res) => {
     const prompt = req.body.prompt;
 
     // Input Validation (sanitize user input if necessary)
+    if (!validator.isLength(prompt, { min: 1, max: 1000 })) {
+      return res.status(400).send('Invalid prompt length.');
+    }
 
-    // Check if the response is already cached
+    // Check if the response is already cached in the in-memory Map
     if (responseCache.has(prompt)) {
       res.status(200).send({
-        bot: responseCache.get(prompt)
+        bot: responseCache.get(prompt),
       });
     } else {
       const response = await openai.createCompletion({
-        model: "text-davinci-003",
+        model: 'text-davinci-003',
         prompt: `${prompt}`,
         temperature: 0,
         max_tokens: 3000,
@@ -43,7 +57,7 @@ app.post('/api/process', async (req, res) => {
 
       const botResponse = response.data.choices[0].text;
 
-      // Cache the response for future requests
+      // Cache the response in the in-memory Map for future requests
       responseCache.set(prompt, botResponse);
 
       // Truncate the response to a reasonable size
@@ -51,7 +65,7 @@ app.post('/api/process', async (req, res) => {
       const truncatedResponse = botResponse.slice(0, maxResponseLength);
 
       res.status(200).send({
-        bot: truncatedResponse
+        bot: truncatedResponse,
       });
     }
   } catch (error) {
