@@ -1,10 +1,9 @@
 import express from 'express';
-import * as dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from 'openai';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
+import { Configuration, OpenAIApi } from 'openai';
 import validator from 'validator';
-import { promisify } from 'util';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -46,7 +45,7 @@ app.post('/api/process', async (req, res) => {
       });
     } else {
       const response = await openai.createCompletion({
-        model: 'text-davinci-003',
+        model: 'text-davinci-003', // Update this with the latest OpenAI model name
         prompt: `${prompt}`,
         temperature: 0,
         max_tokens: 3000,
@@ -56,7 +55,12 @@ app.post('/api/process', async (req, res) => {
       });
 
       // Check if the response contains any error
-      if (response.data && response.data.choices && response.data.choices.length > 0) {
+      if (
+        response.data &&
+        response.data.choices &&
+        response.data.choices.length > 0 &&
+        response.data.choices[0].text
+      ) {
         const botResponse = response.data.choices[0].text;
 
         // Cache the response in the in-memory Map for future requests
@@ -75,6 +79,11 @@ app.post('/api/process', async (req, res) => {
     console.error(error);
     res.status(500).send('Something went wrong');
   }
+});
+
+// Default route to handle undefined routes
+app.use((req, res) => {
+  res.status(404).send('Not Found');
 });
 
 export default app;
