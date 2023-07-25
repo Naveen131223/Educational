@@ -38,7 +38,7 @@ app.post('/', async (req, res) => {
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: `${prompt}`,
-      temperature: 1.2, // Using a slightly higher temperature for more creative responses.
+      temperature: 0.8, // Using a slightly higher temperature for more creative responses.
       max_tokens: 150, // Limiting the response length to improve speed.
     });
 
