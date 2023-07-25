@@ -31,6 +31,7 @@ const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 100, // 100 requests per minute
 });
+
 app.use(limiter); // Apply rate limiting to all routes
 
 app.get('/', async (req, res) => {
@@ -42,10 +43,10 @@ app.get('/', async (req, res) => {
 app.post('/', async (req, res) => {
   try {
     const prompt = req.body.prompt;
+
     // Sanitize user input before using it
     const sanitizedPrompt = sanitizeUserInput(prompt);
 
-    // Use the OpenAI API to get a response from the model
     const response = await openai.createCompletion({
       model: 'text-davinci-003',
       prompt: `${sanitizedPrompt}`,
@@ -65,5 +66,4 @@ app.post('/', async (req, res) => {
   }
 });
 
-const port = 5000;
-app.listen(port, () => console.log(`AI server started on http://localhost:${port}`));
+app.listen(5000, () => console.log('AI server started on http://localhost:5000'));
