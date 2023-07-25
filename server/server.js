@@ -55,16 +55,23 @@ app.post('/api/process', async (req, res) => {
         presence_penalty: 0,
       });
 
-      const botResponse = response.data.choices[0].text;
+      // Check if the response contains any error
+      if (response.data && response.data.choices && response.data.choices.length > 0) {
+        const botResponse = response.data.choices[0].text;
 
-      // Cache the response in the in-memory Map for future requests
-      responseCache.set(prompt, botResponse);
+        // Cache the response in the in-memory Map for future requests
+        responseCache.set(prompt, botResponse);
 
-      res.status(200).send({
-        bot: botResponse,
-      });
+        res.status(200).send({
+          bot: botResponse,
+        });
+      } else {
+        // Handle the case where the response doesn't contain any valid data
+        res.status(500).send('Something went wrong with the AI model response.');
+      }
     }
   } catch (error) {
+    // Handle any other errors that might occur during the API call or processing
     console.error(error);
     res.status(500).send('Something went wrong');
   }
