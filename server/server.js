@@ -60,12 +60,8 @@ app.post('/api/process', async (req, res) => {
       // Cache the response in the in-memory Map for future requests
       responseCache.set(prompt, botResponse);
 
-      // Truncate the response to a reasonable size
-      const maxResponseLength = 500;
-      const truncatedResponse = botResponse.slice(0, maxResponseLength);
-
       res.status(200).send({
-        bot: truncatedResponse,
+        bot: botResponse,
       });
     }
   } catch (error) {
