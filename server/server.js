@@ -1,9 +1,9 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-import rateLimit from 'express-rate-limit';
+import * as dotenv from 'dotenv';
+import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-import validator from 'validator';
-import dotenv from 'dotenv';
+import cluster from 'cluster';
+import os from 'os';
 
 dotenv.config();
 
@@ -13,39 +13,51 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const app = express();
+const numCPUs = os.cpus().length;
 
-// Middleware to parse JSON body and limit request size
-app.use(bodyParser.json({ limit: '1mb' }));
+if (cluster.isMaster) {
+  console.log(`Master ${process.pid} is running`);
 
-// Rate Limiting (Limit to 100 requests per 10 minutes)
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  max: 100,
-});
-app.use(limiter);
+  // Fork workers for each CPU core
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
 
-// Simple in-memory cache for responses
-const responseCache = new Map();
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+} else {
+  const app = express();
+  
+  // Set up CORS configuration
+  const allowedOrigins = ['https://example.com', 'https://yourdomain.com'];
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  }));
+  
+  app.use(express.json());
 
-// Your API endpoint for processing the AI model
-app.post('/api/process', async (req, res) => {
-  try {
-    const prompt = req.body.prompt;
+  app.get('/', async (req, res) => {
+    res.status(200).send({
+      message: 'Hello from CodeX!',
+    });
+  });
 
-    // Input Validation (sanitize user input if necessary)
-    if (!validator.isLength(prompt, { min: 1, max: 1000 })) {
-      return res.status(400).send('Invalid prompt length.');
-    }
+  app.post('/', async (req, res) => {
+    try {
+      // Validate and sanitize input
+      const prompt = req.body.prompt;
 
-    // Check if the response is already cached in the in-memory Map
-    if (responseCache.has(prompt)) {
-      res.status(200).send({
-        bot: responseCache.get(prompt),
-      });
-    } else {
+      // Implement rate limiting here
+      
       const response = await openai.createCompletion({
-        model: 'text-davinci-003', // Update this with the latest OpenAI model name
+        model: 'text-davinci-003',
         prompt: `${prompt}`,
         temperature: 0,
         max_tokens: 3000,
@@ -54,36 +66,14 @@ app.post('/api/process', async (req, res) => {
         presence_penalty: 0,
       });
 
-      // Check if the response contains any error
-      if (
-        response.data &&
-        response.data.choices &&
-        response.data.choices.length > 0 &&
-        response.data.choices[0].text
-      ) {
-        const botResponse = response.data.choices[0].text;
-
-        // Cache the response in the in-memory Map for future requests
-        responseCache.set(prompt, botResponse);
-
-        res.status(200).send({
-          bot: botResponse,
-        });
-      } else {
-        // Handle the case where the response doesn't contain any valid data
-        res.status(500).send('Something went wrong with the AI model response.');
-      }
+      res.status(200).send({
+        bot: response.data.choices[0].text,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Something went wrong');
     }
-  } catch (error) {
-    // Handle any other errors that might occur during the API call or processing
-    console.error(error);
-    res.status(500).send('Something went wrong');
-  }
-});
+  });
 
-// Default route to handle undefined routes
-app.use((req, res) => {
-  res.status(404).send('Not Found');
-});
-
-export default app;
+  app.listen(5000, () => console.log(`AI server started on http://localhost:5000 (Worker ${process.pid})`));
+}
