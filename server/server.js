@@ -39,7 +39,7 @@ app.post('/', async (req, res) => {
       model: "text-davinci-003",
       prompt: `${prompt}`,
       temperature: 0.8, // Using a slightly higher temperature for more creative responses.
-      max_tokens: 500, // Limiting the response length to improve speed.
+      // Do not specify max_tokens to remove the response length limit.
     });
 
     const botResponse = response.data.choices[0].text;
