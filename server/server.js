@@ -1,11 +1,9 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+import helmet from 'helmet'; // Added Helmet for security headers
+import rateLimit from 'express-rate-limit'; // Added rate limiting
 import { Configuration, OpenAIApi } from 'openai';
-import bodyParser from 'body-parser';
-import validator from 'validator';
 
 dotenv.config();
 
@@ -29,15 +27,12 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Set a limit on the request body size to prevent denial-of-service attacks
-app.use(bodyParser.json({ limit: '1mb' }));
-
 // Store the last response to be reused if the same prompt is requested again.
 let lastResponse = null;
 
 app.get('/', async (req, res) => {
   res.status(200).send({
-    message: 'Hi Sister',
+    message: 'Hello from CodeX!',
   });
 });
 
@@ -46,7 +41,7 @@ app.post('/', async (req, res) => {
     const prompt = req.body.prompt;
 
     // Validate and sanitize the input prompt
-    if (!prompt || typeof prompt !== 'string' || !validator.isLength(prompt, { min: 1, max: 200 })) {
+    if (!prompt || typeof prompt !== 'string') {
       return res.status(400).send({
         error: 'Invalid prompt',
       });
@@ -62,8 +57,8 @@ app.post('/', async (req, res) => {
     const response = await openai.createCompletion({
       model: 'text-davinci-003',
       prompt: `${prompt}`,
-      temperature: 0.6, // Using a slightly higher temperature for more creative responses.
-      max_tokens: 900, // Limiting the response length to improve speed.
+      temperature: 0.7, // Using a slightly higher temperature for more creative responses.
+      max_tokens: 150, // Limiting the response length to improve speed.
     });
 
     const botResponse = response.data.choices[0].text;
