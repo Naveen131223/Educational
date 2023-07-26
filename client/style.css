@@ -20,7 +20,87 @@ body {
         }
 
 
+h2 {
+  color: #333; /* Title color */
+}
 
+#bannerContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+#bannerPreview {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+input[type="file"],
+input[type="number"],
+button,
+select {
+  margin: 5px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #3498db; /* Button background color */
+  color: #fff; /* Button text color */
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2980b9; /* Button background color on hover */
+}
+
+select:hover {
+  background-color: #3498db; /* Dropdown background color on hover */
+}
+
+/* Styles for the download button */
+.download-button {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.download-button a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2ecc71; /* Download button background color */
+  color: #fff; /* Download button text color */
+  text-decoration: none;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+
+.download-button a:hover {
+  background-color: #27ae60; /* Download button background color on hover */
+}
+
+/* Additional styles for displaying size information */
+.size-info {
+  color: #666; /* Size information color */
+  margin: 5px 0;
+}
+
+/* New styles for the image and size info container */
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Add some spacing between image containers */
+#bannerPreviewContainer .image-container:not(:last-child) {
+  margin-bottom: 30px;
+}
 
 
 
