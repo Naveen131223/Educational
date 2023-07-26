@@ -202,9 +202,128 @@ const module = await import("./script.js?v=v7");
 </div>
 
   
+  <div id="bannerContainer">
+  <h2>Custom Banner Image Uploader</h2>
+  <input type="file" id="imageInput" multiple>
+  <br>
+  <label for="customWidth">Custom Width (in pixels):</label>
+  <input type="number" id="customWidth" value="300">
+  <br>
+  <label for="customHeight">Custom Height (in pixels):</label>
+  <input type="number" id="customHeight" value="150">
+  <br>
+  <label for="imageFormat">Select Image Format:</label>
+  <select id="imageFormat">
+    <option value="png">PNG</option>
+    <option value="jpg">JPG</option>
+    <option value="gif">GIF</option>
+    <!-- ... (other image format options) ... -->
+  </select>
+  <br>
+  <button onclick="updateBanners()">Update Banners</button>
+  <button onclick="resetPreview()">Reset</button>
+  <br>
+  <div id="bannerPreviewContainer"></div>
+</div>
+
+<script>
+// Updated function to handle image upload and preview
+function updateBanners() {
+  const imageInput = document.getElementById("imageInput");
+  const customWidthInput = document.getElementById("customWidth");
+  const customHeightInput = document.getElementById("customHeight");
+  const imageFormatSelect = document.getElementById("imageFormat");
+  const bannerPreviewContainer = document.getElementById("bannerPreviewContainer");
   
+  bannerPreviewContainer.innerHTML = ""; // Clear previous previews
 
+  const files = imageInput.files; // Get all selected files
+  const format = imageFormatSelect.value; // Get selected image format
 
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const reader = new FileReader();
+    
+    reader.onload = function (e) {
+      const img = new Image();
+      img.src = e.target.result;
+
+      img.onload = function () {
+        // Get the original size of the image
+        const originalWidth = img.width;
+        const originalHeight = img.height;
+        const originalSize = (file.size / 1024).toFixed(2); // Size in KB (rounded to 2 decimal places)
+
+        // Get user-defined custom width and height
+        const customWidth = parseInt(customWidthInput.value);
+        const customHeight = parseInt(customHeightInput.value);
+
+        // Resize the image
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = customWidth;
+        canvas.height = customHeight;
+        ctx.drawImage(img, 0, 0, customWidth, customHeight);
+
+        // Get the data URL of the resized image
+        const dataURL = canvas.toDataURL(`image/${format}`);
+
+        // Calculate the compressed size of the image
+        const byteCharacters = atob(dataURL.split(',')[1]);
+        const compressedSize = (byteCharacters.length / 1024).toFixed(2); // Size in KB (rounded to 2 decimal places)
+
+        // Create a new image element for the preview
+        const previewImg = new Image();
+        previewImg.src = dataURL;
+        previewImg.style.marginTop = "20px";
+        previewImg.style.border = "1px solid #ccc";
+        previewImg.style.padding = "5px";
+
+        // Display original size and compressed size
+        const sizeInfo = document.createElement("p");
+        sizeInfo.classList.add("size-info"); // Add the 'size-info' class for styling
+        sizeInfo.textContent = `Original Size: ${originalWidth}x${originalHeight} | ${originalSize} KB | Compressed Size: ${compressedSize} KB | Compressed Width: ${customWidth} | Compressed Height: ${customHeight}`;
+
+        // Create a container for each image and its size information
+        const container = document.createElement("div");
+        container.classList.add("image-container"); // Add the 'image-container' class for styling
+        container.appendChild(previewImg);
+        container.appendChild(sizeInfo);
+        bannerPreviewContainer.appendChild(container);
+
+         // Create a download link for the resized image
+        const downloadLink = document.createElement("a");
+        downloadLink.href = dataURL;
+        downloadLink.download = `custom_banner_${i}.${format}`;
+        downloadLink.textContent = `Download Image ${i + 1}`;
+        downloadLink.style.backgroundColor = "#2ecc71"; // Set button background color
+        downloadLink.style.color = "#fff"; // Set button text color
+        downloadLink.style.textDecoration = "none"; // Remove underline
+        downloadLink.style.borderRadius = "5px"; // Add rounded corners
+        downloadLink.style.padding = "10px 20px"; // Add padding
+        downloadLink.style.margin = "5px 0"; // Add margin
+        bannerPreviewContainer.appendChild(downloadLink);
+        bannerPreviewContainer.appendChild(document.createElement("br"));
+      };
+    };
+    
+    reader.readAsDataURL(file);
+  }
+}
+
+// Function to reset image previews and input
+function resetPreview() {
+  const bannerPreviewContainer = document.getElementById("bannerPreviewContainer");
+  const imageInput = document.getElementById("imageInput");
+  const customWidthInput = document.getElementById("customWidth");
+  const customHeightInput = document.getElementById("customHeight");
+
+  bannerPreviewContainer.innerHTML = ""; // Clear image previews
+  imageInput.value = ""; // Clear selected files
+  customWidthInput.value = "300"; // Reset custom width value
+  customHeightInput.value = "150"; // Reset custom height value
+}
+</script>
 	  
 
 <script>
