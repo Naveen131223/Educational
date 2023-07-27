@@ -19,6 +19,81 @@ body {
   padding: 0;
         }
 
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .imagePreview {
+      margin: 10px;
+      padding: 5px;
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      cursor: grab;
+      touch-action: manipulation;
+    }
+    
+    .button-container label {
+  display: block; /* Changed 'inline' to 'block' */
+  margin-right: 5px;
+}
+
+
+    /* Additional styles for the SortableJS */
+    .sortable-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .sortable-placeholder {
+      width: 200px;
+      height: 200px;
+      background-color: rgba(0, 0, 0, 0.1);
+      border: 1px dashed #ccc;
+      box-sizing: border-box;
+    }
+
+    .customFileUpload {
+      display: inline-block;
+      background-color: #007bff;
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .button-container {
+      margin-bottom: 10px;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #007bff;
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .button:last-child {
+      margin-right: 0;
+    }
+
+    .button-container label {
+      margin-right: 5px;
+    }
+
+
+
+
+
+
+
+
 
 
     /* Style the header */
