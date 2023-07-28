@@ -19,6 +19,67 @@ body {
   padding: 0;
         }
 
+
+
+    /* ... other styles ... */
+    .action-buttons button {
+        margin: 5px;
+        padding: 8px 12px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .action-buttons button.reset-btn {
+        background-color: #f44336;
+    }
+    /* Add colors to the buttons */
+    .action-buttons button.upload-btn {
+        background-color: green;
+    }
+    .action-buttons button.download-btn {
+        background-color: #FFC107;
+    }
+    
+        input[type="file"] {
+        margin-bottom: 10px;
+        /* Choose Files button color */
+        background-color: #2196F3;
+        color: #fff;
+        padding: 8px 12px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+
+input[type="file"] {
+    background-color: #2196F3; /* Blue color for Choose Files button */
+    color: #fff; /* Text color (white) for better contrast */
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.action-buttons button.upload-btn {
+    background-color: #4CAF50; /* Green color for Upload and Process button */
+    color: #fff; /* Text color (white) for better contrast */
+}
+
+/* Remove underline from the download button */
+.action-buttons button a {
+    text-decoration: none;
+}
+
+
+
+
+
+
+
+
     h1 {
       margin-bottom: 20px;
     }
