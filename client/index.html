@@ -290,6 +290,112 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
   <div id="imageContainer" class="sortable-list"></div>
 
+    <h1>Image Compression without Pixel Breakage - Professional Quality</h1>
+    <form>
+        <input type="file" name="images[]" id="imageInput" multiple accept="image/*">
+        <input type="button" class="upload-btn" value="Upload and Process" onclick="processImages()">
+        <div class="action-buttons">
+            <button class="reset-btn" onclick="resetPreview()">Reset</button>
+        </div>
+    </form>
+
+    <div id="imagePreview"></div>
+
+    <script>
+        function processImages() {
+            const fileInput = document.getElementById('imageInput');
+            const files = fileInput.files;
+
+            if (files.length === 0) {
+                alert("Please select one or more images to upload.");
+                return;
+            }
+
+            const imagePreviewDiv = document.getElementById('imagePreview');
+            imagePreviewDiv.innerHTML = '';
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function () {
+                        // Display the original image, image info, and download button.
+                        const previewContainer = document.createElement('div');
+                        previewContainer.classList.add('preview-image');
+
+                        const originalImgElement = document.createElement('img');
+                        originalImgElement.src = img.src;
+                        previewContainer.appendChild(originalImgElement);
+
+                        const originalSizeInfo = document.createElement('p');
+                        originalSizeInfo.classList.add('image-info');
+                        originalSizeInfo.textContent = `Original Size: Width: ${img.width}px Height: ${img.height}px, Size: ${formatBytes(file.size, 2)}`;
+                        previewContainer.appendChild(originalSizeInfo);
+
+                        // Create a canvas element to perform image processing.
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+
+                        // Perform image processing here (e.g., quality improvement).
+                        ctx.drawImage(img, 0, 0);
+
+                        // Get the compressed image as a data URL (base64 encoded).
+                        const processedImageUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+                        // Create a new image element for compressed image.
+                        const compressedImg = new Image();
+                        compressedImg.src = processedImageUrl;
+                        compressedImg.onload = function () {
+                            // Get the compressed image width and height after it's loaded.
+                            const compressedWidth = compressedImg.width;
+                            const compressedHeight = compressedImg.height;
+
+                            // Get the compressed image size in KB with two decimal points.
+                            const compressedSize = formatBytes((processedImageUrl.length * 0.75), 2);
+
+                            // Display the compressed image size, width, height, and the download button.
+                            const compressedSizeInfo = document.createElement('p');
+                            compressedSizeInfo.classList.add('image-info');
+                            compressedSizeInfo.textContent = `Compressed Size: ${compressedSize}, Width: ${compressedWidth}px, Height: ${compressedHeight}px`;
+                            previewContainer.appendChild(compressedSizeInfo);
+
+                            const downloadBtn = document.createElement('a');
+                            downloadBtn.href = processedImageUrl;
+                            downloadBtn.download = `Download Image ${i + 1}.jpg`;
+                            downloadBtn.innerHTML = `Download Image ${i + 1}`;
+                            previewContainer.appendChild(downloadBtn);
+
+                            imagePreviewDiv.appendChild(previewContainer);
+                        };
+                    };
+                };
+
+                // Read the selected image file.
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function resetPreview() {
+            const imagePreviewDiv = document.getElementById('imagePreview');
+            imagePreviewDiv.innerHTML = '';
+        }
+
+        function formatBytes(bytes, decimals = 0) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+    </script>
+	  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
 
