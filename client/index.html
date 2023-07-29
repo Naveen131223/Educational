@@ -198,12 +198,20 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 	  
 <div id="readerContainer">
-    <label for="sentenceInput">Enter a sentence to be Read:</label>
-    <input type="text" id="sentenceInput" placeholder="Type your sentence here...">
+    <label for="sentenceInput">Enter sentences to be Read:</label>
+    <textarea id="sentenceInput" placeholder="Type your sentences here..."></textarea>
     <button id="readButton">Start Reading</button>
     <button id="stopButton">Stop Reading</button>
 </div>
 
+<script>
+	const sentenceInput = document.getElementById("sentenceInput");
+
+sentenceInput.addEventListener("input", () => {
+    sentenceInput.style.height = "auto"; // Reset the height to auto to calculate the new height
+    sentenceInput.style.height = `${sentenceInput.scrollHeight}px`; // Set the new height based on the content
+});
+</script>
   
   <div id="bannerContainer">
   <h2>Custom Banner Image Uploader</h2>
