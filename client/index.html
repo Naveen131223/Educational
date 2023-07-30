@@ -334,7 +334,137 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
   <div id="imageContainer" class="sortable-list"></div>
 
    
+<h2>Tic Tac Toe Game</h2>
 
+<div class="container">
+        <div class="grid" id="grid">
+            <div class="cell" onclick="makeMove(0)"></div>
+            <div class="cell" onclick="makeMove(1)"></div>
+            <div class="cell" onclick="makeMove(2)"></div>
+            <div class="cell" onclick="makeMove(3)"></div>
+            <div class="cell" onclick="makeMove(4)"></div>
+            <div class="cell" onclick="makeMove(5)"></div>
+            <div class="cell" onclick="makeMove(6)"></div>
+            <div class="cell" onclick="makeMove(7)"></div>
+            <div class="cell" onclick="makeMove(8)"></div>
+        </div>
+        <div class="btn-container">
+            <button class="btn new-game-btn" onclick="newGame()">New Game</button>
+            <button class="btn reset-btn" onclick="resetGame()">Reset</button>
+            <button class="btn two-player-btn selected" onclick="toggleTwoPlayer()">2 Player</button>
+            <button class="btn cpu-btn" onclick="toggleCPU()">CPU</button>
+        </div>
+        <div class="status" id="status"></div>
+    </div>
+
+
+	  <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameOver = false;
+        let twoPlayerMode = true;
+        let cpuMode = false;
+        const statusElement = document.getElementById('status');
+
+        function checkWin(player) {
+            const winCombination = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6] // diagonals
+            ];
+
+            for (const combination of winCombination) {
+                const [a, b, c] = combination;
+                if (board[a] === player && board[b] === player && board[c] === player) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function checkDraw() {
+            return !board.includes('');
+        }
+
+        function makeMove(index) {
+            if (!gameOver && board[index] === '') {
+                board[index] = currentPlayer;
+                document.getElementsByClassName('cell')[index].innerText = currentPlayer;
+                document.getElementsByClassName('cell')[index].classList.add(currentPlayer.toLowerCase());
+                if (checkWin(currentPlayer)) {
+                    gameOver = true;
+                    statusElement.innerText = currentPlayer + ' wins!';
+                } else if (checkDraw()) {
+                    gameOver = true;
+                    statusElement.innerText = 'It\'s a draw!';
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    if (!gameOver && currentPlayer === 'O' && !twoPlayerMode && cpuMode) {
+                        cpuMove();
+                    }
+                }
+            }
+        }
+
+        function cpuMove() {
+            if (!gameOver) { // Make sure CPU doesn't move if the game is over
+                let emptyCells = board.map((cell, index) => (cell === '' ? index : -1)).filter(index => index !== -1);
+                if (emptyCells.length > 0) {
+                    let randomIndex = Math.floor(Math.random() * emptyCells.length);
+                    let cpuMoveIndex = emptyCells[randomIndex];
+                    setTimeout(() => makeMove(cpuMoveIndex), 500); // Simulate a delay before CPU move
+                }
+            }
+        }
+
+        function newGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameOver = false;
+            twoPlayerMode = true;
+            cpuMode = false;
+            statusElement.innerText = '';
+            let cells = document.getElementsByClassName('cell');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].innerText = '';
+                cells[i].classList.remove('x', 'o');
+            }
+            document.querySelector('.two-player-btn').classList.add('selected');
+            document.querySelector('.cpu-btn').classList.remove('selected');
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameOver = false;
+            statusElement.innerText = '';
+            let cells = document.getElementsByClassName('cell');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].innerText = '';
+                cells[i].classList.remove('x', 'o');
+            }
+        }
+
+        function toggleTwoPlayer() {
+            twoPlayerMode = true;
+            cpuMode = false;
+            statusElement.innerText = '';
+            let cells = document.getElementsByClassName('cell');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].classList.remove('o');
+            }
+            document.querySelector('.two-player-btn').classList.add('selected');
+            document.querySelector('.cpu-btn').classList.remove('selected');
+        }
+
+        function toggleCPU() {
+            twoPlayerMode = false;
+            cpuMode = true;
+            statusElement.innerText = 'CPU Mode';
+            document.querySelector('.two-player-btn').classList.remove('selected');
+            document.querySelector('.cpu-btn').classList.add('selected');
+        }
+    </script>
 	  
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
