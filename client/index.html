@@ -465,7 +465,260 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
             document.querySelector('.cpu-btn').classList.add('selected');
         }
     </script>
-	  
+
+	      <div class="container">
+        <h1>2048 Game</h1>
+        <div id="grid-container">
+            <!-- The game grid will be dynamically generated here -->
+        </div>
+    </div>
+
+
+
+    <script>
+        // JavaScript logic for the game goes here
+
+        // Define the grid size
+        const gridSize = 4;
+
+        // Create a 2D array to represent the grid
+        const grid = [];
+        for (let i = 0; i < gridSize; i++) {
+            grid[i] = [];
+            for (let j = 0; j < gridSize; j++) {
+                grid[i][j] = 0; // Set all values to 0 initially
+            }
+        }
+
+        // Function to generate the game grid dynamically
+        function generateGrid() {
+            const gridContainer = document.getElementById('grid-container');
+            gridContainer.innerHTML = '';
+
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile tile-' + grid[i][j];
+                    tile.textContent = grid[i][j] !== 0 ? grid[i][j] : ''; // Display the tile value if it's not zero
+                    gridContainer.appendChild(tile);
+                }
+            }
+        }
+
+        // Function to handle key press events
+        function handleKeyPress(event) {
+            let moved = false;
+
+            switch (event.key) {
+                case 'ArrowUp':
+                    moved = moveUp();
+                    break;
+                case 'ArrowDown':
+                    moved = moveDown();
+                    break;
+                case 'ArrowLeft':
+                    moved = moveLeft();
+                    break;
+                case 'ArrowRight':
+                    moved = moveRight();
+                    break;
+            }
+
+            if (moved) {
+                generateNewTile();
+                generateGrid();
+            }
+        }
+
+        // Function to handle touch events for mobile devices
+        function handleTouchStart(event) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+        }
+
+        function handleTouchMove(event) {
+            event.preventDefault();
+        }
+
+        function handleTouchEnd(event) {
+            const touchEndX = event.changedTouches[0].clientX;
+            const touchEndY = event.changedTouches[0].clientY;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            let moved = false;
+
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) {
+                    moved = moveRight();
+                } else {
+                    moved = moveLeft();
+                }
+            } else {
+                if (deltaY > 0) {
+                    moved = moveDown();
+                } else {
+                    moved = moveUp();
+                }
+            }
+
+            if (moved) {
+                generateNewTile();
+                generateGrid();
+            }
+        }
+
+        // Function to move tiles up
+        function moveUp() {
+            let moved = false;
+
+            for (let j = 0; j < gridSize; j++) {
+                for (let i = 1; i < gridSize; i++) {
+                    if (grid[i][j] !== 0) {
+                        let k = i;
+                        while (k > 0 && grid[k - 1][j] === 0) {
+                            grid[k - 1][j] = grid[k][j];
+                            grid[k][j] = 0;
+                            k--;
+                            moved = true;
+                        }
+                        if (k > 0 && grid[k - 1][j] === grid[k][j]) {
+                            grid[k - 1][j] *= 2;
+                            grid[k][j] = 0;
+                            moved = true;
+                        }
+                    }
+                }
+            }
+
+            return moved;
+        }
+
+        // Function to move tiles down
+        function moveDown() {
+            let moved = false;
+
+            for (let j = 0; j < gridSize; j++) {
+                for (let i = gridSize - 2; i >= 0; i--) {
+                    if (grid[i][j] !== 0) {
+                        let k = i;
+                        while (k < gridSize - 1 && grid[k + 1][j] === 0) {
+                            grid[k + 1][j] = grid[k][j];
+                            grid[k][j] = 0;
+                            k++;
+                            moved = true;
+                        }
+                        if (k < gridSize - 1 && grid[k + 1][j] === grid[k][j]) {
+                            grid[k + 1][j] *= 2;
+                            grid[k][j] = 0;
+                            moved = true;
+                        }
+                    }
+                }
+            }
+
+            return moved;
+        }
+
+        // Function to move tiles left
+        function moveLeft() {
+            let moved = false;
+
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 1; j < gridSize; j++) {
+                    if (grid[i][j] !== 0) {
+                        let k = j;
+                        while (k > 0 && grid[i][k - 1] === 0) {
+                            grid[i][k - 1] = grid[i][k];
+                            grid[i][k] = 0;
+                            k--;
+                            moved = true;
+                        }
+                        if (k > 0 && grid[i][k - 1] === grid[i][k]) {
+                            grid[i][k - 1] *= 2;
+                            grid[i][k] = 0;
+                            moved = true;
+                        }
+                    }
+                }
+            }
+
+            return moved;
+        }
+
+        // Function to move tiles right
+        function moveRight() {
+            let moved = false;
+
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = gridSize - 2; j >= 0; j--) {
+                    if (grid[i][j] !== 0) {
+                        let k = j;
+                        while (k < gridSize - 1 && grid[i][k + 1] === 0) {
+                            grid[i][k + 1] = grid[i][k];
+                            grid[i][k] = 0;
+                            k++;
+                            moved = true;
+                        }
+                        if (k < gridSize - 1 && grid[i][k + 1] === grid[i][k]) {
+                            grid[i][k + 1] *= 2;
+                            grid[i][k] = 0;
+                            moved = true;
+                        }
+                    }
+                }
+            }
+
+            return moved;
+        }
+
+        // Function to generate a new tile with a value of 2 or 4
+        function generateNewTile() {
+            const emptyTiles = [];
+
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    if (grid[i][j] === 0) {
+                        emptyTiles.push({ row: i, col: j });
+                    }
+                }
+            }
+
+            if (emptyTiles.length > 0) {
+                const { row, col } = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+                grid[row][col] = Math.random() < 0.9 ? 2 : 4;
+            }
+        }
+
+        // Function to initialize the game
+        function startGame() {
+            // Clear the grid
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    grid[i][j] = 0;
+                }
+            }
+
+            // Generate two initial tiles
+            generateNewTile();
+            generateNewTile();
+
+            // Render the grid
+            generateGrid();
+
+            // Add the event listeners
+            window.addEventListener('keydown', handleKeyPress);
+            const gridContainer = document.getElementById('grid-container');
+            gridContainer.addEventListener('touchstart', handleTouchStart);
+            gridContainer.addEventListener('touchmove', handleTouchMove);
+            gridContainer.addEventListener('touchend', handleTouchEnd);
+        }
+
+        // Call the start game function when the page loads
+        window.onload = function () {
+            startGame();
+        };
+    </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
