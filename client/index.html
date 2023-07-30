@@ -300,147 +300,15 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 
 
-  <h1>Image Compression</h1>
-  <div id="container">
-    <input type="file" id="file-input" accept="image/*" multiple>
-    <br>
-    <label for="compression-input">Image Size Value in KB Switch from 1 to 14 Values: </label>
-    <input type="number" id="compression-input" step="1" min="1" max="1000" value="10">
-    <button id="upload-btn">Upload Images</button>
-    <button id="preview-btn">Preview</button>
-    <button id="reset-btn">Reset</button>
-    <br>
-    <div id="image-previews"></div>
-  </div>
+  
 
 
-<script>
-	let originalImageData; // Store original image data to reset preview
 
-    document.getElementById("upload-btn").addEventListener("click", function () {
-      document.getElementById("file-input").click();
-    });
+      
 
-    document.getElementById("file-input").addEventListener("change", async function (event) {
-      const files = event.target.files;
-      if (!files || files.length === 0) return;
-
-      const imagePreviewsContainer = document.getElementById("image-previews");
-      imagePreviewsContainer.innerHTML = ""; // Clear previous previews
-
-      let imageNumber = 1; // Counter to keep track of image number
-
-      // Helper function to read a file as Data URL
-      function readFileAsDataURL(file) {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (event) => resolve(event.target.result);
-          reader.readAsDataURL(file);
-        });
-      }
-
-      // Helper function to get the size of a Data URL in bytes
-      function getDataURLSize(dataURL) {
-        const head = dataURL.split(",")[0];
-        const encodedData = dataURL.split(",")[1];
-        return (head + "," + atob(encodedData)).length;
-      }
-
-      // Process images and store compressed data in the array
-      for (const file of files) {
-        const image = new Image();
-        const imageDataURL = await readFileAsDataURL(file);
-        image.src = imageDataURL;
-
-        await new Promise((resolve) => {
-          image.onload = resolve;
-        });
-
-        originalImageData = imageDataURL; // Store original image data for reset
-
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        // Calculate new width and height to maintain aspect ratio
-        const maxDimension = 300;
-        let newWidth, newHeight;
-        if (image.width > image.height) {
-          newWidth = maxDimension;
-          newHeight = (image.height * maxDimension) / image.width;
-        } else {
-          newHeight = maxDimension;
-          newWidth = (image.width * maxDimension) / image.height;
-        }
-
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-        ctx.drawImage(image, 0, 0, newWidth, newHeight);
-
-        const targetSizeKB = parseFloat(document.getElementById("compression-input").value);
-
-        // Perform dynamic compression to meet the target size
-        let compressionQuality = 1;
-        const maxSizeByte = targetSizeKB * 1024;
-        let compressedSizeByte = getDataURLSize(canvas.toDataURL("image/jpeg", compressionQuality));
-        while (compressedSizeByte > maxSizeByte && compressionQuality > 0.1) {
-          compressionQuality -= 0.1;
-          compressedSizeByte = getDataURLSize(canvas.toDataURL("image/jpeg", compressionQuality));
-        }
-
-        // Create compressed image and store in the array
-        const compressedImage = new Image();
-        compressedImage.src = canvas.toDataURL("image/jpeg", compressionQuality);
-
-        // Display original and compressed image details along with download links
-        const previewDiv = document.createElement("div");
-        previewDiv.className = "image-preview";
-
-        const detailsDiv = document.createElement("div");
-        detailsDiv.className = "image-details";
-        detailsDiv.innerHTML = `<h3>${file.name}</h3>
-                                <p><strong>Original Image:</strong><br>
-                                Width: ${image.width}px | Height: ${image.height}px | Size: ${formatBytes(file.size)}</p>
-                                <img src="${compressedImage.src}" alt="Compressed Image">
-                                <p><strong>Compressed Image:</strong><br>
-                                Width: ${newWidth}px | Height: ${newHeight}px | Size: ${formatBytes(compressedSizeByte)}</p>`;
-
-        const downloadLink = document.createElement("a");
-        downloadLink.href = compressedImage.src;
-        downloadLink.download = "compressed_" + file.name;
-        downloadLink.textContent = `Download Image ${imageNumber++}`;
-        downloadLink.className = "download-btn";
-
-        previewDiv.appendChild(detailsDiv);
-        previewDiv.appendChild(downloadLink);
-        imagePreviewsContainer.appendChild(previewDiv);
-      }
-    });
-
-    // Preview button event handler
-    document.getElementById("preview-btn").addEventListener("click", function () {
-      document.getElementById("file-input").dispatchEvent(new Event("change"));
-    });
-
-    // Reset button event handler
-    document.getElementById("reset-btn").addEventListener("click", function () {
-      const imagePreviewsContainer = document.getElementById("image-previews");
-      imagePreviewsContainer.innerHTML = ""; // Clear previous previews
-
-      const compressionInput = document.getElementById("compression-input");
-      compressionInput.value = "100"; // Reset compression target size input to default value
-
-      // Clear the file input by replacing it with a new one
-      const fileInput = document.getElementById("file-input");
-      fileInput.type = "text"; // Change the type to text temporarily
-      fileInput.type = "file"; // Reset the type back to file
-    });
-
-    function formatBytes(bytes) {
-      const kb = bytes / 1024;
-      return kb.toFixed(2) + " KB";
-	}
-	
-	<\script>
+        
+        
+     
 
 
 	  
