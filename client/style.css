@@ -29,6 +29,91 @@ p {
 
 
 
+.container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+            border: 2px solid #333;
+            padding: 5px;
+            border-radius: 10px;
+            background-color: #f1f1f1;
+        }
+
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            border: 2px solid yellow; /* Yellow outline */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cell:hover {
+            background-color: #ddd;
+        }
+
+        .cell.x {
+            color: red; /* Red X */
+        }
+
+        .cell.o {
+            color: blue; /* Blue O */
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            transition: background-color 0.3s ease;
+            width: 140px;
+        }
+
+        .new-game-btn, .reset-btn {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .two-player-btn {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        .cpu-btn {
+            background-color: #f0ad4e;
+            color: #fff;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+
     h1 {
       margin-bottom: 20px;
     }
