@@ -363,90 +363,95 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
   <button id="uploadBtn_1">Upload Images</button>
   <div id="output_1"></div>
 
-  <script>
-    // Function to compress images using Canvas
-    function compressImage_1(file_1) {
-      return new Promise((resolve_1, reject_1) => {
-        const reader_1 = new FileReader();
+<script>
+  // Function to compress images using Canvas
+  function compressImage_1(file_1) {
+    return new Promise((resolve_1, reject_1) => {
+      const reader_1 = new FileReader();
 
-        reader_1.onload = function(event_1) {
-          const img_1 = new Image();
-          img_1.src = event_1.target.result;
+      reader_1.onload = function(event_1) {
+        const img_1 = new Image();
+        img_1.src = event_1.target.result;
 
-          img_1.onload = function() {
-            const canvas_1 = document.createElement('canvas');
-            const ctx_1 = canvas_1.getContext('2d');
+        img_1.onload = function() {
+          const canvas_1 = document.createElement('canvas');
+          const ctx_1 = canvas_1.getContext('2d');
 
-            const width_1 = img_1.width;
-            const height_1 = img_1.height;
+          const width_1 = img_1.width;
+          const height_1 = img_1.height;
 
-            canvas_1.width = width_1;
-            canvas_1.height = height_1;
+          canvas_1.width = width_1;
+          canvas_1.height = height_1;
 
-            ctx_1.drawImage(img_1, 0, 0, width_1, height_1);
+          ctx_1.drawImage(img_1, 0, 0, width_1, height_1);
 
-            canvas_1.toBlob((blob_1) => {
-              resolve_1({
-                compressedBlob_1: blob_1,
-                originalSize_1: (file_1.size / 1024).toFixed(2), // Size in KB
-                originalWidth_1: width_1,
-                originalHeight_1: height_1,
-                compressedWidth_1: width_1,
-                compressedHeight_1: height_1,
-                compressedSize_1: (blob_1.size / 1024).toFixed(2) // Size in KB
-              });
-            }, 'image/jpeg', 0.95); // Higher image quality (0.95) for less compression
-          };
-
-          img_1.onerror = function() {
-            reject_1(new Error('Failed to load the image.'));
-          };
+          canvas_1.toBlob((blob_1) => {
+            resolve_1({
+              compressedBlob_1: blob_1,
+              originalSize_1: (file_1.size / 1024).toFixed(2), // Size in KB
+              originalWidth_1: width_1,
+              originalHeight_1: height_1,
+              compressedWidth_1: width_1,
+              compressedHeight_1: height_1,
+              compressedSize_1: (blob_1.size / 1024).toFixed(2) // Size in KB
+            });
+          }, 'image/jpeg', 0.95); // Higher image quality (0.95) for less compression
         };
 
-        reader_1.readAsDataURL(file_1);
-      });
-    }
+        img_1.onerror = function() {
+          reject_1(new Error('Failed to load the image.'));
+        };
+      };
 
-    // Function to handle image compression for multiple files
-    async function handleImageCompression_1(files_1) {
-      const outputDiv_1 = document.getElementById('output_1');
-      outputDiv_1.innerHTML = ''; // Clear previous results before appending new ones
+      reader_1.readAsDataURL(file_1);
+    });
+  }
 
-      for (const file_1 of files_1) {
-        try {
-          const {
-            compressedBlob_1,
-            originalSize_1,
-            originalWidth_1,
-            originalHeight_1,
-            compressedWidth_1,
-            compressedHeight_1,
-            compressedSize_1
-          } = await compressImage_1(file_1);
+  // Function to handle image compression for multiple files
+  async function handleImageCompression_1(files_1) {
+    const outputDiv_1 = document.getElementById('output_1');
+    outputDiv_1.innerHTML = ''; // Clear previous results before appending new ones
 
-          const compressedURL_1 = URL.createObjectURL(compressedBlob_1);
+    for (const file_1 of files_1) {
+      try {
+        const {
+          compressedBlob_1,
+          originalSize_1,
+          originalWidth_1,
+          originalHeight_1,
+          compressedWidth_1,
+          compressedHeight_1,
+          compressedSize_1
+        } = await compressImage_1(file_1);
 
-          // Create compressed image preview with image details
-          const compressedImagePreview_1 = document.createElement('div');
-          compressedImagePreview_1.className = 'image-preview_1';
-          compressedImagePreview_1.innerHTML = `
-            <img src="${compressedURL_1}" alt="Compressed Image">
-            <p>Original Size: ${originalSize_1} KB</p>
-            <p>Original Width: ${originalWidth_1}px</p>
-            <p>Original Height: ${originalHeight_1}px</p>
-            <p>Compressed Size: ${compressedSize_1} KB</p>
-            <p>Compressed Width: ${compressedWidth_1}px</p>
-            <p>Compressed Height: ${compressedHeight_1}px</p>
-            <a href="${compressedURL_1}" download="compressed_${file_1.name}" class="download-link_1">Download Compressed Image</a>
-          `;
+        const compressedURL_1 = URL.createObjectURL(compressedBlob_1);
 
-          outputDiv_1.appendChild(compressedImagePreview_1);
-        } catch (error_1) {
-          console.error('Error while compressing image:', error_1);
-        }
+        // Create compressed image preview with image details
+        const compressedImagePreview_1 = document.createElement('div');
+        compressedImagePreview_1.className = 'image-preview_1';
+        compressedImagePreview_1.innerHTML = `
+          <img src="${compressedURL_1}" alt="Compressed Image">
+          <p>Original Size: ${originalSize_1} KB</p>
+          <p>Original Width: ${originalWidth_1}px</p>
+          <p>Original Height: ${originalHeight_1}px</p>
+          <p>Compressed Size: ${compressedSize_1} KB</p>
+          <p>Compressed Width: ${compressedWidth_1}px</p>
+          <p>Compressed Height: ${compressedHeight_1}px</p>
+          <a href="${compressedURL_1}" download="compressed_${file_1.name}" class="download-link_1">Download Compressed Image</a>
+        `;
+
+        outputDiv_1.appendChild(compressedImagePreview_1);
+      } catch (error_1) {
+        console.error('Error while compressing image:', error_1);
       }
     }
+  }
 
+  // Check if event listeners have already been added
+  let eventListenersAdded_1 = false;
+
+  // Function to attach event listeners for compression
+  function attachEventListeners_1() {
     // Event listener to handle image selection and compression
     document.getElementById('compressBtn_1').addEventListener('click', () => {
       const imageInput_1 = document.getElementById('imageInput_1');
@@ -478,7 +483,15 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
         handleImageCompression_1(selectedFiles_1);
       }
     });
-  </script>
+  }
+
+  // Only attach the event listeners if they have not been added before
+  if (!eventListenersAdded_1) {
+    attachEventListeners_1();
+    eventListenersAdded_1 = true;
+  }
+</script>
+
  
 
 
