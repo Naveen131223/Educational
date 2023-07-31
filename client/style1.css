@@ -1,20 +1,20 @@
-body {
+    body_1 {
       font-family: Arial, sans-serif;
       text-align: center;
     }
 
-    #output {
+    #output_1 {
       margin-top: 20px;
     }
 
-    .image-preview {
+    .image-preview_1 {
       margin: 10px;
       border: 1px solid #ccc;
       padding: 5px;
     }
 
     /* Different button colors */
-    #compressBtn {
+    #compressBtn_1 {
       background-color: #4CAF50;
       color: white;
       padding: 10px 20px;
@@ -23,7 +23,7 @@ body {
       margin: 5px;
     }
 
-    #resetBtn {
+    #resetBtn_1 {
       background-color: #f44336;
       color: white;
       padding: 10px 20px;
@@ -33,7 +33,7 @@ body {
     }
 
     /* Upload button style */
-    #uploadBtn {
+    #uploadBtn_1 {
       background-color: #2196F3;
       color: white;
       padding: 10px 20px;
@@ -43,7 +43,7 @@ body {
     }
 
     /* Download link with rectangular color border */
-    a.download-link {
+    a.download-link_1 {
       display: inline-block;
       padding: 10px 20px;
       background-color: #4CAF50;
@@ -54,13 +54,13 @@ body {
       margin-top: 5px;
     }
 
-    a.download-link:hover {
+    a.download-link_1:hover {
       background-color: white;
       color: #4CAF50;
     }
 
     /* Smaller image preview */
-    .image-preview img {
+    .image-preview_1 img {
       max-width: 200px;
       max-height: 200px;
     }
