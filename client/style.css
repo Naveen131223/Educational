@@ -278,7 +278,7 @@ h2 {
 
 #bannerContainer {
   max-width: 600px;
-  margin: 300px;
+  margin: 0auto;
   padding: 20px;
   border: 1px solid #ccc;
   position: relative;
