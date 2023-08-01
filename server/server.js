@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -14,52 +13,56 @@ const openai = new OpenAIApi(configuration);
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '1mb' })); // Limit request size to 1MB
 
-// Create a rate limiter to limit the number of requests
-const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 10, // 10 requests per minute
-});
+// Function to sanitize user input
+function sanitizeInput(input) {
+  const sanitizedInput = input.replace(/[^a-zA-Z0-9\s.,?!-]/g, '');
+  return sanitizedInput;
+}
 
-app.use(limiter);
+// In-memory cache to store previous API responses
+const responseCache = {};
 
-app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: 'Hello from CodeX!',
-  });
-});
+// Function to check if a prompt is already cached
+function isCached(prompt) {
+  return responseCache.hasOwnProperty(prompt);
+}
 
 app.post('/', async (req, res) => {
   try {
-    const prompt = req.body.prompt;
+    const prompt = sanitizeInput(req.body.prompt);
 
-    if (!prompt || typeof prompt !== 'string') {
-      return res.status(400).send({ error: 'Invalid request. "prompt" must be a non-empty string.' });
-    }
-
-    const response = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt: `${prompt}`,
-      temperature: 0,
-      max_tokens: 3000,
-      top_p: 1,
-      frequency_penalty: 0.5,
-      presence_penalty: 0,
-    });
-
-    if (response.data && response.data.choices && response.data.choices[0] && response.data.choices[0].text) {
-      return res.status(200).send({
-        bot: response.data.choices[0].text,
+    // Check if the response is already cached
+    if (isCached(prompt)) {
+      res.status(200).send({
+        bot: responseCache[prompt],
       });
     } else {
-      return res.status(500).send({ error: 'Something went wrong with the AI response.' });
+      // Perform the API call asynchronously using async/await
+      const response = await openai.createCompletion({
+        model: 'text-davinci-003',
+        prompt: `${prompt}`,
+        temperature: 0.2,
+        max_tokens: 3000,
+        top_p: 1,
+        frequency_penalty: 0.5,
+        presence_penalty: 0,
+      });
+
+      // Cache the response for future use
+      responseCache[prompt] = response.data.choices[0].text;
+
+      res.status(200).send({
+        bot: response.data.choices[0].text,
+      });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ error: error.message || 'Something went wrong' });
+    res.status(500).send('Something went wrong');
   }
 });
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`AI server started on http://localhost:${port}`));
+const PORT = 5000;
+
+app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
