@@ -13,7 +13,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const DEFAULT_TEMPERATURE = 0.2;
+const DEFAULT_TEMPERATURE = 0.7;
 const DEFAULT_MAX_TOKENS = 1024;
 const DEFAULT_FREQUENCY_PENALTY = 0.5;
 const DEFAULT_PRESENCE_PENALTY = 0;
@@ -23,6 +23,12 @@ const REQUESTS_PER_MINUTE = 60; // Set your desired rate limit here
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute in milliseconds
 let requestCount = 0;
 let lastRequestTimestamp = Date.now();
+
+app.get('/', async (req, res) => {
+  res.status(200).send({
+    message: 'Hello from CodeX!',
+  });
+});
 
 app.post('/', async (req, res) => {
   try {
@@ -61,5 +67,5 @@ app.post('/', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000; // Change 5000 to the desired port number
 app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
