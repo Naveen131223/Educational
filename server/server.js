@@ -41,7 +41,13 @@ function processRequestQueue() {
   }
 }
 
-app.post('/', async (req, res) => {
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong');
+});
+
+app.post('/', async (req, res, next) => {
   try {
     const prompt = sanitizeInput(req.body.prompt);
 
@@ -79,11 +85,20 @@ app.post('/', async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Something went wrong');
+    // Pass the error to the error handling middleware
+    next(error);
   }
 });
 
-const PORT = 10000;
+const PORT = 5000;
 
-app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+// Graceful shutdown
+const server = app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+
+process.on('SIGINT', () => {
+  console.log('Shutting down the server...');
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+});
