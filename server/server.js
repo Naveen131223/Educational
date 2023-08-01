@@ -29,6 +29,29 @@ function isCached(prompt) {
   return responseCache.hasOwnProperty(prompt);
 }
 
+// Custom middleware for API limiting - allow 10 requests per 10 minutes
+const requestCount = {};
+const requestLimit = 10;
+const requestInterval = 10 * 60 * 1000; // 10 minutes
+
+app.use((req, res, next) => {
+  const ip = req.ip;
+  const now = Date.now();
+
+  if (!requestCount[ip]) {
+    requestCount[ip] = [];
+  }
+
+  requestCount[ip] = requestCount[ip].filter((timestamp) => timestamp > now - requestInterval);
+
+  if (requestCount[ip].length < requestLimit) {
+    requestCount[ip].push(now);
+    next();
+  } else {
+    res.status(429).send('Too Many Requests');
+  }
+});
+
 app.post('/', async (req, res) => {
   try {
     const prompt = sanitizeInput(req.body.prompt);
@@ -65,4 +88,4 @@ app.post('/', async (req, res) => {
 
 const PORT = 5000;
 
-app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`)); 
+app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
