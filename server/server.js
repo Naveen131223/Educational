@@ -13,7 +13,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const DEFAULT_TEMPERATURE = 0.7;
+const DEFAULT_TEMPERATURE = 0.2;
 const DEFAULT_MAX_TOKENS = 1024;
 const DEFAULT_FREQUENCY_PENALTY = 0.5;
 const DEFAULT_PRESENCE_PENALTY = 0;
@@ -32,7 +32,7 @@ app.post('/', async (req, res) => {
       requestCount++;
       if (requestCount > REQUESTS_PER_MINUTE) {
         const timeUntilReset = RATE_LIMIT_WINDOW_MS - (currentTimestamp - lastRequestTimestamp);
-        return res.status(429).send(`Rate limit exceeded. Please try again in ${timeUntilReset} milliseconds.`);
+        return res.status(429).send(`Rate limit exceeded. Please try again in ${Math.ceil(timeUntilReset / 1000)} seconds.`);
       }
     } else {
       requestCount = 1;
