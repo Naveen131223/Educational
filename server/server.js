@@ -1,8 +1,8 @@
-import express from 'express';
-import * as dotenv from 'dotenv';
-import cors from 'cors';
-import { Configuration, OpenAIApi } from 'openai';
-import rateLimit from 'express-rate-limit';
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const { Configuration, OpenAIApi } = require('openai');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config();
 
@@ -49,14 +49,16 @@ async function getAIResponse(prompt) {
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 10, // 10 requests per minute
-  async: true, // Delay responses instead of blocking them
+  handler: (req, res) => {
+    res.status(429).send('Too many requests, please try again later.');
+  },
 });
 
 app.use(limiter);
 
 app.get('/', async (req, res) => {
   res.status(200).send({
-    message: 'Hi Sister',
+    message: 'Hello from CodeX!',
   });
 });
 
