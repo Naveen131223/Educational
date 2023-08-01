@@ -1,12 +1,10 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
-import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
 app.use(express.json());
 
 const configuration = new Configuration({
@@ -20,14 +18,27 @@ const DEFAULT_MAX_TOKENS = 1024;
 const DEFAULT_FREQUENCY_PENALTY = 0.5;
 const DEFAULT_PRESENCE_PENALTY = 0;
 
-app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: 'Hello from CodeX!',
-  });
-});
+// Rate Limiting Parameters
+const REQUESTS_PER_MINUTE = 60; // Set your desired rate limit here
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute in milliseconds
+let requestCount = 0;
+let lastRequestTimestamp = Date.now();
 
 app.post('/', async (req, res) => {
   try {
+    // Check rate limit
+    const currentTimestamp = Date.now();
+    if (currentTimestamp - lastRequestTimestamp < RATE_LIMIT_WINDOW_MS) {
+      requestCount++;
+      if (requestCount > REQUESTS_PER_MINUTE) {
+        const timeUntilReset = RATE_LIMIT_WINDOW_MS - (currentTimestamp - lastRequestTimestamp);
+        return res.status(429).send(`Rate limit exceeded. Please try again in ${timeUntilReset} milliseconds.`);
+      }
+    } else {
+      requestCount = 1;
+      lastRequestTimestamp = currentTimestamp;
+    }
+
     const prompt = req.body.prompt || "Default prompt if not provided.";
 
     const response = await openai.createCompletion({
