@@ -16,6 +16,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Create a cache to store AI responses
+const responseCache = new Map();
+
+// A function to call the AI API and store the response in the cache
+async function getAIResponse(prompt) {
+  if (responseCache.has(prompt)) {
+    return responseCache.get(prompt);
+  }
+
+  try {
+    const response = await openai.createCompletion({
+      model: 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0,
+      max_tokens: 3000,
+      top_p: 1,
+      frequency_penalty: 0.5,
+      presence_penalty: 0,
+    });
+
+    const botResponse = response.data.choices[0].text;
+    responseCache.set(prompt, botResponse);
+    return botResponse;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 // Create a rate limiter to limit the number of requests with async option
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -27,7 +56,7 @@ app.use(limiter);
 
 app.get('/', async (req, res) => {
   res.status(200).send({
-    message: 'Hello from CodeX!',
+    message: 'Hi Sister',
   });
 });
 
@@ -35,18 +64,10 @@ app.post('/', async (req, res) => {
   try {
     const prompt = req.body.prompt;
 
-    const response = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt: `${prompt}`,
-      temperature: 0,
-      max_tokens: 3000,
-      top_p: 1,
-      frequency_penalty: 0.5,
-      presence_penalty: 0,
-    });
+    const botResponse = await getAIResponse(prompt);
 
     res.status(200).send({
-      bot: response.data.choices[0].text,
+      bot: botResponse,
     });
   } catch (error) {
     console.error(error);
