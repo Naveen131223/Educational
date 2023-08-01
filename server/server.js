@@ -16,10 +16,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Create a rate limiter to limit the number of requests
+// Create a rate limiter to limit the number of requests with async option
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 10, // 10 requests per minute
+  async: true, // Delay responses instead of blocking them
 });
 
 app.use(limiter);
