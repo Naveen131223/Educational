@@ -17,9 +17,6 @@ app.use(express.json({ limit: '1mb' })); // Limit request size to 1MB
 
 // Function to sanitize user input
 function sanitizeInput(input) {
-  if (typeof input !== 'string') {
-    throw new Error('Input must be a string');
-  }
   const sanitizedInput = input.replace(/[^a-zA-Z0-9\s.,?!-]/g, '');
   return sanitizedInput;
 }
