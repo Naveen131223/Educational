@@ -67,5 +67,5 @@ app.post('/', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000; // Change 5000 to the desired port number
+const PORT = process.env.PORT || 10000; // Change 5000 to the desired port number
 app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
