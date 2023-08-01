@@ -1,11 +1,9 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
+import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 
 dotenv.config();
-
-const app = express();
-app.use(express.json());
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -13,59 +11,79 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const DEFAULT_TEMPERATURE = 0.7;
-const DEFAULT_MAX_TOKENS = 1024;
-const DEFAULT_FREQUENCY_PENALTY = 0.5;
-const DEFAULT_PRESENCE_PENALTY = 0;
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '1mb' })); // Limit request size to 1MB
 
-// Rate Limiting Parameters
-const REQUESTS_PER_MINUTE = 60; // Set your desired rate limit here
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute in milliseconds
-let requestCount = 0;
-let lastRequestTimestamp = Date.now();
+// Function to sanitize user input
+function sanitizeInput(input) {
+  const sanitizedInput = input.replace(/[^a-zA-Z0-9\s.,?!-]/g, '');
+  return sanitizedInput;
+}
 
-app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: 'Hello from CodeX!',
-  });
-});
+// In-memory cache to store previous API responses
+const responseCache = {};
+
+// Function to check if a prompt is already cached
+function isCached(prompt) {
+  return responseCache.hasOwnProperty(prompt);
+}
+
+// Manual rate limiting variables
+const maxRequestsPerMinute = 5;
+const requestQueue = [];
+const rateLimitTime = 60 * 1000; // 1 minute
+
+function processRequestQueue() {
+  const currentTime = Date.now();
+  while (requestQueue.length > 0 && currentTime - requestQueue[0] >= rateLimitTime) {
+    requestQueue.shift();
+  }
+}
 
 app.post('/', async (req, res) => {
   try {
-    // Check rate limit
-    const currentTimestamp = Date.now();
-    if (currentTimestamp - lastRequestTimestamp < RATE_LIMIT_WINDOW_MS) {
-      requestCount++;
-      if (requestCount > REQUESTS_PER_MINUTE) {
-        const timeUntilReset = RATE_LIMIT_WINDOW_MS - (currentTimestamp - lastRequestTimestamp);
-        return res.status(429).send(`Rate limit exceeded. Please try again in ${Math.ceil(timeUntilReset / 1000)} seconds.`);
-      }
-    } else {
-      requestCount = 1;
-      lastRequestTimestamp = currentTimestamp;
+    const prompt = sanitizeInput(req.body.prompt);
+
+    // Rate limiting - check if request exceeds the limit
+    if (requestQueue.length >= maxRequestsPerMinute) {
+      res.status(429).send('Too many requests. Please try again later.');
+      return;
     }
 
-    const prompt = req.body.prompt || "Default prompt if not provided.";
+    processRequestQueue();
+    requestQueue.push(Date.now());
 
-    const response = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: `${prompt}`,
-      temperature: req.body.temperature || DEFAULT_TEMPERATURE,
-      max_tokens: req.body.max_tokens || DEFAULT_MAX_TOKENS,
-      top_p: req.body.top_p || 1,
-      frequency_penalty: req.body.frequency_penalty || DEFAULT_FREQUENCY_PENALTY,
-      presence_penalty: req.body.presence_penalty || DEFAULT_PRESENCE_PENALTY,
-    });
+    // Check if the response is already cached
+    if (isCached(prompt)) {
+      res.status(200).send({
+        bot: responseCache[prompt],
+      });
+    } else {
+      // Perform the API call asynchronously using async/await
+      const response = await openai.createCompletion({
+        model: 'text-davinci-003',
+        prompt: `${prompt}`,
+        temperature: 0.2,
+        max_tokens: 3000,
+        top_p: 1,
+        frequency_penalty: 0.5,
+        presence_penalty: 0,
+      });
 
-    res.status(200).send({
-      bot: response.data.choices[0].text,
-    });
+      // Cache the response for future use
+      responseCache[prompt] = response.data.choices[0].text;
 
+      res.status(200).send({
+        bot: response.data.choices[0].text,
+      });
+    }
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.message || 'Something went wrong');
+    res.status(500).send('Something went wrong');
   }
 });
 
-const PORT = process.env.PORT || 10000; // Change 5000 to the desired port number
+const PORT = 5000;
+
 app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
