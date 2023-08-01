@@ -84,6 +84,6 @@ app.post('/', async (req, res) => {
   }
 });
 
-const PORT = 5000;
+const PORT = 10000;
 
 app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
