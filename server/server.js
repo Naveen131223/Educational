@@ -38,7 +38,7 @@ app.post('/', async (req, res) => {
       res.status(200).send({
         bot: responseCache[prompt],
       });
-    } else {
+    } else { 
       // Perform the API call asynchronously using async/await
       const response = await openai.createCompletion({
         model: 'text-davinci-003',
