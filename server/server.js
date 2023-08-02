@@ -6,6 +6,7 @@ import { Configuration, OpenAIApi } from 'openai';
 dotenv.config();
 
 const configuration = new Configuration({
+  organization: 'org-pcjIfspJqkNvGTVr90n7tzaC',
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -54,6 +55,17 @@ app.use((req, res, next) => {
   }
 });
 
+// Function to list all available engines
+async function listEngines() {
+  try {
+    const response = await openai.listEngines();
+    return response.data;
+  } catch (error) {
+    console.error('Error listing engines:', error);
+    throw error;
+  }
+}
+
 app.post('/', async (req, res) => {
   try {
     const prompt = sanitizeInput(req.body.prompt);
@@ -90,4 +102,13 @@ app.post('/', async (req, res) => {
 
 const PORT = 5000;
 
-app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+app.listen(PORT, async () => {
+  console.log(`AI server started on http://localhost:${PORT}`);
+  try {
+    const engines = await listEngines();
+    console.log('Available Engines:');
+    console.log(engines);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
