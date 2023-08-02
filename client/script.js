@@ -1,1 +1,344 @@
-const _0x396ea6=_0x4c04;(function(_0x16534d,_0x3ff3a6){const _0x1181f7={_0x5f1bfb:'0x213',_0x1d9358:'0x20d',_0x2b2592:0x1d7},_0x5ecd90=_0x4c04,_0x9573cc=_0x16534d();while(!![]){try{const _0x1b57c4=-parseInt(_0x5ecd90(_0x1181f7._0x5f1bfb))/(0x1528+0xc35+-0x215c)+parseInt(_0x5ecd90(0x21c))/(0xd2c*0x2+0x1b54+-0x35aa*0x1)*(parseInt(_0x5ecd90(_0x1181f7._0x1d9358))/(0x349*0x2+-0x161b+0xf8c))+-parseInt(_0x5ecd90('0x238'))/(-0x1d7+-0xf00+0x10db)*(-parseInt(_0x5ecd90(0x251))/(-0x1eed+0x6cb*-0x4+-0x15a*-0x2b))+-parseInt(_0x5ecd90(_0x1181f7._0x2b2592))/(0x256e*-0x1+-0x3*0xcb3+0x4b8d)+parseInt(_0x5ecd90(0x24b))/(-0x3bc+0x98e*-0x2+-0x16df*-0x1)*(-parseInt(_0x5ecd90(0x247))/(-0x406+-0x468+-0x72*-0x13))+parseInt(_0x5ecd90('0x245'))/(0x5d2+-0x2625+0x2*0x102e)*(parseInt(_0x5ecd90('0x212'))/(0xb9a+0x1ed8+-0x2a68))+parseInt(_0x5ecd90('0x23d'))/(-0x998+0xf35*0x1+-0x592);if(_0x1b57c4===_0x3ff3a6)break;else _0x9573cc['push'](_0x9573cc['shift']());}catch(_0x2567af){_0x9573cc['push'](_0x9573cc['shift']());}}}(_0x1c20,0x55db*-0x11+-0x17a3*0x3f+0xedec*0x11));function _0x1c20(){const _0x22a648=['Something\x20went\x20wrong','7ceMzsA','POST','Fpzbj','XFPhl','Continue\x20Reading','innerHTML','55455plztaK','EcpCV','getElementById','ioefd','text','https://educational-development.onrender.com/','speechSynthesis','focus','style','classList','3017250ACyTUZ','yxPMV','zhEej','button','value','smooth','(((.+)+)+)+$','feedback','Stop\x20Reading','plzOI','length','qcwTo','itMOG','apply','push','beforeend','reset','load','paCJf','disabled','JXJIc','uarbO','onend','qIdwu','bot','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span>','UnqTt','continueReadingButtonContainer','div','speak','cssText','removeChild','\x0a\x20\x20\x20\x20<div\x20class=\x22wrapper\x20','#chat_container','\x22\x20/>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22message\x22\x20id=\x22','isAi','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span>','add','submit','placeholder','fCJYr','addEventListener','ixnxq','hWftu','\x0a\x20\x20background-color:\x20#007bff;\x0a\x20\x20color:\x20#fff;\x0a\x20\x20padding:\x208px\x2012px;\x0a\x20\x20border:\x20none;\x0a\x20\x20border-radius:\x204px;\x0a\x20\x20margin-top:\x2010px;\x0a\x20\x20cursor:\x20pointer;\x0a','Read\x20AI\x20Output','id-','NiCuW','botResponse','\x22\x20alt=\x22','setAttribute','volume','preventDefault','\x22>\x0a\x20\x20\x20\x20\x20\x20<div\x20class=\x22chat\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22profile\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<img\x20src=\x22','60uOmrIB','JQvPn','IyyjP','cancel','bkRPW','10vcpxCZ','436461ZzqAnu','click','cHQrx','ERCUt','</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','constructor','Bkjyn','textContent','form','10162UeRfDp','slice','querySelector','kpQMz','application/json','createElement','prompt','kcIzA','lbyEz','feedback-form','printButtonContainer','IgWRf','Drsxz','appendChild','rate','</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20</div>\x0a\x20\x20','KAcFW','wQqyk','mOmow','user','button[type=\x22submit\x22]','insertAdjacentHTML','random','keyup','Sstrh','yPfFG','https://educational-development.onrender.com/feedback','BemKZ','56jHzwFD','EiVaM','toString','input','Aoybm','14376483JOtmWB','Error\x20sending\x20feedback:','pitch','error','trim','status','vvyio','dENNp','927126cSRQrw','OsczZ','3575560AjnipC','Google\x20US\x20English','search'];_0x1c20=function(){return _0x22a648;};return _0x1c20();}const _0x31e10b=(function(){let _0x417549=!![];return function(_0x2cd4d4,_0x56264a){const _0x861981={_0x4ee823:0x1e4},_0x188616=_0x417549?function(){const _0x79e302=_0x4c04;if(_0x56264a){const _0x46f8e8=_0x56264a[_0x79e302(_0x861981._0x4ee823)](_0x2cd4d4,arguments);return _0x56264a=null,_0x46f8e8;}}:function(){};return _0x417549=![],_0x188616;};}()),_0x36b0be=_0x31e10b(this,function(){const _0x5194a1={_0x4850e8:0x1dd,_0x86b638:0x235,_0x2462e1:'0x235'},_0x40b690=_0x4c04,_0x5ed9ed={};_0x5ed9ed[_0x40b690(0x235)]=_0x40b690(_0x5194a1._0x4850e8);const _0x1640f6=_0x5ed9ed;return _0x36b0be[_0x40b690(0x23a)]()['search'](_0x1640f6[_0x40b690(_0x5194a1._0x86b638)])[_0x40b690(0x23a)]()[_0x40b690(0x218)](_0x36b0be)[_0x40b690('0x249')](_0x1640f6[_0x40b690(_0x5194a1._0x2462e1)]);});_0x36b0be();import _0x1c5adf from'./assets/bot.svg';import _0x485685 from'./assets/user.svg';const _0x2cca3a=document[_0x396ea6('0x21e')](_0x396ea6('0x21b')),_0x2da8a3=document[_0x396ea6('0x21e')](_0x396ea6('0x1f8')),_0x294eca=_0x2cca3a['querySelector']('textarea'),_0x40d91d=_0x2cca3a['querySelector'](_0x396ea6(0x230)),_0x1cebad=document[_0x396ea6('0x221')](_0x396ea6(0x1da)),_0x46deaa=document[_0x396ea6(0x221)](_0x396ea6(0x1da));let _0x2bc672;const _0x493940=[],_0x2854b9=[];let _0x42fc02,_0x1c1103=-(0x1614+0x255*0xd+-0x3464),_0x14c6b7=![];_0x1cebad[_0x396ea6(0x1d5)][_0x396ea6('0x1f5')]=_0x396ea6('0x203'),_0x46deaa[_0x396ea6(0x1d5)][_0x396ea6(0x1f5)]='\x0a\x20\x20background-color:\x20#28a745;\x0a\x20\x20color:\x20#fff;\x0a\x20\x20padding:\x208px\x2012px;\x0a\x20\x20border:\x20none;\x0a\x20\x20border-radius:\x204px;\x0a\x20\x20margin-top:\x2010px;\x0a\x20\x20cursor:\x20pointer;\x0a\x20\x20margin-left:\x2010px;\x0a',_0x1cebad[_0x396ea6('0x21a')]='Read\x20AI\x20Output',_0x46deaa[_0x396ea6(0x21a)]=_0x396ea6('0x24f');function _0x36aa09(_0x563b6f,_0x17436e){const _0x39b378={_0x339f8d:0x1d3,_0x29fe07:0x22a,_0xffc062:'0x23f',_0x550f64:'0x1f4',_0x21870a:0x1df},_0x44cf34={_0x8c938f:'0x1e9',_0x1dada2:0x252},_0xa87ba=_0x396ea6,_0x579022={'paCJf':function(_0xebe340,_0x437005){return _0xebe340+_0x437005;},'EcpCV':function(_0x11e9bc,_0x1f5f0f,_0x5cb733){return _0x11e9bc(_0x1f5f0f,_0x5cb733);},'qcwTo':_0xa87ba('0x204'),'itMOG':_0xa87ba(0x248),'yOtjD':'en-IN-ta'};_0x14c6b7&&_0x1c1103===_0x17436e?(window[_0xa87ba(_0x39b378._0x339f8d)][_0xa87ba(0x210)](),_0x14c6b7=![],_0x1cebad['textContent']=_0x579022[_0xa87ba('0x1e2')]):(_0x1c1103!==_0x17436e&&(_0x42fc02=new SpeechSynthesisUtterance(_0x563b6f),_0x1c1103=_0x17436e,_0x42fc02['voiceURI']=_0x579022[_0xa87ba('0x1e3')],_0x42fc02['lang']=_0x579022['yOtjD'],_0x42fc02[_0xa87ba('0x20a')]=0x1602+0x17*-0x117+0x311,_0x42fc02[_0xa87ba(_0x39b378._0x29fe07)]=-0xc23+-0x107f*-0x2+-0x14db+0.9,_0x42fc02[_0xa87ba(_0x39b378._0xffc062)]=-0x153f+-0x13fd+-0x9*-0x495+0.19999999999999996,_0x42fc02[_0xa87ba('0x1ed')]=()=>{const _0x330703=_0xa87ba;_0x14c6b7=![],_0x1cebad[_0x330703(0x21a)]='Read\x20AI\x20Output';const _0x204697=_0x579022[_0x330703(_0x44cf34._0x8c938f)](_0x1c1103,-0xbe7*-0x1+0x447+-0x102d),_0x59a6b6=_0x2854b9[_0x204697];_0x59a6b6&&_0x579022[_0x330703(_0x44cf34._0x1dada2)](_0x36aa09,_0x59a6b6[_0x330703('0x1db')],_0x204697);}),window[_0xa87ba(0x1d3)][_0xa87ba(_0x39b378._0x550f64)](_0x42fc02),_0x14c6b7=!![],_0x1cebad['textContent']=_0xa87ba(_0x39b378._0x21870a));}_0x1cebad[_0x396ea6(0x200)]('click',()=>{const _0x1aff75={_0x58c06e:0x22c,_0x25c503:'0x1f1',_0xf30da6:0x1db,_0x81bb28:0x1e1},_0x55e206=_0x396ea6,_0x172471={'KAcFW':function(_0x4399c3,_0x315cec){return _0x4399c3-_0x315cec;},'UnqTt':function(_0x360a95,_0x1e2897,_0x256729){return _0x360a95(_0x1e2897,_0x256729);},'JLCvS':function(_0x477c40,_0x269554){return _0x477c40-_0x269554;}},_0x1de4c8=_0x2854b9[_0x172471[_0x55e206(_0x1aff75._0x58c06e)](_0x2854b9['length'],0x355*-0x8+-0x59*-0x56+-0x33d)];_0x1de4c8&&_0x172471[_0x55e206(_0x1aff75._0x25c503)](_0x36aa09,_0x1de4c8[_0x55e206(_0x1aff75._0xf30da6)],_0x172471['JLCvS'](_0x2854b9[_0x55e206(_0x1aff75._0x81bb28)],0x1631*-0x1+-0x13ed+0x2a1f));}),_0x2da8a3[_0x396ea6(0x229)](_0x1cebad),_0x46deaa[_0x396ea6('0x200')](_0x396ea6('0x214'),()=>{const _0x425099=_0x396ea6,_0x289421={'ioefd':function(_0x3ef97b,_0x462ab0,_0x1f7478){return _0x3ef97b(_0x462ab0,_0x1f7478);}},_0x9ff867=_0x2854b9[_0x1c1103];_0x9ff867&&_0x289421[_0x425099('0x1d0')](_0x36aa09,_0x9ff867[_0x425099('0x1db')],_0x1c1103);}),_0x2da8a3[_0x396ea6(0x229)](_0x46deaa);function _0x36fc62(_0x366e60){const _0x2e35e5={_0x24618e:'0x21a'},_0x1186ce=_0x396ea6,_0x29fc27={'ERCUt':function(_0x4e89a5,_0x1bb064){return _0x4e89a5===_0x1bb064;},'CjQdP':'....','tNMBJ':function(_0x582bd0,_0x1bf44d,_0x4ea006){return _0x582bd0(_0x1bf44d,_0x4ea006);}};_0x366e60[_0x1186ce('0x21a')]='',_0x2bc672=_0x29fc27['tNMBJ'](setInterval,()=>{const _0x5ecafc=_0x1186ce;_0x366e60['textContent']+='.',_0x29fc27[_0x5ecafc(0x216)](_0x366e60[_0x5ecafc(_0x2e35e5._0x24618e)],_0x29fc27['CjQdP'])&&(_0x366e60[_0x5ecafc(0x21a)]='');},0xe48+-0x2b9+-0xb2b);}function _0x232fb2(){const _0x16682c={_0x35362c:'0x205'},_0x20c3e8=_0x396ea6,_0x2df9d5=Date['now'](),_0x1846ff=Math[_0x20c3e8('0x232')](),_0x4e721d=_0x1846ff[_0x20c3e8('0x23a')](-0x1d8a+0x26de+-0x251*0x4)[_0x20c3e8('0x21d')](-0xebc+0x70d*-0x1+0x31d*0x7,-0xbbf*-0x2+0x3a*0x58+-0x2b66);return _0x20c3e8(_0x16682c._0x35362c)+_0x2df9d5+'-'+_0x4e721d;}function _0x40da28(_0x3e9c9b,_0x429a6e,_0x29b6a9){const _0x154f13={_0x29ce81:'0x1fa',_0x441db1:0x1e5,_0x5d2444:'0x22f',_0x3f97cd:'0x1f9',_0x5322d6:'0x1fb'},_0x512623=_0x396ea6,_0x438fd3={};_0x438fd3[_0x512623('0x215')]='bot';const _0x17414c=_0x438fd3,_0xbc5dd1=_0x3e9c9b?_0x1c5adf:_0x485685,_0x210034={};_0x210034[_0x512623(_0x154f13._0x29ce81)]=_0x3e9c9b,_0x210034[_0x512623('0x1db')]=_0x429a6e;const _0x4bab93=_0x210034;return _0x3e9c9b?_0x2854b9[_0x512623(_0x154f13._0x441db1)](_0x4bab93):_0x493940['push'](_0x4bab93),_0x512623('0x1f7')+(_0x3e9c9b?'ai':'')+_0x512623('0x20c')+_0xbc5dd1+_0x512623(0x208)+(_0x3e9c9b?_0x17414c[_0x512623(0x215)]:_0x512623(_0x154f13._0x5d2444))+_0x512623(_0x154f13._0x3f97cd)+_0x29b6a9+_0x512623(_0x154f13._0x5322d6)+_0x429a6e+_0x512623('0x22b');}let _0x153727;const _0xc6a95b=async _0x200ebe=>{const _0x4fe2b7={_0x27e9f7:'0x220',_0xc161f8:'0x24a',_0x548259:'0x1db',_0x1761db:0x241,_0x1048ef:'0x20e',_0x5469ac:0x231,_0x287d73:0x1e7,_0x1d0104:'0x23c',_0x8caabc:0x224,_0x458fd2:0x211,_0xa245ee:'0x1ea'},_0xe5a862={_0x98dd89:0x222,_0x5008a2:'0x237',_0x292e5d:0x1ef,_0x98cacc:'0x241',_0x40f673:'0x217',_0x315417:'0x1d4',_0x598216:0x22e,_0xba8df9:0x1e1,_0x25d38b:0x1d1,_0x11eeeb:'0x24a',_0x4a7b44:0x1ea,_0x493210:0x21a,_0x529e98:0x24a,_0x2b90ec:0x1ea},_0x223df1=_0x396ea6,_0xb771f7={'JXJIc':function(_0x2d0406,_0x2b9275,_0x2b1ffe){return _0x2d0406(_0x2b9275,_0x2b1ffe);},'NiCuW':_0x223df1(0x1d2),'BemKZ':_0x223df1(0x24c),'zhwVg':_0x223df1(_0x4fe2b7._0x27e9f7),'guBOe':function(_0x75dcfe,_0x2a1d90){return _0x75dcfe(_0x2a1d90);},'Aoybm':function(_0x226b14){return _0x226b14();},'mOmow':function(_0x434a77,_0x12f93c,_0x1d5d2d){return _0x434a77(_0x12f93c,_0x1d5d2d);},'IyyjP':function(_0x98d083,_0x137e86){return _0x98d083-_0x137e86;},'hWftu':function(_0x5ad476,_0x5753cf){return _0x5ad476(_0x5753cf);},'JQvPn':function(_0x52296d,_0x4f6dd5){return _0x52296d===_0x4f6dd5;},'Fpzbj':_0x223df1('0x1e6'),'lbyEz':function(_0x5a6c49){return _0x5a6c49();},'kpQMz':function(_0x59a87b,_0x590b98,_0x559980){return _0x59a87b(_0x590b98,_0x559980);},'bkRPW':_0x223df1(_0x4fe2b7._0xc161f8)};_0x200ebe[_0x223df1('0x20b')]();const _0x494a76=_0x294eca[_0x223df1(_0x4fe2b7._0x548259)][_0x223df1(_0x4fe2b7._0x1761db)]();if(_0xb771f7[_0x223df1(_0x4fe2b7._0x1048ef)](_0x494a76,''))return;_0x40d91d[_0x223df1('0x1ea')]=!![];const _0x186ccf=_0x40da28(![],_0x494a76);_0x2da8a3[_0x223df1(_0x4fe2b7._0x5469ac)](_0xb771f7[_0x223df1(0x24d)],_0x186ccf),_0x2cca3a[_0x223df1(_0x4fe2b7._0x287d73)](),_0xb771f7[_0x223df1(_0x4fe2b7._0x1d0104)](_0x23fa85);const _0x530b3f=_0xb771f7[_0x223df1(_0x4fe2b7._0x8caabc)](_0x232fb2),_0x5da979=_0x40da28(!![],'',_0x530b3f);_0x2da8a3[_0x223df1(_0x4fe2b7._0x5469ac)](_0xb771f7[_0x223df1(0x24d)],_0x5da979);const _0x17ff53=document['getElementById'](_0x530b3f);_0x36fc62(_0x17ff53);try{_0x153727=_0xb771f7[_0x223df1(0x21f)](setTimeout,async()=>{const _0x997c3e=_0x223df1;try{const _0x513844={};_0x513844[_0x997c3e(_0xe5a862._0x98dd89)]=_0x494a76;const _0x8d9a73=await _0xb771f7[_0x997c3e('0x1eb')](fetch,_0xb771f7[_0x997c3e('0x206')],{'method':_0xb771f7[_0x997c3e(_0xe5a862._0x5008a2)],'headers':{'Content-Type':_0xb771f7['zhwVg']},'body':JSON['stringify'](_0x513844)});_0xb771f7['guBOe'](clearInterval,_0x2bc672),_0x17ff53[_0x997c3e('0x21a')]='';if(_0x8d9a73['ok']){const _0x1c225f=await _0x8d9a73['json'](),_0x411d60=_0x1c225f[_0x997c3e(_0xe5a862._0x292e5d)][_0x997c3e(_0xe5a862._0x98cacc)]();_0x17ff53[_0x997c3e(0x250)]=_0x997c3e(0x1f0)+_0x411d60+_0x997c3e(_0xe5a862._0x40f673),_0xb771f7['Aoybm'](_0x23fa85),_0x40d91d['disabled']=![],_0x294eca[_0x997c3e(_0xe5a862._0x315417)](),_0xb771f7['mOmow'](_0x3960d0,_0x494a76,_0x411d60),_0xb771f7[_0x997c3e(_0xe5a862._0x598216)](_0x36aa09,_0x411d60,_0xb771f7[_0x997c3e('0x20f')](_0x2854b9[_0x997c3e(_0xe5a862._0xba8df9)],-0xf3*-0x9+0x127c+-0x1b06));}else{const _0x219fea=await _0x8d9a73[_0x997c3e(_0xe5a862._0x25d38b)]();_0x17ff53[_0x997c3e('0x21a')]=_0x997c3e(_0xe5a862._0x11eeeb),_0xb771f7[_0x997c3e('0x202')](alert,_0x219fea),_0x40d91d[_0x997c3e(_0xe5a862._0x4a7b44)]=![];}}catch(_0x1b4ff0){_0x17ff53[_0x997c3e(_0xe5a862._0x493210)]=_0x997c3e(_0xe5a862._0x529e98),console[_0x997c3e('0x240')](_0x1b4ff0),_0x40d91d[_0x997c3e(_0xe5a862._0x2b90ec)]=![];}},0xb41+0x3*0x9c2+-0x287d);}catch(_0x224437){_0x17ff53['textContent']=_0xb771f7[_0x223df1(_0x4fe2b7._0x458fd2)],console[_0x223df1(0x240)](_0x224437),_0x40d91d[_0x223df1(_0x4fe2b7._0xa245ee)]=![];}},_0x3960d0=(_0x5b19ba,_0x1d801f)=>{const _0x22daf6={_0x4a6f9f:'0x1fe',_0x15203f:'0x1f3',_0x4d89b1:'0x221',_0x2686a6:'0x1ff',_0x2bd91c:0x23b,_0x106520:'0x223',_0x5a53c7:0x223,_0x2b9b59:'0x1d6',_0x14a279:0x209,_0x320c18:0x246,_0x537f00:'0x209',_0xba8511:0x1ec,_0x232324:0x228,_0x545536:'0x21a',_0x5bb093:'0x246',_0x2cf7cc:'0x1da',_0x25813a:'0x1fc',_0x510166:0x244,_0x10108c:0x229,_0x41560d:'0x1fd'},_0x3d47c6={_0x45c4d0:'0x1f6'},_0x50cc21={_0xf6effb:'0x20b',_0x37d9b2:0x1db},_0xf29ad4=_0x396ea6,_0x1ac24b={'eZDvG':function(_0x4b615f,_0x12381c){return _0x4b615f===_0x12381c;},'zhEej':function(_0x30f295,_0x3b720d,_0xeda272,_0xc939f7){return _0x30f295(_0x3b720d,_0xeda272,_0xc939f7);},'fCJYr':'form','kcIzA':_0xf29ad4(0x1da),'OsczZ':'type','KYXqK':_0xf29ad4(0x1d1),'uarbO':_0xf29ad4(_0x22daf6._0x4a6f9f),'qIdwu':'Provide\x20feedback','Drsxz':'submit','ixnxq':'Submit','EiVaM':'Cancel','plzOI':_0xf29ad4(_0x22daf6._0x15203f),'dENNp':'feedback-container','IgWRf':_0xf29ad4(0x214)},_0x342374=document[_0xf29ad4(_0x22daf6._0x4d89b1)](_0x1ac24b[_0xf29ad4(_0x22daf6._0x2686a6)]),_0x183631=document['createElement'](_0xf29ad4(_0x22daf6._0x2bd91c)),_0x30a37=document['createElement'](_0x1ac24b[_0xf29ad4(_0x22daf6._0x106520)]),_0x361941=document[_0xf29ad4(_0x22daf6._0x4d89b1)](_0x1ac24b[_0xf29ad4(_0x22daf6._0x5a53c7)]);_0x342374[_0xf29ad4(_0x22daf6._0x2b9b59)]['add'](_0xf29ad4('0x225')),_0x183631[_0xf29ad4(_0x22daf6._0x14a279)](_0x1ac24b[_0xf29ad4(_0x22daf6._0x320c18)],_0x1ac24b['KYXqK']),_0x183631[_0xf29ad4(_0x22daf6._0x537f00)](_0x1ac24b[_0xf29ad4(_0x22daf6._0xba8511)],_0x1ac24b[_0xf29ad4('0x1ee')]),_0x30a37['setAttribute']('type',_0x1ac24b[_0xf29ad4(_0x22daf6._0x232324)]),_0x30a37[_0xf29ad4(_0x22daf6._0x545536)]=_0x1ac24b[_0xf29ad4('0x201')],_0x361941[_0xf29ad4(0x209)](_0x1ac24b[_0xf29ad4(_0x22daf6._0x5bb093)],_0xf29ad4(_0x22daf6._0x2cf7cc)),_0x361941['textContent']=_0x1ac24b[_0xf29ad4(0x239)],_0x342374['appendChild'](_0x183631),_0x342374['appendChild'](_0x30a37),_0x342374['appendChild'](_0x361941);const _0x353dc8=document[_0xf29ad4(0x221)](_0x1ac24b[_0xf29ad4(0x1e0)]);_0x353dc8['classList'][_0xf29ad4(_0x22daf6._0x25813a)](_0x1ac24b[_0xf29ad4(_0x22daf6._0x510166)]),_0x353dc8[_0xf29ad4(_0x22daf6._0x10108c)](_0x342374),_0x2da8a3['appendChild'](_0x353dc8),_0x342374[_0xf29ad4(0x200)](_0xf29ad4(_0x22daf6._0x41560d),_0x45bc10=>{const _0x3c45af=_0xf29ad4;_0x45bc10[_0x3c45af(_0x50cc21._0xf6effb)]();const _0x524fe2=_0x183631[_0x3c45af(_0x50cc21._0x37d9b2)][_0x3c45af('0x241')]();if(_0x1ac24b['eZDvG'](_0x524fe2,''))return;_0x1ac24b[_0x3c45af(0x1d9)](_0x59ae8d,_0x5b19ba,_0x1d801f,_0x524fe2),_0x2da8a3[_0x3c45af(0x1f6)](_0x353dc8);}),_0x361941[_0xf29ad4(0x200)](_0x1ac24b[_0xf29ad4(0x227)],()=>{const _0x34bc84=_0xf29ad4;_0x2da8a3[_0x34bc84(_0x3d47c6._0x45c4d0)](_0x353dc8);});},_0x59ae8d=async(_0x5a4aba,_0x26154e,_0x1bc145)=>{const _0x1949a3={_0x509335:0x236,_0x22f823:'0x207',_0x4a175f:0x24c,_0x255df5:'0x240',_0x1e32d0:0x242,_0x18962e:0x240},_0x36b929=_0x396ea6,_0x5f82e3={'wiGOW':function(_0x238a49,_0x4e9861,_0x236f9c){return _0x238a49(_0x4e9861,_0x236f9c);},'XFPhl':_0x36b929(_0x1949a3._0x509335),'yxPMV':_0x36b929(0x220)};try{const _0x1e6d71={};_0x1e6d71[_0x36b929('0x222')]=_0x5a4aba,_0x1e6d71[_0x36b929(_0x1949a3._0x22f823)]=_0x26154e,_0x1e6d71[_0x36b929('0x1de')]=_0x1bc145;const _0x343023=await _0x5f82e3['wiGOW'](fetch,_0x5f82e3[_0x36b929(0x24e)],{'method':_0x36b929(_0x1949a3._0x4a175f),'headers':{'Content-Type':_0x5f82e3[_0x36b929('0x1d8')]},'body':JSON['stringify'](_0x1e6d71)});!_0x343023['ok']&&console[_0x36b929(_0x1949a3._0x255df5)]('Failed\x20to\x20send\x20feedback:',_0x343023[_0x36b929(_0x1949a3._0x1e32d0)],_0x343023['statusText']);}catch(_0x9820bd){console[_0x36b929(_0x1949a3._0x18962e)](_0x36b929(0x23e),_0x9820bd);}};_0x2cca3a['addEventListener']('submit',_0xc6a95b),_0x2cca3a[_0x396ea6('0x200')](_0x396ea6(0x233),_0x38134d=>{const _0x4eee5b=_0x396ea6,_0x5b5420={'vvyio':function(_0x4c04b4,_0x28296c){return _0x4c04b4===_0x28296c;},'Sstrh':function(_0x1dc0e9,_0xbc74c){return _0x1dc0e9(_0xbc74c);}};_0x5b5420[_0x4eee5b(0x243)](_0x38134d['keyCode'],-0x8*-0xd+-0x1393*0x1+-0xa4*-0x1e)&&_0x5b5420[_0x4eee5b(0x234)](_0xc6a95b,_0x38134d);});function _0x23fa85(){const _0x3f8b9b={_0x40d00c:0x22d,_0x394793:0x1dc},_0x2b142c=_0x396ea6,_0x648e64={};_0x648e64[_0x2b142c(_0x3f8b9b._0x40d00c)]=_0x2b142c(_0x3f8b9b._0x394793);const _0x475248=_0x648e64;_0x2da8a3['scrollTo']({'top':_0x2da8a3['scrollHeight'],'behavior':_0x475248['wQqyk']});}window[_0x396ea6('0x200')](_0x396ea6(0x1e8),()=>{const _0x31d635=_0x396ea6,_0xb5c3b0={'Bkjyn':function(_0x1e8b60){return _0x1e8b60();}};_0xb5c3b0[_0x31d635('0x219')](_0x23fa85);});function _0x4c04(_0x4c04d2,_0x28dee5){const _0x547ff3=_0x1c20();return _0x4c04=function(_0x314a13,_0x1d69c2){_0x314a13=_0x314a13-(0x1bbc+-0x4f*-0x32+-0x295b);let _0x2b5a11=_0x547ff3[_0x314a13];return _0x2b5a11;},_0x4c04(_0x4c04d2,_0x28dee5);}const _0x5c5789=document[_0x396ea6(0x1cf)](_0x396ea6(0x226)),_0x3144f6=document[_0x396ea6('0x1cf')](_0x396ea6(0x1f2));_0x5c5789[_0x396ea6(0x229)](_0x1cebad),_0x3144f6[_0x396ea6('0x229')](_0x46deaa);
+import bot from './assets/bot.svg';
+import user from './assets/user.svg';
+
+const form = document.querySelector('form');
+const chatContainer = document.querySelector('#chat_container');
+const input = form.querySelector('textarea');
+const submitButton = form.querySelector('button[type="submit"]');
+const printButton = document.createElement('button');
+const continueReadingButton = document.createElement('button');
+let loadInterval;
+const userChats = [];
+const botChats = [];
+let utterance;
+let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
+let isReading = false;
+
+
+
+
+printButton.style.cssText = `
+  background-color: #007bff;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+`;
+
+continueReadingButton.style.cssText = `
+  background-color: #28a745;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+`;
+
+
+printButton.textContent = 'Read AI Output';
+continueReadingButton.textContent = 'Continue Reading';
+
+// Function to toggle reading the AI output
+function toggleReading(message, index) {
+  if (isReading && currentUtteranceIndex === index) {
+    // Stop reading if currently reading the same message
+    window.speechSynthesis.cancel();
+    isReading = false;
+    printButton.textContent = 'Read AI Output';
+  } else {
+    // Start reading the AI output
+    if (currentUtteranceIndex !== index) {
+      // Create a new utterance for the new message
+      utterance = new SpeechSynthesisUtterance(message);
+      currentUtteranceIndex = index;
+      utterance.voiceURI = 'Google US English';
+      utterance.lang = 'en-IN-ta';
+      utterance.volume = 2;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.2;
+      utterance.onend = () => {
+        isReading = false;
+        printButton.textContent = 'Read AI Output';
+
+        // Check if there is a next message to continue reading
+        const nextIndex = currentUtteranceIndex + 1;
+        const nextBotChat = botChats[nextIndex];
+        if (nextBotChat) {
+          toggleReading(nextBotChat.value, nextIndex);
+        }
+      };
+    }
+    window.speechSynthesis.speak(utterance);
+    isReading = true;
+    printButton.textContent = 'Stop Reading';
+  }
+}
+
+printButton.addEventListener('click', () => {
+  const lastBotChat = botChats[botChats.length - 1];
+  if (lastBotChat) {
+    toggleReading(lastBotChat.value, botChats.length - 1);
+  }
+});
+chatContainer.appendChild(printButton);
+
+continueReadingButton.addEventListener('click', () => {
+  const lastBotChat = botChats[currentUtteranceIndex];
+  if (lastBotChat) {
+    toggleReading(lastBotChat.value, currentUtteranceIndex);
+  }
+});
+chatContainer.appendChild(continueReadingButton);
+
+function loader(element) {
+  element.textContent = '';
+
+  loadInterval = setInterval(() => {
+    // Update the text content of the loading indicator
+    element.textContent += '.';
+
+    // If the loading indicator has reached three dots, reset it
+    if (element.textContent === '....') {
+      element.textContent = '';
+    }
+  }, 100);
+}
+
+function generateUniqueId() {
+  const timestamp = Date.now();
+  const randomNumber = Math.random();
+  const hexadecimalString = randomNumber.toString(16).slice(2, 8); // Generate a 6-digit hexadecimal string
+
+  return `id-${timestamp}-${hexadecimalString}`;
+}
+
+function createChatStripe(isAi, value, uniqueId) {
+  const profileImg = isAi ? bot : user;
+  const message = { isAi, value };
+
+  if (isAi) {
+    botChats.push(message);
+  } else {
+    userChats.push(message);
+  }
+
+  return `
+    <div class="wrapper ${isAi ? 'ai' : ''}">
+      <div class="chat">
+        <div class="profile">
+          <img src="${profileImg}" alt="${isAi ? 'bot' : 'user'}" />
+        </div>
+        <div class="message" id="${uniqueId}">
+          <span>${value}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+let thinkingTimeout;
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const prompt = input.value.trim();
+
+  if (prompt === '') {
+    // Do not submit if the prompt is empty
+    return;
+  }
+
+  // Disable the submit button while processing
+  submitButton.disabled = true;
+
+  // User's chat stripe
+  const userChatStripe = createChatStripe(false, prompt);
+  chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
+
+  // Clear the textarea input
+  form.reset();
+
+  // Scroll to the latest message after inserting the user's chat stripe
+  scrollToLatestMessage();
+
+  // Bot's chat stripe
+  const uniqueId = generateUniqueId();
+  const botChatStripe = createChatStripe(true, '', uniqueId);
+  chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
+
+  // Get the message div
+  const messageDiv = document.getElementById(uniqueId);
+
+  // Show the loading indicator
+  loader(messageDiv);
+
+  try {
+    // Simulate AI "thinking" with a shorter delay
+    thinkingTimeout = setTimeout(async () => {
+      try {
+        // Fetch the response from the server
+        const response = await fetch('https://educational-development.onrender.com/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+          }),
+        });
+
+        clearInterval(loadInterval);
+        messageDiv.textContent = '';
+
+        if (response.ok) {
+          const data = await response.json();
+          const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
+
+          // Display the bot's response instantly
+          messageDiv.innerHTML = `
+            <span>${parsedData}</span>
+          `;
+
+          // Scroll to the latest message after rendering the response
+          scrollToLatestMessage();
+
+          // Re-enable the submit button after processing
+          submitButton.disabled = false;
+
+          // Focus on the input field for the next response
+          input.focus();
+
+          // Listen for user feedback on the response
+          listenForFeedback(prompt, parsedData);
+
+          // Start reading the AI output
+          toggleReading(parsedData, botChats.length - 1);
+        } else {
+          const err = await response.text();
+
+          messageDiv.textContent = 'Something went wrong';
+          alert(err);
+
+          // Re-enable the submit button after processing
+          submitButton.disabled = false;
+        }
+      } catch (error) {
+        messageDiv.textContent = 'Something went wrong';
+        console.error(error);
+
+        // Re-enable the submit button after processing
+        submitButton.disabled = false;
+      }
+    }, 1000); // Adjust the AI delay duration as needed
+  } catch (error) {
+    messageDiv.textContent = 'Something went wrong';
+    console.error(error);
+
+    // Re-enable the submit button after processing
+    submitButton.disabled = false;
+  }
+};
+
+// Function to listen for user feedback on the AI response
+const listenForFeedback = (prompt, botResponse) => {
+  const feedbackForm = document.createElement('form');
+  const feedbackInput = document.createElement('input');
+  const feedbackSubmitButton = document.createElement('button');
+  const feedbackCancelButton = document.createElement('button');
+
+  feedbackForm.classList.add('feedback-form');
+  feedbackInput.setAttribute('type', 'text');
+  feedbackInput.setAttribute('placeholder', 'Provide feedback');
+  feedbackSubmitButton.setAttribute('type', 'submit');
+  feedbackSubmitButton.textContent = 'Submit';
+  feedbackCancelButton.setAttribute('type', 'button');
+  feedbackCancelButton.textContent = 'Cancel';
+
+  feedbackForm.appendChild(feedbackInput);
+  feedbackForm.appendChild(feedbackSubmitButton);
+  feedbackForm.appendChild(feedbackCancelButton);
+
+  const feedbackContainer = document.createElement('div');
+  feedbackContainer.classList.add('feedback-container');
+  feedbackContainer.appendChild(feedbackForm);
+
+  chatContainer.appendChild(feedbackContainer);
+
+  feedbackForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const feedback = feedbackInput.value.trim();
+
+    if (feedback === '') {
+      return;
+    }
+
+    // Send the feedback to the server for model improvement
+    sendFeedback(prompt, botResponse, feedback);
+
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+
+  feedbackCancelButton.addEventListener('click', () => {
+    // Remove the feedback form from the chat
+    chatContainer.removeChild(feedbackContainer);
+  });
+};
+
+// Function to send feedback to the server for model improvement
+const sendFeedback = async (prompt, botResponse, feedback) => {
+  try {
+    const response = await fetch('https://educational-development.onrender.com/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        botResponse: botResponse,
+        feedback: feedback,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to send feedback:', response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending feedback:', error);
+  }
+};
+
+form.addEventListener('submit', handleSubmit);
+form.addEventListener('keyup', (e) => {
+  if (e.keyCode === 13) {
+    handleSubmit(e);
+  }
+});
+
+// Auto-scroll to the latest message smoothly
+function scrollToLatestMessage() {
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
+    behavior: 'smooth',
+  });
+}
+
+// Scroll to the latest message on initial load
+window.addEventListener('load', () => {
+  scrollToLatestMessage();
+});
+
+// ... Your existing JavaScript code ...
+
+const printButtonContainer = document.getElementById('printButtonContainer');
+const continueReadingButtonContainer = document.getElementById('continueReadingButtonContainer');
+
+printButtonContainer.appendChild(printButton);
+continueReadingButtonContainer.appendChild(continueReadingButton);
+
+// ... The rest of your existing JavaScript code ...
