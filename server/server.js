@@ -48,6 +48,8 @@ app.use((req, res, next) => {
     requestCount[ip].push(now);
     next();
   } else {
+    const retryAfter = Math.ceil((requestCount[ip][0] + requestInterval - now) / 1000);
+    res.setHeader('Retry-After', retryAfter);
     res.status(429).send('Too Many Requests');
   }
 });
