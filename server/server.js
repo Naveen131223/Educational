@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
-import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -30,14 +29,28 @@ function isCached(prompt) {
   return responseCache.hasOwnProperty(prompt);
 }
 
-// Create a rate limiter to allow 10 requests per 10 minutes
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 10, // limit each IP to 10 requests per windowMs
-});
+// Custom middleware for API limiting - allow 10 requests per 10 minutes
+const requestCount = {};
+const requestLimit = 10;
+const requestInterval = 10 * 60 * 1000; // 10 minutes
 
-// Apply the rate limiter to all requests
-app.use(limiter);
+app.use((req, res, next) => {
+  const ip = req.ip;
+  const now = Date.now();
+
+  if (!requestCount[ip]) {
+    requestCount[ip] = [];
+  }
+
+  requestCount[ip] = requestCount[ip].filter((timestamp) => timestamp > now - requestInterval);
+
+  if (requestCount[ip].length < requestLimit) {
+    requestCount[ip].push(now);
+    next();
+  } else {
+    res.status(429).send('Too Many Requests');
+  }
+});
 
 app.post('/', async (req, res) => {
   try {
