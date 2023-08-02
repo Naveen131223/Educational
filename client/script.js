@@ -14,6 +14,9 @@ let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
 let isReading = false;
 
+
+
+
 printButton.style.cssText = `
   background-color: #007bff;
   color: #fff;
@@ -34,6 +37,7 @@ continueReadingButton.style.cssText = `
   cursor: pointer;
   margin-left: 10px;
 `;
+
 
 printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
@@ -213,10 +217,6 @@ const handleSubmit = async (e) => {
 
           // Start reading the AI output
           toggleReading(parsedData, botChats.length - 1);
-        } else if (response.status === 429) {
-          // Retry the API call after waiting for a specific duration (e.g., 5 seconds)
-          await sleep(5000);
-          handleSubmit(e);
         } else {
           const err = await response.text();
 
@@ -332,5 +332,13 @@ function scrollToLatestMessage() {
 window.addEventListener('load', () => {
   scrollToLatestMessage();
 });
+
+// ... Your existing JavaScript code ...
+
+const printButtonContainer = document.getElementById('printButtonContainer');
+const continueReadingButtonContainer = document.getElementById('continueReadingButtonContainer');
+
+printButtonContainer.appendChild(printButton);
+continueReadingButtonContainer.appendChild(continueReadingButton);
 
 // ... The rest of your existing JavaScript code ...
