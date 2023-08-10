@@ -15,42 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' })); // Limit request size to 1MB
 
-// Function to sanitize user input
-function sanitizeInput(input) {
-  const sanitizedInput = input.replace(/[^a-zA-Z0-9\s.,?!-]/g, '');
-  return sanitizedInput;
-}
-
-// In-memory cache to store previous API responses
-const responseCache = {};
-
-// Function to check if a prompt is already cached
-function isCached(prompt) {
-  return responseCache.hasOwnProperty(prompt);
-}
-
-// Custom middleware for API limiting - allow 10 requests per 10 minutes
-const requestCount = {};
-const requestLimit = 10;
-const requestInterval = 10 * 60 * 1000; // 10 minutes
-
-app.use((req, res, next) => {
-  const ip = req.ip;
-  const now = Date.now();
-
-  if (!requestCount[ip]) {
-    requestCount[ip] = [];
-  }
-
-  requestCount[ip] = requestCount[ip].filter((timestamp) => timestamp > now - requestInterval);
-
-  if (requestCount[ip].length < requestLimit) {
-    requestCount[ip].push(now);
-    next();
-  } else {
-    res.status(429).send('Too Many Requests');
-  }
-});
+// ... (other middleware and functions)
 
 app.post('/', async (req, res) => {
   try {
@@ -81,8 +46,13 @@ app.post('/', async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Something went wrong');
+    if (error.response && error.response.status === 429) {
+      // Handle the 429 error by sending a message to the user
+      res.status(429).send('Too Many Requests. Please try again later.');
+    } else {
+      console.error(error);
+      res.status(500).send('Something went wrong');
+    }
   }
 });
 
