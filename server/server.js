@@ -47,8 +47,10 @@ app.post('/', async (req, res) => {
     }
   } catch (error) {
     if (error.response && error.response.status === 429) {
-      // Handle the 429 error by sending a message to the user
-      res.status(429).send('Too Many Requests. Please try again later.');
+      // Send a response to the client similar to "How can I help you?"
+      res.status(200).send({
+        bot: "How can I help you?",
+      });
     } else {
       console.error(error);
       res.status(500).send('Something went wrong');
