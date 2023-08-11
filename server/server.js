@@ -26,6 +26,7 @@ function generateBotResponse(inputMessage) {
   // For demonstration purposes, using predefined responses.
   const responses = [
     "How can I assist you?",
+    "How can I help you?",
     "Is there anything else you'd like to know?",
     "Feel free to ask any questions.",
     "I'm here to help. What can I do for you?",
