@@ -3,16 +3,31 @@ import cors from 'cors';
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '1mb' })); // Limit request size to 1MB
+
+const userResponses = {}; // Store user responses for manual response manner
 
 app.post('/', async (req, res) => {
   try {
-    const userMessage = req.body.message;
+    const userMessage = req.body.message.toLowerCase(); // Convert message to lowercase for case-insensitive check
 
-    const botResponse = await generateBotResponse(userMessage);
+    // Store the user's message in the responses object
+    userResponses[new Date().toISOString()] = userMessage;
+
+    let manualResponse = "Hello, how can I assist you?"; // Default response
+
+    // Check user's message for trigger phrases
+    if (userMessage.includes('hi sister')) {
+      manualResponse = "Hi there! How can I help you?";
+    } else if (userMessage.includes('how are you')) {
+      manualResponse = "I'm just a bot, but I'm here to assist you!";
+    } else if (userMessage.includes('tell me a joke')) {
+      manualResponse = "Sure! Why don't scientists trust atoms? Because they make up everything!";
+    }
+    // Add more trigger phrases and responses here
 
     res.status(200).send({
-      bot: botResponse,
+      bot: manualResponse,
     });
   } catch (error) {
     console.error(error);
@@ -20,21 +35,10 @@ app.post('/', async (req, res) => {
   }
 });
 
-async function generateBotResponse(inputMessage) {
-  // Normalize user input for case-insensitive comparison
-  const normalizedInput = inputMessage.toLowerCase();
-
-  // Check for specific input messages and provide corresponding responses
-  if (normalizedInput.includes('hi sister')) {
-    return "How can I help you?";
-  } else if (normalizedInput.includes('hello')) {
-    return "Hello! How can I assist you?";
-  } else if (normalizedInput.includes('bye')) {
-    return "Goodbye! Feel free to ask more questions later.";
-  } else {
-    return "I'm here to help. What can I do for you?";
-  }
-}
+// Endpoint to get user responses
+app.get('/user-responses', (req, res) => {
+  res.status(200).send(userResponses);
+});
 
 const PORT = 5000;
 
