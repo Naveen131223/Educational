@@ -5,29 +5,15 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' })); // Limit request size to 1MB
 
-const userResponses = {}; // Store user responses for manual response manner
-
 app.post('/', async (req, res) => {
   try {
-    const userMessage = req.body.message.toLowerCase(); // Convert message to lowercase for case-insensitive check
+    const userMessage = req.body.message; // Assuming the client sends a 'message' field
 
-    // Store the user's message in the responses object
-    userResponses[new Date().toISOString()] = userMessage;
-
-    let manualResponse = "Hello, how can I assist you?"; // Default response
-
-    // Check user's message for trigger phrases
-    if (userMessage.includes('hi sister')) {
-      manualResponse = "Hi there! How can I help you?";
-    } else if (userMessage.includes('how are you')) {
-      manualResponse = "I'm just a bot, but I'm here to assist you!";
-    } else if (userMessage.includes('tell me a joke')) {
-      manualResponse = "Sure! Why don't scientists trust atoms? Because they make up everything!";
-    }
-    // Add more trigger phrases and responses here
+    // Generate a response based on the user's input
+    const botResponse = generateBotResponse(userMessage);
 
     res.status(200).send({
-      bot: manualResponse,
+      bot: botResponse,
     });
   } catch (error) {
     console.error(error);
@@ -35,10 +21,21 @@ app.post('/', async (req, res) => {
   }
 });
 
-// Endpoint to get user responses
-app.get('/user-responses', (req, res) => {
-  res.status(200).send(userResponses);
-});
+function generateBotResponse(inputMessage) {
+  // Here you can implement a logic to generate responses based on user input.
+  // For demonstration purposes, using predefined responses.
+  const responses = [
+    "How can I assist you?",
+    "How can I help you?",
+    "Is there anything else you'd like to know?",
+    "Feel free to ask any questions.",
+    "I'm here to help. What can I do for you?",
+  ];
+
+  // Select a response randomly
+  const randomIndex = Math.floor(Math.random() * responses.length);
+  return responses[randomIndex];
+}
 
 const PORT = 5000;
 
