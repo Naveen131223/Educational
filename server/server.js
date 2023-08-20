@@ -22,19 +22,17 @@ app.post('/', async (req, res) => {
 });
 
 function generateBotResponse(inputMessage) {
-  // Here you can implement a logic to generate responses based on user input.
-  // For demonstration purposes, using predefined responses.
-  const responses = [
-    "How can I assist you?",
-    "How can I help you?",
-    "Is there anything else you'd like to know?",
-    "Feel free to ask any questions.",
-    "I'm here to help. What can I do for you?",
-  ];
-
-  // Select a response randomly
-  const randomIndex = Math.floor(Math.random() * responses.length);
-  return responses[randomIndex];
+  const lowercaseInput = inputMessage.toLowerCase(); // Convert input to lowercase
+  
+  if (lowercaseInput.includes('hello')) {
+    return "Hello! How can I assist you?";
+  } else if (lowercaseInput.includes('help')) {
+    return "Of course, I'm here to help. What do you need assistance with?";
+  } else if (lowercaseInput.includes('bye')) {
+    return "Goodbye! Feel free to return if you have more questions.";
+  } else {
+    return "I'm here to assist you. Please let me know how I can help.";
+  }
 }
 
 const PORT = 5000;
