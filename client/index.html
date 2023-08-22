@@ -847,74 +847,82 @@ window.onload = animateLines;
 	  
 	 
 	
-  
   <script>
-    let activeIndicator = null;
-    let activeUtterance = null;
+  let activeIndicator = null;
+  let activeUtterance = null;
 
-    function handleClick(event) {
-      if (event.target.nodeName === 'SPAN') {
-        const word = event.target.textContent;
-        if (!activeIndicator) {
-          startReading(word, event.clientX, event.clientY);
-        }
+  function handleClick(event) {
+    if (event.target.nodeName === 'SPAN') {
+      const word = event.target.textContent;
+      if (!activeIndicator) {
+        startReading(word, event.clientX, event.clientY);
       }
     }
+  }
 
-    function startReading(word, x, y) {
-      activeUtterance = new SpeechSynthesisUtterance(word);
-      activeUtterance.voice = getRomanticVoice();
-      window.speechSynthesis.speak(activeUtterance);
-
-      activeIndicator = document.createElement('div');
-      activeIndicator.className = 'indicator';
-      activeIndicator.style.left = (x - 10) + 'px';
-      activeIndicator.style.top = (y - 10) + 'px';
-      document.body.appendChild(activeIndicator);
-
-      // Add the "visible" class to make the indicator visible
-      activeIndicator.classList.add('visible');
-
-      activeUtterance.onend = function () {
-        stopReading();
-      };
+  function startReading(word, x, y) {
+    if (activeUtterance) {
+      activeUtterance.onend = null; // Remove previous onend handler
+      stopReading();
     }
 
-    function stopReading() {
-      if (activeUtterance) {
-        window.speechSynthesis.cancel();
-        activeUtterance = null;
-      }
-      if (activeIndicator) {
-        activeIndicator.remove();
-        activeIndicator = null;
-      }
+    activeUtterance = new SpeechSynthesisUtterance(word);
+    activeUtterance.voice = getRomanticVoice();
+    window.speechSynthesis.speak(activeUtterance);
+
+    activeIndicator = document.createElement('div');
+    activeIndicator.className = 'indicator';
+    activeIndicator.style.left = (x - 10) + 'px';
+    activeIndicator.style.top = (y - 10) + 'px';
+    document.body.appendChild(activeIndicator);
+
+    // Add the "visible" class to make the indicator visible
+    activeIndicator.classList.add('visible');
+
+    activeUtterance.onend = function() {
+      stopReading();
+    };
+  }
+
+  function stopReading() {
+    if (activeUtterance) {
+      window.speechSynthesis.cancel();
+      activeUtterance = null;
     }
-
-    function getRomanticVoice() {
-      const voices = window.speechSynthesis.getVoices();
-      const romanticVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
-      return romanticVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
+    if (activeIndicator) {
+      activeIndicator.remove();
+      activeIndicator = null;
     }
+  }
 
-    // Function to recursively traverse and process text nodes
-    function processTextNodes(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const words = node.textContent.trim().split(/\s+/);
-        const spannedWords = words.map(word => `<span>${word}</span>`).join(' ');
-        const spanContainer = document.createElement('span');
-        spanContainer.innerHTML = spannedWords;
-        node.parentNode.replaceChild(spanContainer, node);
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        node.childNodes.forEach(processTextNodes);
-      }
+  function getRomanticVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const romanticVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
+    return romanticVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
+  }
+
+  // Function to recursively traverse and process text nodes
+  function processTextNodes(node) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+      const words = node.textContent.trim().split(/\s+/);
+      const spannedWords = words.map(word => `<span>${word}</span>`).join(' ');
+      const spanContainer = document.createElement('span');
+      spanContainer.innerHTML = spannedWords;
+      node.parentNode.replaceChild(spanContainer, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      node.childNodes.forEach(processTextNodes);
     }
+  }
 
-    // Process text nodes in the entire document
-    processTextNodes(document.body);
+  // Apply processing only to a specific container element
+  const textContainer = document.getElementById('text-container');
+  if (textContainer) {
+    processTextNodes(textContainer);
+  }
 
-    document.addEventListener('click', handleClick);
-  </script>
+  document.addEventListener('click', handleClick);
+</script>
+
 
 
 
