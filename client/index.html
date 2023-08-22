@@ -847,6 +847,7 @@ window.onload = animateLines;
 	  
 	 
 	
+  
   <script>
     let activeIndicator = null;
     let activeUtterance = null;
@@ -904,24 +905,16 @@ window.onload = animateLines;
         const spanContainer = document.createElement('span');
         spanContainer.innerHTML = spannedWords;
         node.parentNode.replaceChild(spanContainer, node);
-      } else {
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
         node.childNodes.forEach(processTextNodes);
       }
     }
 
-    // Function to process text nodes within a specific container
-    function processTextNodesInContainer(container) {
-      container.childNodes.forEach(processTextNodes);
-    }
-
-    const chatContainer = document.getElementById('chat_container');
-    if (chatContainer) {
-      processTextNodesInContainer(chatContainer);
-    }
+    // Process text nodes in the entire document
+    processTextNodes(document.body);
 
     document.addEventListener('click', handleClick);
   </script>
-
 
 
 
