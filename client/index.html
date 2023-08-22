@@ -26,63 +26,6 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 
-<script>
-let activeIndicator = null;
-let activeUtterance = null;
-
-function handleClick(event) {
-if (event.target.nodeName === 'SPAN') {
-const word = event.target.textContent;
-if (!activeIndicator) {
-startReading(word, event.clientX, event.clientY);
-}
-}
-}
-
-function startReading(word, x, y) {
-activeUtterance = new SpeechSynthesisUtterance(word);
-activeUtterance.voice = getRomanticVoice();
-window.speechSynthesis.speak(activeUtterance);
-
-activeIndicator = document.createElement('div');
-activeIndicator.className = 'indicator';
-activeIndicator.style.left = (x - 10) + 'px';
-activeIndicator.style.top = (y - 10) + 'px';
-document.body.appendChild(activeIndicator);
-
-// Add the "visible" class to make the indicator visible
-activeIndicator.classList.add('visible');
-
-activeUtterance.onend = function () {
-stopReading();
-};
-}
-
-function stopReading() {
-if (activeUtterance) {
-window.speechSynthesis.cancel();
-activeUtterance = null;
-}
-if (activeIndicator) {
-activeIndicator.remove();
-activeIndicator = null;
-}
-}
-
-function getRomanticVoice() {
-const voices = window.speechSynthesis.getVoices();
-const romanticVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
-return romanticVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
-}
-
-const paragraphs = document.querySelectorAll('p');
-paragraphs.forEach(paragraph => {
-const words = paragraph.textContent.split(' ');
-paragraph.innerHTML = words.map(word => `<span>${word}</span>`).join(' ');
-});
-
-document.addEventListener('click', handleClick);
-</script>
 	 
 
 	  
@@ -904,6 +847,63 @@ window.onload = animateLines;
 	  
 	 
 	
+<script>
+let activeIndicator = null;
+let activeUtterance = null;
+
+function handleClick(event) {
+if (event.target.nodeName === 'SPAN') {
+const word = event.target.textContent;
+if (!activeIndicator) {
+startReading(word, event.clientX, event.clientY);
+}
+}
+}
+
+function startReading(word, x, y) {
+activeUtterance = new SpeechSynthesisUtterance(word);
+activeUtterance.voice = getRomanticVoice();
+window.speechSynthesis.speak(activeUtterance);
+
+activeIndicator = document.createElement('div');
+activeIndicator.className = 'indicator';
+activeIndicator.style.left = (x - 10) + 'px';
+activeIndicator.style.top = (y - 10) + 'px';
+document.body.appendChild(activeIndicator);
+
+// Add the "visible" class to make the indicator visible
+activeIndicator.classList.add('visible');
+
+activeUtterance.onend = function () {
+stopReading();
+};
+}
+
+function stopReading() {
+if (activeUtterance) {
+window.speechSynthesis.cancel();
+activeUtterance = null;
+}
+if (activeIndicator) {
+activeIndicator.remove();
+activeIndicator = null;
+}
+}
+
+function getRomanticVoice() {
+const voices = window.speechSynthesis.getVoices();
+const romanticVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
+return romanticVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
+}
+
+const paragraphs = document.querySelectorAll('p');
+paragraphs.forEach(paragraph => {
+const words = paragraph.textContent.split(' ');
+paragraph.innerHTML = words.map(word => `<span>${word}</span>`).join(' ');
+});
+
+document.addEventListener('click', handleClick);
+</script>
 
 
 
