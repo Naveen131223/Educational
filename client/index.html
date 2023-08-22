@@ -26,6 +26,77 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 
+
+	  <script>
+let activeIndicator = null;
+let activeUtterance = null;
+
+function handleClick(event) {
+  if (event.target.nodeName === 'SPAN') {
+    const word = event.target.textContent;
+    if (!activeIndicator) {
+      startReading(word, event.clientX, event.clientY);
+    }
+  }
+}
+
+function startReading(word, x, y) {
+  activeUtterance = new SpeechSynthesisUtterance(word);
+  activeUtterance.voice = getRomanticVoice();
+  window.speechSynthesis.speak(activeUtterance);
+
+  const range = document.createRange();
+  range.setStart(event.target.firstChild, 0);
+  range.setEnd(event.target.firstChild, word.length);
+  const rect = range.getBoundingClientRect();
+
+  activeIndicator = document.createElement('div');
+  activeIndicator.className = 'indicator';
+
+  // Calculate the indicator's position, accounting for scrolling
+  const scrollX = window.scrollX || window.pageXOffset || document.documentElement.scrollLeft;
+  const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+
+  activeIndicator.style.left = (rect.left + rect.width / 2 - 10 + scrollX) + 'px';
+  activeIndicator.style.top = (rect.top + rect.height / 2 - 10 + scrollY) + 'px';
+
+  document.body.appendChild(activeIndicator);
+
+  activeIndicator.classList.add('visible');
+
+  activeUtterance.onend = function () {
+    stopReading();
+  };
+}
+
+function stopReading() {
+  if (activeUtterance) {
+    window.speechSynthesis.cancel();
+    activeUtterance = null;
+  }
+  if (activeIndicator) {
+    activeIndicator.remove();
+    activeIndicator = null;
+  }
+}
+
+function getRomanticVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  const romanticVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
+  return romanticVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
+}
+
+const elements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote, em, strong, a, span, code, mark, small, sub, sup, pre, del, ins, s, abbr, time, var, kbd, dfn, cite, q, samp'); // Include more elements
+elements.forEach(element => {
+  const words = element.textContent.split(' ');
+  element.innerHTML = words.map(word => `<span>${word}</span>`).join(' ');
+});
+
+document.addEventListener('click', handleClick);
+</script>
+
+	  
+
 <script type="module">
 (async () => {
 const module = await import("./script.js?v=v7");
