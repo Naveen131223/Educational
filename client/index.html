@@ -26,14 +26,14 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 
-
-	  <script>
+<script>
 let activeIndicator = null;
 let activeUtterance = null;
 
 function handleClick(event) {
-  if (event.target.nodeName === 'SPAN') {
-    const word = event.target.textContent;
+  const target = event.target.closest('span'); // Get the closest span element
+  if (target) {
+    const word = target.textContent;
     if (!activeIndicator) {
       startReading(word, event.clientX, event.clientY);
     }
@@ -45,11 +45,6 @@ function startReading(word, x, y) {
   activeUtterance.voice = getRomanticVoice();
   window.speechSynthesis.speak(activeUtterance);
 
-  const range = document.createRange();
-  range.setStart(event.target.firstChild, 0);
-  range.setEnd(event.target.firstChild, word.length);
-  const rect = range.getBoundingClientRect();
-
   activeIndicator = document.createElement('div');
   activeIndicator.className = 'indicator';
 
@@ -57,8 +52,8 @@ function startReading(word, x, y) {
   const scrollX = window.scrollX || window.pageXOffset || document.documentElement.scrollLeft;
   const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
 
-  activeIndicator.style.left = (rect.left + rect.width / 2 - 10 + scrollX) + 'px';
-  activeIndicator.style.top = (rect.top + rect.height / 2 - 10 + scrollY) + 'px';
+  activeIndicator.style.left = (x - 10 + scrollX) + 'px';
+  activeIndicator.style.top = (y - 10 + scrollY) + 'px';
 
   document.body.appendChild(activeIndicator);
 
@@ -94,6 +89,7 @@ elements.forEach(element => {
 
 document.addEventListener('click', handleClick);
 </script>
+	 
 
 	  
 
