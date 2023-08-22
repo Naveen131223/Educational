@@ -21,6 +21,19 @@ body {
 }
 
 
+.indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(255, 51, 102, 0.5); /* Transparent pink color */
+  position: absolute;
+  z-index: 9999;
+  display: none; /* Initially hidden */
+}
+
+.indicator.visible {
+  display: block; /* Make it visible on click */
+}
   
 p {
       font-size: 18px;
