@@ -897,13 +897,14 @@ window.onload = animateLines;
       return romanticVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
     }
 
-    // Function to recursively traverse and process text nodes
+    // Process text nodes in the entire document
     function processTextNodes(node) {
       if (node.nodeType === Node.TEXT_NODE) {
         const words = node.textContent.trim().split(/\s+/);
         const spannedWords = words.map(word => `<span>${word}</span>`).join(' ');
         const spanContainer = document.createElement('span');
         spanContainer.innerHTML = spannedWords;
+        spanContainer.addEventListener('click', handleClick); // Add the click handler to spans
         node.parentNode.replaceChild(spanContainer, node);
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         node.childNodes.forEach(processTextNodes);
@@ -913,7 +914,6 @@ window.onload = animateLines;
     // Process text nodes in the entire document
     processTextNodes(document.body);
 
-    document.addEventListener('click', handleClick);
   </script>
 
 
