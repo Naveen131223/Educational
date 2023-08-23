@@ -848,8 +848,7 @@ window.onload = animateLines;
 
 
 	  <script>
-
-		  let activeIndicator = null;
+let activeIndicator = null;
 let activeUtterance = null;
 let readingEnabled = true;
 
@@ -863,12 +862,13 @@ function handleClick(event) {
   if (targetNode.nodeName === 'SPAN') {
     const word = targetNode.textContent;
     if (!activeIndicator) {
-      startReading(word, event.clientX, event.clientY);
+      startReading(word, event.clientX, event.clientY + window.scrollY);
     }
   } else {
     if (!activeIndicator) {
       // Add an empty word for the indicator to appear
-      startReading('', event.clientX, event.clientY + window.scrollY);
+      const scrollY = window.scrollY;
+      startReading('', event.clientX, event.clientY + scrollY);
       setTimeout(stopReading, 1000); // Hide after 1 second (1000 milliseconds)
     }
   }
@@ -955,7 +955,6 @@ toggleButton.addEventListener('click', function() {
   }
 });
 
-		  
 </script>
 
 
