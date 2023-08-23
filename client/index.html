@@ -847,6 +847,8 @@ window.onload = animateLines;
 		  
 		  </script>
 
+
+
 	  <script>
   let activeIndicator = null;
   let activeUtterance = null;
@@ -932,17 +934,6 @@ window.onload = animateLines;
   toggleButton.className = 'on';
   toggleButton.textContent = 'Read Content On';
   document.body.appendChild(toggleButton);
-
-  toggleButton.style.position = 'fixed';
-  toggleButton.style.bottom = '20px';
-  toggleButton.style.right = '20px';
-  toggleButton.style.backgroundColor = '#007bff';
-  toggleButton.style.color = 'white';
-  toggleButton.style.padding = '10px 20px';
-  toggleButton.style.cursor = 'pointer';
-  toggleButton.style.borderRadius = '5px';
-  toggleButton.style.userSelect = 'none';
-  toggleButton.style.zIndex = '9999';
 
   toggleButton.addEventListener('click', function() {
     if (readingEnabled) {
