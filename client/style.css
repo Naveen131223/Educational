@@ -20,6 +20,12 @@ body {
   font-size: 16px; /* Set a base font size */
 }
 
+  .content {
+    width: 200%;
+    background-color: lightgray;
+    white-space: nowrap;
+  }
+
 #toggleButton {
   position: fixed;
   bottom: 20px;
