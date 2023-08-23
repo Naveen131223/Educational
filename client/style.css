@@ -24,7 +24,7 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: yellow;
+  background-color: #007bff;
   color: white;
   padding: 10px 20px;
   cursor: pointer;
