@@ -21,6 +21,24 @@ body {
 }
 
 
+#toggleButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  user-select: none;
+}
+
+#toggleButton.off {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
 .indicator {
 width: 20px;
 height: 20px;
