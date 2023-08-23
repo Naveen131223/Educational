@@ -25,8 +25,20 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	  <link rel="stylesheet" href="style1.css" />
   </head>
   <body>
+	  
+<div class="indicator"></div>
+	  
+	<script>
+    function showIndicator(event) {
+      var indicator = document.querySelector('.indicator');
+      indicator.style.left = (event.clientX - 10) + 'px'; // Adjust offset
+      indicator.style.top = (event.clientY - 10) + 'px'; // Adjust offset
+      indicator.classList.add('visible');
+    }
 
-	
+    document.addEventListener('touchstart', showIndicator);
+    document.addEventListener('mousedown', showIndicator);
+  </script>
 	  
 
 <script type="module">
