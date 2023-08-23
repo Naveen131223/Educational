@@ -41,19 +41,20 @@ body {
 }
 
 
-.indicator {
-width: 20px;
-height: 20px;
-border-radius: 50%;
-background-color: rgba(255, 51, 102, 0.5); /* Transparent pink color */
-position: absolute;
-z-index: 9999;
-display: none; /* Initially hidden */
-}
+    .indicator {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: rgba(255, 51, 102, 0.5); /* Transparent pink color */
+      position: absolute;
+      z-index: 9999;
+      display: none; /* Initially hidden */
+      pointer-events: none; /* Allow events to pass through */
+    }
 
-.indicator.visible {
-display: block; /* Make it visible on click */
-}
+    .indicator.visible {
+      display: block; /* Make it visible on touch/mouse */
+    }
   
 p {
       font-size: 18px;
