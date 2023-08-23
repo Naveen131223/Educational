@@ -26,7 +26,42 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   </head>
   <body>
 	  
+ <div class="indicator"></div>
+  <script>
+    function showIndicator(event) {
+      var indicator = document.querySelector('.indicator');
+      var leftOffset = event.clientX - 10; // Adjust offset
+      var topOffset = event.clientY - 10 + window.scrollY; // Account for scroll
+      
+      indicator.style.left = leftOffset + 'px';
+      indicator.style.top = topOffset + 'px';
+      indicator.classList.add('visible');
+      
+      setTimeout(function() {
+        indicator.classList.remove('visible');
+      }, 1000); // Hide after 1 second (1000 milliseconds)
+    }
 
+    document.addEventListener('touchstart', showIndicator);
+    document.addEventListener('mousedown', showIndicator);
+  </script><script>
+    function showIndicator(event) {
+      var indicator = document.querySelector('.indicator');
+      var leftOffset = event.clientX - 10; // Adjust offset
+      var topOffset = event.clientY - 10 + window.scrollY; // Account for scroll
+      
+      indicator.style.left = leftOffset + 'px';
+      indicator.style.top = topOffset + 'px';
+      indicator.classList.add('visible');
+      
+      setTimeout(function() {
+        indicator.classList.remove('visible');
+      }, 1000); // Hide after 1 second (1000 milliseconds)
+    }
+
+    document.addEventListener('touchstart', showIndicator);
+    document.addEventListener('mousedown', showIndicator);
+  </script>
 	  
 
 <script type="module">
