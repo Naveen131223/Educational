@@ -1,40 +1,40 @@
 import express from 'express';
 import cors from 'cors';
+import axios from 'axios';
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' })); // Limit request size to 1MB
 
 app.post('/', async (req, res) => {
-try {
-const userMessage = req.body.message; // Assuming the client sends a 'message' field
+  try {
+    const userMessage = req.body.message; // Assuming the client sends a 'message' field
 
-// Generate a response based on the user's input
-const botResponse = generateBotResponse(userMessage);
+    // Fetch response from Google based on user's input
+    const botResponse = await getGoogleResponse(userMessage);
 
-res.status(200).send({
-bot: botResponse,
+    res.status(200).send({
+      bot: botResponse,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
 });
-} catch (error) {
-console.error(error);
-res.status(500).send('Something went wrong');
-}
-});
 
-function generateBotResponse(inputMessage) {
-// Here you can implement a logic to generate responses based on user input.
-// For demonstration purposes, using predefined responses.
-const responses = [
-"How can I assist you?",
-"How can I help you?",
-"Is there anything else you'd like to know?",
-"Feel free to ask any questions.",
-"I'm here to help. What can I do for you?",
-];
+async function getGoogleResponse(query) {
+  try {
+    // Make a request to Google
+    const response = await axios.get(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
 
-// Select a response randomly
-const randomIndex = Math.floor(Math.random() * responses.length);
-return responses[randomIndex];
+    // Extract the relevant information from the response (you may need to adjust this based on Google's HTML structure)
+    const extractedInfo = 'Extracted information from Google response';
+
+    return extractedInfo;
+  } catch (error) {
+    console.error('Error fetching data from Google:', error);
+    return 'Failed to fetch information from Google';
+  }
 }
 
 const PORT = 5000;
