@@ -3,7 +3,7 @@ const { ChatCompletion } = require('g4f');
 const { request, Response, stream_with_context } = require('flask');
 const { get } = require('requests');
 const { special_instructions } = require('./config');
-
+ 
 class BackendApi {
   constructor(bp, config) {
     this.bp = bp;
