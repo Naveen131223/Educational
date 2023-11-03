@@ -10,7 +10,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const apiKey = process.env.OPENAI_API_KEY || null; // Set apiKey to null initially
+let apiKey = process.env.OPENAI_API_KEY;
+
+// If API key is not present in environment variables, prompt the user
+if (!apiKey) {
+  apiKey = askUserForApiKey();
+}
 
 let openai;
 if (apiKey) {
@@ -20,17 +25,17 @@ if (apiKey) {
   openai = new OpenAIApi(configuration);
 }
 
-app.get('/', async (req, res) => {
-  const defaultResponses = [
-    "How can I assist you?",
-    "How can I help you?",
-    "Is there anything else you'd like to know?",
-    "Feel free to ask any questions.",
-    "I'm here to help. What can I do for you?",
-  ];
+const constantResponses = [
+  "How can I assist you?",
+  "How can I help you?",
+  "Is there anything else you'd like to know?",
+  "Feel free to ask any questions.",
+  "I'm here to help. What can I do for you?",
+];
 
-  const randomIndex = Math.floor(Math.random() * defaultResponses.length);
-  const defaultMessage = defaultResponses[randomIndex];
+app.get('/', async (req, res) => {
+  const randomIndex = Math.floor(Math.random() * constantResponses.length);
+  const defaultMessage = constantResponses[randomIndex];
 
   res.status(200).send({
     message: 'Hello from CodeX!',
@@ -41,8 +46,10 @@ app.get('/', async (req, res) => {
 app.post('/', async (req, res) => {
   try {
     if (!openai) {
-      return res.status(403).send({
-        error: 'OpenAI API key not provided.',
+      const randomIndex = Math.floor(Math.random() * constantResponses.length);
+      const defaultMessage = constantResponses[randomIndex];
+      return res.status(200).send({
+        bot: defaultMessage,
       });
     }
 
