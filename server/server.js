@@ -1,21 +1,14 @@
 import express from 'express';
-import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 import readlineSync from 'readline-sync';
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-let apiKey = process.env.OPENAI_API_KEY;
-
-// If API key is not present in environment variables, prompt the user
-if (!apiKey) {
-  apiKey = askUserForApiKey();
-}
+// Ask the user for the OpenAI API key
+const apiKey = askUserForApiKey();
 
 let openai;
 if (apiKey) {
@@ -33,7 +26,7 @@ const constantResponses = [
   "I'm here to help. What can I do for you?",
 ];
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
   const randomIndex = Math.floor(Math.random() * constantResponses.length);
   const defaultMessage = constantResponses[randomIndex];
 
@@ -78,5 +71,5 @@ app.listen(5000, () => console.log('AI server started on http://localhost:5000')
 
 function askUserForApiKey() {
   const apiKey = readlineSync.question('Enter your OpenAI API key: ');
-  return apiKey;
+  return apiKey || null; // return null if the user didn't provide the API key
 }
