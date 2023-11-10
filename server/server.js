@@ -95,7 +95,7 @@ app.post('/', async (req, res) => {
       model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: `${prompt}`,
       temperature: 0.2,
-      max_tokens: 1500,
+      max_tokens: 1000,
       top_p: 0.5,
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
