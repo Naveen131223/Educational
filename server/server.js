@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import axios from 'axios';
+import { Configuration, OpenAIApi } from 'openai';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -8,63 +8,101 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
+const apiKey = process.env.OPENAI_API_KEY;
+
+if (!apiKey) {
+  console.error('Please provide an OPENAI_API_KEY in your environment variables.');
+  process.exit(1);
+}
+
+const configuration = new Configuration({
+  apiKey,
+});
+
+const openai = new OpenAIApi(configuration);
+
 // Simple in-memory cache to store API responses
 const responseCache = {};
+let isAIModelReady = false; // Flag to check if the AI model is ready
+const WARM_UP_PROMPT = 'Warm-up prompt';
 
-// Middleware to check if the internet data is ready before processing requests
-let isInternetDataReady = false; // Flag to check if the internet data is ready
+// Initialize the AI model asynchronously during server startup
+const modelInitializationPromise = initializeAIModel();
 
-// Simulate initialization of internet data asynchronously during server startup
-const internetDataInitializationPromise = initializeInternetData();
-
-async function initializeInternetData() {
+async function initializeAIModel() {
   try {
-    console.log('Initializing internet data...');
-    // Example: Fetch data from the JSONPlaceholder API
-    const response = await axios.get('https://jsonplaceholder.typicode.com/todos/1');
-    const internetData = response.data.title;
+    console.log('Initializing AI model...');
+    const response = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-ada-001',
+      prompt: WARM_UP_PROMPT,
+    });
 
-    responseCache['internetData'] = internetData;
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[WARM_UP_PROMPT] = botResponse;
 
-    console.log('Internet data is ready!');
-    isInternetDataReady = true;
+    console.log('AI model is ready!');
+    isAIModelReady = true;
   } catch (error) {
-    console.error('Error initializing internet data:', error);
+    console.error('Error initializing AI model:', error);
   }
 }
 
-// Middleware to check if the internet data is ready before processing requests
+// Middleware to check if the AI model is ready before processing requests
 app.use((req, res, next) => {
-  if (!isInternetDataReady) {
+  if (!isAIModelReady) {
     return res.status(200).send({
-      message: 'Initializing internet data, please wait...',
+      message: 'Initializing AI model, please wait...',
     });
   }
   next();
 });
 
 app.get('/status', (req, res) => {
-  if (isInternetDataReady) {
+  if (isAIModelReady) {
     return res.status(200).send({
-      status: 'Internet data is ready!',
+      status: 'AI model is ready!',
     });
   }
   res.status(200).send({
-    status: 'Internet data is initializing...',
+    status: 'AI model is initializing...',
   });
 });
 
 app.get('/', (req, res) => {
-  // If the internet data is ready, return the cached response immediately
+  // If the AI model is ready, return the cached warm-up response immediately
   return res.status(200).send({
-    internetData: responseCache['internetData'],
+    bot: responseCache[WARM_UP_PROMPT],
   });
 });
 
 app.post('/', async (req, res) => {
   try {
-    // Example: Using the fetched internet data in the response
-    const botResponse = `Internet data: ${responseCache['internetData']}`;
+    let { prompt } = req.body;
+
+    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
+      return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
+    }
+
+    // Sanitize and escape the input prompt to prevent XSS attacks
+    prompt = sanitizeInput(prompt);
+
+    if (responseCache[prompt]) {
+      console.log('Cache hit for prompt:', prompt);
+      return res.status(200).send({ bot: responseCache[prompt] });
+    }
+
+    const response = await openai.createCompletion({
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
+      prompt: `${prompt}`,
+      temperature: 0.2,
+      max_tokens: 500,
+      top_p: 0.5,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+    });
+
+    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
+    responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
@@ -79,10 +117,10 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong');
 });
 
-// Start the server after the internet data is initialized
-internetDataInitializationPromise.then(() => {
+// Start the server after the AI model is initialized
+modelInitializationPromise.then(() => {
   const server = app.listen(port, () => {
-    console.log(`Server started on http://localhost:${port}`);
+    console.log(`AI server started on http://localhost:${port}`);
   });
 
   process.on('SIGTERM', () => {
@@ -93,3 +131,24 @@ internetDataInitializationPromise.then(() => {
     });
   });
 });
+
+function sanitizeInput(input) {
+  return input.replace(/[&<>"'\/]/g, (char) => {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#39;';
+      case '/':
+        return '&#x2F;';
+      default:
+        return char;
+    }
+  });
+                                                         }
