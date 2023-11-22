@@ -1,85 +1,56 @@
 import express from 'express';
-import https from 'https';
+import puppeteer from 'puppeteer';
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
 
-// Simple in-memory cache to store search results
-const searchResultsCache = {};
-
-app.post('/search', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
-    const { query } = req.body;
+    const { prompt } = req.body;
 
-    if (!query || typeof query !== 'string' || query.trim() === '') {
-      return res.status(400).send({ error: 'Invalid or missing query in the request body.' });
+    if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
+      return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
     }
 
-    const sanitizedQuery = sanitizeInput(query);
+    // Launch a headless browser with puppeteer
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-    // Check if the result is already in the cache
-    if (searchResultsCache[sanitizedQuery]) {
-      return res.status(200).send({ results: searchResultsCache[sanitizedQuery] });
-    }
+    // Perform a search on Google
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(prompt)}`;
+    await page.goto(searchUrl);
 
-    const searchResults = await performGoogleSearch(sanitizedQuery);
+    // Extract all text content from the search results
+    const results = await page.evaluate(() => {
+      const extractedResults = [];
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, div, span, a, li, td, span, strong, em, b, i, u, s').forEach((result) => {
+        const text = result.textContent;
+        const link = result.tagName === 'A' ? result.href : '';
+        extractedResults.push({ text, link });
+      });
+      return extractedResults;
+    });
 
-    // Cache the result for future use
-    searchResultsCache[sanitizedQuery] = searchResults;
+    // Close the browser
+    await browser.close();
 
-    res.status(200).send({ results: searchResults });
+    // Respond to the user
+    res.status(200).send({
+      bot: `Search results for "${prompt}" on Google: ${results.map(result => `${result.text} - ${result.link}`).join(', ')}`,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something went wrong');
   }
 });
 
-const performGoogleSearch = async (query) => {
-  const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-
-  return new Promise((resolve, reject) => {
-    https.get(googleUrl, (response) => {
-      let data = '';
-
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      response.on('end', () => {
-        // Extract text content from HTML using a simple regular expression
-        const textContents = extractTextFromHtml(data);
-        resolve(textContents);
-      });
-    }).on('error', (error) => {
-      reject(error);
-    });
-  });
-};
-
-const extractTextFromHtml = (html) => {
-  // Use a regular expression to extract text content from HTML
-  // This is a basic example and may not work reliably for all cases
-  const textContentRegex = /<div class="tF2Cxc">(.*?)<\/div>/gs;
-  const matches = html.match(textContentRegex) || [];
-  
-  // Remove HTML tags from each match
-  const textContents = matches.map(match => match.replace(/<[^>]*>/g, ''));
-  
-  return textContents;
-};
-
-const sanitizeInput = (input) => {
-  // Add input sanitation logic as needed
-  // For simplicity, this example only trims the input
-  return input.trim();
-};
-
 const server = app.listen(port, () => {
   console.log(`Server started on http://localhost:${port}`);
 });
 
+// Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('Shutting down gracefully...');
   server.close(() => {
