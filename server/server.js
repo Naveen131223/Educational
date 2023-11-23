@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import { Configuration, OpenAIApi } from 'openai';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -8,74 +7,38 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
-const apiKey = process.env.OPENAI_API_KEY;
-
-if (!apiKey) {
-  console.error('Please provide an OPENAI_API_KEY in your environment variables.');
-  process.exit(1);
-}
-
-const configuration = new Configuration({
-  apiKey,
-});
-
-const openai = new OpenAIApi(configuration);
-
-// Simple in-memory cache to store API responses
+// Simple in-memory cache to store generated responses
 const responseCache = {};
-let isAIModelReady = false; // Flag to check if the AI model is ready
-const WARM_UP_PROMPT = 'Warm-up prompt';
+let isModelReady = true; // Since we're not using an external API, assume it's always ready
 
-// Initialize the AI model asynchronously during server startup
-const modelInitializationPromise = initializeAIModel();
-
-async function initializeAIModel() {
-  try {
-    console.log('Initializing AI model...');
-    const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-ada-001',
-      prompt: WARM_UP_PROMPT,
-    });
-
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[WARM_UP_PROMPT] = botResponse;
-
-    console.log('AI model is ready!');
-    isAIModelReady = true;
-  } catch (error) {
-    console.error('Error initializing AI model:', error);
-  }
-}
-
-// Middleware to check if the AI model is ready before processing requests
 app.use((req, res, next) => {
-  if (!isAIModelReady) {
+  if (!isModelReady) {
     return res.status(200).send({
-      message: 'Initializing AI model, please wait...',
+      message: 'Initializing model, please wait...',
     });
   }
   next();
 });
 
 app.get('/status', (req, res) => {
-  if (isAIModelReady) {
+  if (isModelReady) {
     return res.status(200).send({
-      status: 'AI model is ready!',
+      status: 'Model is ready!',
     });
   }
   res.status(200).send({
-    status: 'AI model is initializing...',
+    status: 'Model is initializing...',
   });
 });
 
 app.get('/', (req, res) => {
-  // If the AI model is ready, return the cached warm-up response immediately
+  // If the model is ready, return a placeholder response immediately
   return res.status(200).send({
-    bot: responseCache[WARM_UP_PROMPT],
+    bot: 'Placeholder response',
   });
 });
 
-app.post('/', async (req, res) => {
+app.post('/', (req, res) => {
   try {
     let { prompt } = req.body;
 
@@ -91,17 +54,10 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: responseCache[prompt] });
     }
 
-    const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: `${prompt}`,
-      temperature: 0.2,
-      max_tokens: 500,
-      top_p: 0.5,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
-    });
+    // Generate a random response using the faker library
+    const faker = require('faker');
+    const botResponse = faker.lorem.paragraph();
 
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
     responseCache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
@@ -117,18 +73,16 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong');
 });
 
-// Start the server after the AI model is initialized
-modelInitializationPromise.then(() => {
-  const server = app.listen(port, () => {
-    console.log(`AI server started on http://localhost:${port}`);
-  });
+// Start the server
+const server = app.listen(port, () => {
+  console.log(`Server started on http://localhost:${port}`);
+});
 
-  process.on('SIGTERM', () => {
-    console.log('Shutting down gracefully...');
-    server.close(() => {
-      console.log('Server has been closed.');
-      process.exit(0);
-    });
+process.on('SIGTERM', () => {
+  console.log('Shutting down gracefully...');
+  server.close(() => {
+    console.log('Server has been closed.');
+    process.exit(0);
   });
 });
 
@@ -151,4 +105,4 @@ function sanitizeInput(input) {
         return char;
     }
   });
- }
+}
