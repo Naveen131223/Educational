@@ -12,9 +12,6 @@ const gpt = new GPT({ key: process.env.OPENAI_API_KEY });
 
 let isServerReady = true;
 
-// Simple in-memory cache to store API responses
-const responseCache = {};
-
 app.use((req, res, next) => {
   if (!isServerReady) {
     return res.status(200).send({
@@ -43,16 +40,13 @@ app.get('/', (req, res) => {
 
 app.post('/', async (req, res) => {
   try {
-    let { prompt, temperature } = req.body;
+    let { prompt } = req.body;
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
     }
 
-    // Default to 0.7 temperature if not provided
-    temperature = temperature || 0.7;
-
-    const botResponse = await generateResponse(prompt, temperature);
+    const botResponse = await generateResponse(prompt);
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
@@ -79,22 +73,12 @@ process.on('SIGTERM', () => {
   });
 });
 
-async function generateResponse(prompt, temperature): Promise<string> {
-  // Check if the response is already in the cache
-  if (responseCache[prompt]) {
-    console.log('Cache hit for prompt:', prompt);
-    return responseCache[prompt];
-  }
-
+async function generateResponse(prompt): Promise<string> {
   // Example using GPT-2.5-turbo
   const response: GPTResponse = await gpt.complete({
     prompt: prompt,
     model: 'gpt-2.5-turbo',
-    temperature: temperature,
   });
 
-  // Cache the response
-  responseCache[prompt] = response.choices[0]?.text || 'No response from the language model.';
-
   return response.choices[0]?.text || 'No response from the language model.';
-    }
+}
