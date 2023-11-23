@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import axios from 'axios';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -7,38 +8,37 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
-// Simple in-memory cache to store generated responses
-const responseCache = {};
-let isModelReady = true; // Since we're not using an external API, assume it's always ready
+const PLAYGROUND_URL = 'https://play.openai.com';
+
+// Middleware to check if the AI model is ready before processing requests
+let isAIModelReady = false;
 
 app.use((req, res, next) => {
-  if (!isModelReady) {
+  if (!isAIModelReady) {
     return res.status(200).send({
-      message: 'Initializing model, please wait...',
+      message: 'Initializing AI model, please wait...',
     });
   }
   next();
 });
 
 app.get('/status', (req, res) => {
-  if (isModelReady) {
+  if (isAIModelReady) {
     return res.status(200).send({
-      status: 'Model is ready!',
+      status: 'AI model is ready!',
     });
   }
   res.status(200).send({
-    status: 'Model is initializing...',
+    status: 'AI model is initializing...',
   });
 });
 
 app.get('/', (req, res) => {
-  // If the model is ready, return a placeholder response immediately
-  return res.status(200).send({
-    bot: 'Placeholder response',
-  });
+  // If the AI model is ready, return the response from the Playground
+  return res.redirect(PLAYGROUND_URL);
 });
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
   try {
     let { prompt } = req.body;
 
@@ -46,20 +46,12 @@ app.post('/', (req, res) => {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
     }
 
-    // Sanitize and escape the input prompt to prevent XSS attacks
-    prompt = sanitizeInput(prompt);
+    // Send the prompt to the Playground API
+    const response = await axios.post(PLAYGROUND_URL + '/api/chat/completions', {
+      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
+    });
 
-    if (responseCache[prompt]) {
-      console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: responseCache[prompt] });
-    }
-
-    // Generate a random response using the faker library
-    const faker = require('faker');
-    const botResponse = faker.lorem.paragraph();
-
-    responseCache[prompt] = botResponse;
-
+    const botResponse = response.data.choices[0]?.message?.content || 'No response from the AI model.';
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error(error);
@@ -76,8 +68,10 @@ app.use((err, req, res, next) => {
 // Start the server
 const server = app.listen(port, () => {
   console.log(`Server started on http://localhost:${port}`);
+  isAIModelReady = true;
 });
 
+// Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('Shutting down gracefully...');
   server.close(() => {
@@ -85,24 +79,3 @@ process.on('SIGTERM', () => {
     process.exit(0);
   });
 });
-
-function sanitizeInput(input) {
-  return input.replace(/[&<>"'\/]/g, (char) => {
-    switch (char) {
-      case '&':
-        return '&amp;';
-      case '<':
-        return '&lt;';
-      case '>':
-        return '&gt;';
-      case '"':
-        return '&quot;';
-      case "'":
-        return '&#39;';
-      case '/':
-        return '&#x2F;';
-      default:
-        return char;
-    }
-  });
-}
