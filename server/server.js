@@ -35,14 +35,22 @@ app.use((req, res, next) => {
 
 app.post('/', async (req, res) => {
   try {
-    let { prompt } = req.body;
+    let { prompt, max_tokens, temperature, top_p, frequency_penalty, presence_penalty } = req.body;
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim() === '') {
       return res.status(400).send({ error: 'Invalid or missing prompt in the request body.' });
     }
 
     const input = tokenizer.encode(prompt, { return_tensors: 'pt' });
-    const output = await model.generate(input);
+
+    // Customize model generation parameters based on your requirements
+    const output = await model.generate(input, {
+      max_tokens: max_tokens || 500,
+      temperature: temperature || 0.7,
+      top_p: top_p || 0.9,
+      frequency_penalty: frequency_penalty || 0.0,
+      presence_penalty: presence_penalty || 0.0,
+    });
 
     const botResponse = tokenizer.decode(output[0], { skipSpecialTokens: true }) || 'No response from the model.';
     responseCache[prompt] = botResponse;
