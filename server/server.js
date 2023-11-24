@@ -33,7 +33,7 @@ async function initializeAIModel() {
   try {
     console.log('Initializing AI model...');
     const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-ada-001',
+      model: process.env.OPENAI_MODEL || 'text-davinci-003',
       prompt: WARM_UP_PROMPT,
     });
 
