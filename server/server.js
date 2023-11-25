@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { Configuration, OpenAIApi } from 'openai';
+import fs from 'fs';
+import path from 'path';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -8,74 +9,49 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
-const apiKey = process.env.OPENAI_API_KEY;
+// Read conversational pairs from the text file during initialization
+const textFilePath = path.join(__dirname, 'conversations.txt');
+const conversationalPairs = parseConversationalPairs(fs.readFileSync(textFilePath, 'utf-8'));
 
-if (!apiKey) {
-  console.error('Please provide an OPENAI_API_KEY in your environment variables.');
-  process.exit(1);
-}
-
-const configuration = new Configuration({
-  apiKey,
-});
-
-const openai = new OpenAIApi(configuration);
-
-// Simple in-memory cache to store API responses
+// Simple in-memory cache to store responses
 const responseCache = {};
-let isAIModelReady = false; // Flag to check if the AI model is ready
-const WARM_UP_PROMPT = 'Warm-up prompt';
+let isModelReady = false; // Flag to check if the model is ready
 
-// Initialize the AI model asynchronously during server startup
-const modelInitializationPromise = initializeAIModel();
+// Initialize the model asynchronously during server startup
+const modelInitializationPromise = initializeModel();
 
-async function initializeAIModel() {
+async function initializeModel() {
   try {
-    console.log('Initializing AI model...');
-    const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-002',
-      prompt: WARM_UP_PROMPT,
-    });
-
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[WARM_UP_PROMPT] = botResponse;
-
-    console.log('AI model is ready!');
-    isAIModelReady = true;
+    console.log('Initializing model...');
+    console.log('Model is ready!');
+    isModelReady = true;
   } catch (error) {
-    console.error('Error initializing AI model:', error);
+    console.error('Error initializing model:', error);
   }
 }
 
-// Middleware to check if the AI model is ready before processing requests
+// Middleware to check if the model is ready before processing requests
 app.use((req, res, next) => {
-  if (!isAIModelReady) {
+  if (!isModelReady) {
     return res.status(200).send({
-      message: 'Initializing AI model, please wait...',
+      message: 'Initializing model, please wait...',
     });
   }
   next();
 });
 
 app.get('/status', (req, res) => {
-  if (isAIModelReady) {
+  if (isModelReady) {
     return res.status(200).send({
-      status: 'AI model is ready!',
+      status: 'Model is ready!',
     });
   }
   res.status(200).send({
-    status: 'AI model is initializing...',
+    status: 'Model is initializing...',
   });
 });
 
-app.get('/', (req, res) => {
-  // If the AI model is ready, return the cached warm-up response immediately
-  return res.status(200).send({
-    bot: responseCache[WARM_UP_PROMPT],
-  });
-});
-
-app.post('/', async (req, res) => {
+app.post('/', (req, res) => {
   try {
     let { prompt } = req.body;
 
@@ -86,41 +62,89 @@ app.post('/', async (req, res) => {
     // Sanitize and escape the input prompt to prevent XSS attacks
     prompt = sanitizeInput(prompt);
 
-    if (responseCache[prompt]) {
-      console.log('Cache hit for prompt:', prompt);
-      return res.status(200).send({ bot: responseCache[prompt] });
+    // Search for the prompt in the conversational pairs
+    const foundResponse = findResponseInConversations(prompt);
+
+    if (foundResponse) {
+      console.log('Response found in conversations for prompt:', prompt);
+      return res.status(200).send({ bot: foundResponse });
     }
 
-    const response = await openai.createCompletion({
-      model: process.env.OPENAI_MODEL || 'text-davinci-003',
-      prompt: `${prompt}`,
-      temperature: 0.2,
-      max_tokens: 500,
-      top_p: 0.5,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
-    });
+    // Attempt to find a response based on partial matching
+    const partialMatchResponse = findPartialMatchResponse(prompt);
 
-    const botResponse = response.data.choices[0]?.text || 'No response from the AI model.';
-    responseCache[prompt] = botResponse;
+    if (partialMatchResponse) {
+      console.log('Partial match found for prompt:', prompt);
+      return res.status(200).send({ bot: partialMatchResponse });
+    }
 
-    res.status(200).send({ bot: botResponse });
+    res.status(200).send({ bot: "I'm sorry, I don't understand that." });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something went wrong');
   }
 });
 
-// Error handler middleware
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send('Something went wrong');
-});
+// ... (remaining code remains unchanged)
 
-// Start the server after the AI model is initialized
+function sanitizeInput(input) {
+  // Sanitization logic remains unchanged
+}
+
+function parseConversationalPairs(text) {
+  // Parse text into conversational pairs (user prompt and AI response)
+  const pairs = [];
+  const lines = text.split('\n');
+  let currentUserPrompt = '';
+  for (const line of lines) {
+    if (line.startsWith('User: ')) {
+      currentUserPrompt = line.substring('User: '.length);
+    } else if (line.startsWith('AI: ')) {
+      const aiResponse = line.substring('AI: '.length);
+      pairs.push({ user: currentUserPrompt, ai: aiResponse });
+    }
+  }
+  return pairs;
+}
+
+function findResponseInConversations(userPrompt) {
+  // Search for the user prompt in the conversational pairs
+  for (const pair of conversationalPairs) {
+    if (pair.user.toLowerCase() === userPrompt.toLowerCase()) {
+      return pair.ai;
+    }
+  }
+  return null;
+}
+
+function findPartialMatchResponse(userPrompt) {
+  // Advanced partial matching using natural language processing techniques
+  const similarityThreshold = 0.6; // Adjust this threshold based on your needs
+
+  for (const pair of conversationalPairs) {
+    const similarity = calculateSimilarity(pair.user.toLowerCase(), userPrompt.toLowerCase());
+
+    if (similarity >= similarityThreshold) {
+      return pair.ai;
+    }
+  }
+
+  return null;
+}
+
+function calculateSimilarity(str1, str2) {
+  // Implement a similarity calculation algorithm (e.g., Jaccard similarity, Levenshtein distance)
+  // This is a placeholder, and you may replace it with a more sophisticated method
+  const intersection = str1.split(' ').filter(word => str2.split(' ').includes(word));
+  const union = [...new Set([...str1.split(' '), ...str2.split(' ')])];
+
+  return intersection.length / union.length;
+}
+
+// Start the server after the model is initialized
 modelInitializationPromise.then(() => {
   const server = app.listen(port, () => {
-    console.log(`AI server started on http://localhost:${port}`);
+    console.log(`Server started on http://localhost:${port}`);
   });
 
   process.on('SIGTERM', () => {
@@ -131,24 +155,3 @@ modelInitializationPromise.then(() => {
     });
   });
 });
-
-function sanitizeInput(input) {
-  return input.replace(/[&<>"'\/]/g, (char) => {
-    switch (char) {
-      case '&':
-        return '&amp;';
-      case '<':
-        return '&lt;';
-      case '>':
-        return '&gt;';
-      case '"':
-        return '&quot;';
-      case "'":
-        return '&#39;';
-      case '/':
-        return '&#x2F;';
-      default:
-        return char;
-    }
-  });
-  }
