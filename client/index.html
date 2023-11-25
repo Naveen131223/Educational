@@ -88,6 +88,18 @@ const module = await import("./script.js?v=v7");
 
 
 
+<audio id="myAudio" autoplay>
+    <source src="game.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+    // Check if the user has visited the site before
+    if (localStorage.getItem('visited') === null) {
+        // If not, set a flag in local storage to indicate the user has visited
+        localStorage.setItem('visited', 'true');
+    }
+</script>
 
 
   
