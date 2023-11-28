@@ -238,77 +238,57 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 <h1>"WebHarvest PDF Generator"</h1>
 
-	  <label for="websiteInput">Enter website address:</label>
-<input type="text" id="websiteInput" placeholder="https://example.com">
-<button id="scrapeAndPrintButton">Scrape and Print</button>
+	   <label for="websiteInput">Enter website address:</label>
+    <input type="text" id="websiteInput" placeholder="https://example.com">
+    <button onclick="openLinkAndPrint()">Scrape and Print</button>
 
-<script>
-    document.getElementById('scrapeAndPrintButton').addEventListener('click', openLinkAndPrint);
-</script>
-	  
+    <script>
+        function openLinkAndPrint() {
+            const url = document.getElementById('websiteInput').value.trim();
 
-<script>
-    function openLinkAndPrint() {
-        // Get website address from input
-        const url = document.getElementById('websiteInput').value.trim();
+            if (!url) {
+                alert('Please enter a valid website address.');
+                return;
+            }
 
-        if (!url) {
-            alert('Please enter a valid website address.');
-            return;
-        }
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const apiUrl = proxyUrl + url;
 
-        // Use CORS-anywhere as a proxy to fetch content from different origins
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        const apiUrl = proxyUrl + url;
+            fetch(apiUrl)
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
 
-        fetch(apiUrl)
-            .then(response => response.text())
-            .then(data => {
-                // Use DOMParser to parse the HTML string
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
+                    const textContent = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
+                        .map(tag => tag.textContent)
+                        .join('\n');
 
-                // Extract text from all paragraphs and headings using textContent
-                const textContent = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
-                    .map(tag => tag.textContent)
-                    .join('\n');
+                    const newDocument = document.implementation.createHTMLDocument('Scraped Content');
+                    const newBody = newDocument.body;
 
-                // Create a new HTML document with the scraped content
-                const newDocument = document.implementation.createHTMLDocument('Scraped Content');
-                const newBody = newDocument.body;
+                    const heading = document.createElement('h1');
+                    heading.textContent = 'Scraped Content';
+                    newBody.appendChild(heading);
 
-                // Append scraped content to the new body
-                const heading = document.createElement('h1');
-                heading.textContent = 'Scraped Content';
-                newBody.appendChild(heading);
+                    const pre = document.createElement('pre');
+                    pre.textContent = textContent;
+                    newBody.appendChild(pre);
 
-                const pre = document.createElement('pre');
-                pre.textContent = textContent;
-                newBody.appendChild(pre);
-
-                // Wait for the new document to be fully loaded
-                newDocument.onload = function () {
-                    // Create a Blob with the new document content
                     const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
-
-                    // Create a URL for the Blob
                     const blobUrl = URL.createObjectURL(blob);
 
-                    // Open a new tab with the URL and print as PDF
                     const printWindow = window.open(blobUrl, '_blank');
                     printWindow.onload = function () {
                         printWindow.print();
 
-                        // Open another tab with the specified link after printing
                         const linkToOpen = '//almstda.tv/4/6558263';
                         const linkWindow = window.open(linkToOpen, '_blank');
                     };
-                };
-            })
-            .catch(error => console.error('Error:', error));
-    }
-</script>
-
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
 
 	  
                 
