@@ -236,7 +236,7 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 </script>
 
 
-<h1>"WebHarvest PDF Generator"</h1>
+<h2>"WebHarvest PDF Generator"</h2>
 
 <label for="websiteInput">Enter website address:</label>
     <input type="text" id="websiteInput" placeholder="https://example.com">
@@ -265,27 +265,42 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
                     .map(tag => tag.textContent)
                     .join('\n');
 
-                const newDocument = document.implementation.createHTMLDocument('Scraped Content');
-                const newBody = newDocument.body;
+                const content = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Scraped Content</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 20px;
+                                line-height: 1.6;
+                            }
 
-                const heading = document.createElement('h1');
-                heading.textContent = 'Scraped Content';
-                newBody.appendChild(heading);
+                            h1, h2, h3, h4, h5, h6 {
+                                color: #333;
+                            }
 
-                const pre = document.createElement('pre');
-                pre.textContent = textContent;
-                newBody.appendChild(pre);
+                            pre {
+                                white-space: pre-wrap;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>Scraped Content</h1>
+                        <pre>${textContent}</pre>
+                    </body>
+                    </html>
+                `;
 
-                const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
-                const blobUrl = URL.createObjectURL(blob);
+                // Open the content in the current tab
+                document.write(content);
 
-                const printWindow = window.open(blobUrl, '_blank');
-                printWindow.onload = function () {
-                    printWindow.print();
-
-                    const linkToOpen = '//almstda.tv/4/6558263';
-                    const linkWindow = window.open(linkToOpen, '_blank');
-                };
+                // Trigger print after a delay to ensure the content is fully loaded
+                setTimeout(() => {
+                    window.print();
+                }, 1000);
             } catch (error) {
                 console.error('Error:', error);
             }
