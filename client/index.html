@@ -280,25 +280,29 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
                 pre.textContent = textContent;
                 newBody.appendChild(pre);
 
-                // Create a Blob with the new document content
-                const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
+                // Wait for the new document to be fully loaded
+                newDocument.onload = function () {
+                    // Create a Blob with the new document content
+                    const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
 
-                // Create a URL for the Blob
-                const blobUrl = URL.createObjectURL(blob);
+                    // Create a URL for the Blob
+                    const blobUrl = URL.createObjectURL(blob);
 
-                // Open a new tab with the URL and print as PDF
-                const printWindow = window.open(blobUrl, '_blank');
-                printWindow.onload = function () {
-                    printWindow.print();
+                    // Open a new tab with the URL and print as PDF
+                    const printWindow = window.open(blobUrl, '_blank');
+                    printWindow.onload = function () {
+                        printWindow.print();
 
-                    // Open another tab with the specified link after printing
-                    const linkToOpen = '//almstda.tv/4/6558263';
-                    const linkWindow = window.open(linkToOpen, '_blank');
+                        // Open another tab with the specified link after printing
+                        const linkToOpen = '//almstda.tv/4/6558263';
+                        const linkWindow = window.open(linkToOpen, '_blank');
+                    };
                 };
             })
             .catch(error => console.error('Error:', error));
     }
 </script>
+
 	  
                 
 
