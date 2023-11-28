@@ -242,7 +242,6 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 
 <script>
-    // I<script>
     function openLinkAndPrint() {
         // Get website address from input
         const url = document.getElementById('websiteInput').value.trim();
@@ -262,42 +261,27 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
                 // Use DOMParser to parse the HTML string
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(data, 'text/html');
-                
+
                 // Extract text from all paragraphs and headings using textContent
                 const textContent = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
                     .map(tag => tag.textContent)
                     .join('\n');
 
                 // Create a new HTML document with the scraped content
-                const newDocument = `<!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>Scraped Content</title>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                margin: 20px;
-                                line-height: 1.6;
-                            }
+                const newDocument = document.implementation.createHTMLDocument('Scraped Content');
+                const newBody = newDocument.body;
 
-                            h1, h2, h3, h4, h5, h6 {
-                                color: #333;
-                            }
+                // Append scraped content to the new body
+                const heading = document.createElement('h1');
+                heading.textContent = 'Scraped Content';
+                newBody.appendChild(heading);
 
-                            pre {
-                                white-space: pre-wrap;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>Scraped Content</h1>
-                        <pre>${textContent}</pre>
-                    </body>
-                    </html>`;
+                const pre = document.createElement('pre');
+                pre.textContent = textContent;
+                newBody.appendChild(pre);
 
                 // Create a Blob with the new document content
-                const blob = new Blob([newDocument], { type: 'text/html' });
+                const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
 
                 // Create a URL for the Blob
                 const blobUrl = URL.createObjectURL(blob);
@@ -315,6 +299,8 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
             .catch(error => console.error('Error:', error));
     }
 </script>
+	  
+                
 
 
 
