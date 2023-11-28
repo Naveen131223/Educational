@@ -237,9 +237,15 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 
 <h1>"WebHarvest PDF Generator"</h1>
-<textarea id="websiteInput" placeholder="Enter the website address (e.g., https://example.com)"></textarea>
-<button onclick="openLinkAndPrint()">Generate a PDF of the website's content.</button>
 
+	  <label for="websiteInput">Enter website address:</label>
+<input type="text" id="websiteInput" placeholder="https://example.com">
+<button id="scrapeAndPrintButton">Scrape and Print</button>
+
+<script>
+    document.getElementById('scrapeAndPrintButton').addEventListener('click', openLinkAndPrint);
+</script>
+	  
 
 <script>
     function openLinkAndPrint() {
@@ -302,6 +308,7 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
             .catch(error => console.error('Error:', error));
     }
 </script>
+
 
 	  
                 
