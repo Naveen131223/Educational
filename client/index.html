@@ -7,7 +7,9 @@
 	  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 	  <meta name="google-site-verification" content="-6KZXHe6S_sLMkKow-xFPO9VgiCu7ZRc6suedaarfj8" />
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+	  
 	  
 	 <meta name="monetag" content="c75aafe3a19435e561d0c955dcc64225"> 
     <meta charset="UTF-8" />
@@ -240,7 +242,9 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 
 <script>
-    function openLinkAndPrint() {
+    // Include the dom-to-image library in your project
+
+function openLinkAndPrint() {
     const url = document.getElementById('websiteInput').value.trim();
 
     if (!url) {
@@ -257,29 +261,21 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
             const parser = new DOMParser();
             const doc = parser.parseFromString(data, 'text/html');
 
-            const textContent = Array.from(doc.body.childNodes)
-                .filter(node => node.nodeType === 3) // Text nodes
-                .map(node => node.textContent.trim())
-                .filter(content => content.length > 0)
-                .join('\n');
-
-            if (textContent.length === 0) {
-                alert('No content found on the specified website.');
-                return;
-            }
-
-            // Log the scraped content to the console
-            console.log(textContent);
-
-            // Use this content as needed (e.g., send it to a server, display it in an alert, etc.)
-
-            // Open another tab with the specified link after printing
-            const linkToOpen = '//almstda.tv/4/6558263';
-            const linkWindow = window.open(linkToOpen, '_blank');
+            // Capture content as an image
+            domtoimage.toPng(doc.body)
+                .then(function (dataUrl) {
+                    // Create a PDF from the image
+                    const pdf = new jsPDF();
+                    pdf.addImage(dataUrl, 'PNG', 0, 0);
+                    
+                    // Download the PDF
+                    pdf.save('scraped_content.pdf');
+                })
+                .catch(error => console.error('Error capturing image:', error));
         })
-        .catch(error => console.error('Error:', error));
-}
-
+        .catch(error => console.error('Error fetching website content:', error));
+	}
+	
 
 
 </script>
