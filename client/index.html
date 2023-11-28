@@ -236,65 +236,6 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 </script>
 
 
-<h2>"WebHarvest PDF Generator"</h2>
-
-<label for="websiteInput">Enter website address:</label>
-    <input type="text" id="websiteInput" placeholder="https://example.com">
-    <button onclick="openLinkInNewTab()">Scrape and Open in New Tab</button>
-
-    <script>
-        function openLinkInNewTab() {
-            const url = document.getElementById('websiteInput').value.trim();
-
-            if (!url) {
-                alert('Please enter a valid website address.');
-                return;
-            }
-
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const apiUrl = proxyUrl + url;
-
-            fetch(apiUrl)
-                .then(response => response.text())
-                .then(data => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(data, 'text/html');
-
-                    const textContent = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
-                        .map(tag => tag.textContent)
-                        .join('\n');
-
-                    const newDocument = document.implementation.createHTMLDocument('Scraped Content');
-                    const newBody = newDocument.body;
-
-                    const heading = document.createElement('h1');
-                    heading.textContent = 'Scraped Content';
-                    newBody.appendChild(heading);
-
-                    const pre = document.createElement('pre');
-                    pre.textContent = textContent;
-                    newBody.appendChild(pre);
-
-                    // Convert the new document to a data URL
-                    const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(newDocument));
-
-                    // Open the data URL in a new tab
-                    const newTab = window.open(dataUrl, '_blank');
-                    if (newTab) {
-                        newTab.focus();
-                    } else {
-                        alert('Pop-up blocked. Please allow pop-ups for this site.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    </script>	  
-                
-
-
-
-
-
 
 	  
 <h2>Request for Sentence Pronunciation</h2>
