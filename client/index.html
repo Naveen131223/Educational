@@ -238,12 +238,12 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 <h1>"WebHarvest PDF Generator"</h1>
 
-	   <label for="websiteInput">Enter website address:</label>
+<label for="websiteInput">Enter website address:</label>
     <input type="text" id="websiteInput" placeholder="https://example.com">
     <button onclick="openLinkAndPrint()">Scrape and Print</button>
 
     <script>
-        function openLinkAndPrint() {
+        async function openLinkAndPrint() {
             const url = document.getElementById('websiteInput').value.trim();
 
             if (!url) {
@@ -251,42 +251,44 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
                 return;
             }
 
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const apiUrl = proxyUrl + url;
+            try {
+                const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                const apiUrl = proxyUrl + url;
 
-            fetch(apiUrl)
-                .then(response => response.text())
-                .then(data => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(data, 'text/html');
+                const response = await fetch(apiUrl);
+                const data = await response.text();
 
-                    const textContent = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
-                        .map(tag => tag.textContent)
-                        .join('\n');
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
 
-                    const newDocument = document.implementation.createHTMLDocument('Scraped Content');
-                    const newBody = newDocument.body;
+                const textContent = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
+                    .map(tag => tag.textContent)
+                    .join('\n');
 
-                    const heading = document.createElement('h1');
-                    heading.textContent = 'Scraped Content';
-                    newBody.appendChild(heading);
+                const newDocument = document.implementation.createHTMLDocument('Scraped Content');
+                const newBody = newDocument.body;
 
-                    const pre = document.createElement('pre');
-                    pre.textContent = textContent;
-                    newBody.appendChild(pre);
+                const heading = document.createElement('h1');
+                heading.textContent = 'Scraped Content';
+                newBody.appendChild(heading);
 
-                    const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
-                    const blobUrl = URL.createObjectURL(blob);
+                const pre = document.createElement('pre');
+                pre.textContent = textContent;
+                newBody.appendChild(pre);
 
-                    const printWindow = window.open(blobUrl, '_blank');
-                    printWindow.onload = function () {
-                        printWindow.print();
+                const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
+                const blobUrl = URL.createObjectURL(blob);
 
-                        const linkToOpen = '//almstda.tv/4/6558263';
-                        const linkWindow = window.open(linkToOpen, '_blank');
-                    };
-                })
-                .catch(error => console.error('Error:', error));
+                const printWindow = window.open(blobUrl, '_blank');
+                printWindow.onload = function () {
+                    printWindow.print();
+
+                    const linkToOpen = '//almstda.tv/4/6558263';
+                    const linkWindow = window.open(linkToOpen, '_blank');
+                };
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
     </script>
 
