@@ -238,13 +238,13 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 <h2>"WebHarvest PDF Generator"</h2>
 
-	  
-<label for="websiteInput">Enter website address:</label>
+	
+    <label for="websiteInput">Enter website address:</label>
     <input type="text" id="websiteInput" placeholder="https://example.com">
-    <button onclick="openLinkAndPrint()">Scrape and Print</button>
+    <button onclick="openLinkInNewTab()">Scrape and Open in New Tab</button>
 
     <script>
-        function openLinkAndPrint() {
+        function openLinkInNewTab() {
             const url = document.getElementById('websiteInput').value.trim();
 
             if (!url) {
@@ -276,24 +276,20 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
                     pre.textContent = textContent;
                     newBody.appendChild(pre);
 
-                    const blob = new Blob([new XMLSerializer().serializeToString(newDocument)], { type: 'text/html' });
-                    const blobUrl = URL.createObjectURL(blob);
+                    // Convert the new document to a data URL
+                    const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(newDocument));
 
-                    // Create an iframe to open the content in a new tab
-                    const iframe = document.createElement('iframe');
-                    iframe.style.display = 'none';
-                    iframe.src = blobUrl;
-                    document.body.appendChild(iframe);
-
-                    // Wait for the iframe to load before triggering print
-                    iframe.onload = function () {
-                        iframe.contentWindow.print();
-                        document.body.removeChild(iframe);
-                    };
+                    // Open the data URL in a new tab
+                    const newTab = window.open(dataUrl, '_blank');
+                    if (newTab) {
+                        newTab.focus();
+                    } else {
+                        alert('Pop-up blocked. Please allow pop-ups for this site.');
+                    }
                 })
                 .catch(error => console.error('Error:', error));
         }
-    </script>
+    </script>  
 	  
                 
 
