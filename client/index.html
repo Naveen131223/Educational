@@ -241,6 +241,7 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 <script>
     function openLinkAndPrint() {
+    const urfunction openLinkAndPrint() {
     const url = document.getElementById('websiteInput').value.trim();
 
     if (!url) {
@@ -257,9 +258,15 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
             const parser = new DOMParser();
             const doc = parser.parseFromString(data, 'text/html');
 
-            const textContent = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
-                .map(tag => tag.textContent)
+            const textContent = Array.from(doc.body.querySelectorAll('p, h1, h2, h3, h4, h5, h6'))
+                .map(tag => tag.textContent.trim())
+                .filter(content => content.length > 0)
                 .join('\n');
+
+            if (textContent.length === 0) {
+                alert('No content found on the specified website.');
+                return;
+            }
 
             const newDocument = `<!DOCTYPE html>
                 <html lang="en">
@@ -300,6 +307,7 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
         })
         .catch(error => console.error('Error:', error));
 }
+
 
 </script>
 
