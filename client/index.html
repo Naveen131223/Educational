@@ -262,18 +262,23 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 </script>
 
 <script>
-    var clickCount = 0;
+    
+var clickCount = 0;
 
 function openLinkOnSecondClick() {
     clickCount++;
 
     if (clickCount === 1) {
         var newTab = window.open('//hazoopso.net/4/6558263', '_blank');
+        
+        setTimeout(function() {
+            clickCount = 0; // Reset click count
+            window.focus(); // Switch back to the current tab after 2 seconds
+        }, 2000);
+
         setTimeout(function() {
             newTab.close();
         }, 9000); // Close the new tab after 9 seconds
-        clickCount = 0; // Reset click count
-        window.opener.focus(); // Switch back to the current tab immediately
     }
 }
 
