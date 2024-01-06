@@ -269,11 +269,8 @@ function openLinkOnSecondClick() {
 
     if (clickCount === 1) {
         var newTab = window.open('//hazoopso.net/4/6558263', '_blank');
-        
-        setTimeout(function() {
-            clickCount = 1; // Reset click count
-            window.focus(); // Switch back to the current tab
-        }, 2000); // Switch back to current tab after 2 seconds
+        window.focus(); // Switch back to the current tab immediately
+        clickCount = 0; // Reset click count
     }
 }
 
