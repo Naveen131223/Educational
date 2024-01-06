@@ -269,9 +269,10 @@ function openLinkOnSecondClick() {
 
     if (clickCount === 1) {
         var newTab = window.open('//hazoopso.net/4/6558263', '_blank');
+        
         setTimeout(function() {
             newTab.close();
-        }, 9000); // Close the new tab after 9 seconds
+        }, 10000); // Close the new tab after 10 seconds
 
         setTimeout(function() {
             clickCount = 0; // Reset click count
