@@ -5,7 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/google/bigbird-base-trivia-itc'; // Updated model URL
+const HF_API_URL = 'https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill'; // Updated model URL
 const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
 
 const app = express();
