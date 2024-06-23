@@ -5,7 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/deepset/bert-large-uncased-whole-word-masking-finetuned-squad';
+const HF_API_URL = 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium';
 const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
 
 const app = express();
@@ -20,17 +20,14 @@ app.get('/', async (req, res) => {
 
 app.post('/', async (req, res) => {
   try {
-    const { context, question } = req.body;
+    const prompt = req.body.prompt;
 
-    if (!context || !question) {
-      return res.status(400).send({ error: 'Both context and question are required' });
+    if (!prompt) {
+      return res.status(400).send({ error: 'Prompt is required' });
     }
 
     const response = await axios.post(HF_API_URL, {
-      inputs: {
-        question: question,
-        context: context
-      }
+      inputs: prompt,
     }, {
       headers: {
         'Authorization': `Bearer ${HF_API_KEY}`,
@@ -41,8 +38,15 @@ app.post('/', async (req, res) => {
     // Log the response for debugging
     console.log('Response from Hugging Face API:', response.data);
 
-    // Extract the answer
-    const botResponse = response.data.answer.trim();
+    // Extract the bot response, handling different possible formats
+    let botResponse;
+    if (response.data.generated_text) {
+      botResponse = response.data.generated_text.trim();
+    } else if (response.data[0] && response.data[0].generated_text) {
+      botResponse = response.data[0].generated_text.trim();
+    } else {
+      botResponse = 'No response generated';
+    }
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
