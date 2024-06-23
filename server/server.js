@@ -5,7 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/bigscience/bloom'; // BLOOM model
+const HF_API_URL = 'https://api-inference.huggingface.co/models/google/bigbird-base-trivia-itc'; // Updated model URL
 const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
 
 const app = express();
@@ -35,19 +35,20 @@ app.post('/', async (req, res) => {
       }
     });
 
-    // Extract the bot response
-    const botResponse = response.data.choices[0].text.trim();
+    // Log the response for debugging
+    console.log('Response from Hugging Face API:', response.data);
 
-    // Add creativity: Randomly select from alternative completions
-    const alternativeResponses = [
-      'That\'s an interesting question!',
-      'Let me think about that...',
-      'Hmm, let me consult my digital crystal ball.',
-    ];
-    const randomIndex = Math.floor(Math.random() * alternativeResponses.length);
-    const creativeResponse = alternativeResponses[randomIndex];
+    // Extract the bot response, handling different possible formats
+    let botResponse;
+    if (response.data.generated_text) {
+      botResponse = response.data.generated_text.trim();
+    } else if (response.data[0] && response.data[0].generated_text) {
+      botResponse = response.data[0].generated_text.trim();
+    } else {
+      botResponse = 'No response generated';
+    }
 
-    res.status(200).send({ bot: `${creativeResponse} ${botResponse}` });
+    res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error('Error fetching response from Hugging Face API:', error);
     res.status(500).send({ error: error.message || 'Something went wrong' });
