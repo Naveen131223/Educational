@@ -5,7 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill'; // Updated model URL
+const HF_API_URL = 'https://api-inference.huggingface.co/models/deepset/roberta-base-squad2'; // Updated model URL
 const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
 
 const app = express();
@@ -20,14 +20,16 @@ app.get('/', async (req, res) => {
 
 app.post('/', async (req, res) => {
   try {
-    const prompt = req.body.prompt;
+    const question = req.body.question;
+    const context = req.body.context;
 
-    if (!prompt) {
-      return res.status(400).send({ error: 'Prompt is required' });
+    if (!question || !context) {
+      return res.status(400).send({ error: 'Question and context are required' });
     }
 
     const response = await axios.post(HF_API_URL, {
-      inputs: prompt,
+      questions: [question],
+      context: context
     }, {
       headers: {
         'Authorization': `Bearer ${HF_API_KEY}`,
@@ -38,14 +40,12 @@ app.post('/', async (req, res) => {
     // Log the response for debugging
     console.log('Response from Hugging Face API:', response.data);
 
-    // Extract the bot response, handling different possible formats
+    // Extract the answer from the response
     let botResponse;
-    if (response.data.generated_text) {
-      botResponse = response.data.generated_text.trim();
-    } else if (response.data[0] && response.data[0].generated_text) {
-      botResponse = response.data[0].generated_text.trim();
+    if (response.data && response.data[0] && response.data[0].answers && response.data[0].answers.length > 0) {
+      botResponse = response.data[0].answers[0].answer;
     } else {
-      botResponse = 'No response generated';
+      botResponse = 'No answer found';
     }
 
     res.status(200).send({ bot: botResponse });
@@ -58,3 +58,4 @@ app.post('/', async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+    
