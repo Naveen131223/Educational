@@ -31,11 +31,16 @@ app.post('/', async (req, res) => {
       }
     });
 
-    const botResponse = response.data.generated_text.trim();
-
-    res.status(200).send({
-      bot: botResponse
-    });
+    if (response.data && response.data.generated_text) {
+      const botResponse = response.data.generated_text.trim();
+      res.status(200).send({ bot: botResponse });
+    } else if (response.data && response.data[0] && response.data[0].generated_text) {
+      // Sometimes the response is in a different format
+      const botResponse = response.data[0].generated_text.trim();
+      res.status(200).send({ bot: botResponse });
+    } else {
+      res.status(200).send({ bot: 'No response generated' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message || 'Something went wrong');
