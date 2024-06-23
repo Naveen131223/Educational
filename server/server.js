@@ -22,6 +22,10 @@ app.post('/', async (req, res) => {
   try {
     const prompt = req.body.prompt;
 
+    if (!prompt) {
+      return res.status(400).send({ error: 'Prompt is required' });
+    }
+
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
     }, {
@@ -31,19 +35,23 @@ app.post('/', async (req, res) => {
       }
     });
 
-    if (response.data && response.data.generated_text) {
-      const botResponse = response.data.generated_text.trim();
-      res.status(200).send({ bot: botResponse });
-    } else if (response.data && response.data[0] && response.data[0].generated_text) {
-      // Sometimes the response is in a different format
-      const botResponse = response.data[0].generated_text.trim();
-      res.status(200).send({ bot: botResponse });
+    // Log the response for debugging
+    console.log('Response from Hugging Face API:', response.data);
+
+    // Extract the bot response, handling different possible formats
+    let botResponse;
+    if (response.data.generated_text) {
+      botResponse = response.data.generated_text.trim();
+    } else if (response.data[0] && response.data[0].generated_text) {
+      botResponse = response.data[0].generated_text.trim();
     } else {
-      res.status(200).send({ bot: 'No response generated' });
+      botResponse = 'No response generated';
     }
+
+    res.status(200).send({ bot: botResponse });
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message || 'Something went wrong');
+    console.error('Error fetching response from Hugging Face API:', error);
+    res.status(500).send({ error: error.message || 'Something went wrong' });
   }
 });
 
