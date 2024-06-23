@@ -5,7 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/openai/gpt-3.5-turbo'; // GPT-3 model
+const HF_API_URL = 'https://api-inference.huggingface.co/models/openai/chatgpt'; // ChatGPT model
 const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
 
 const app = express();
