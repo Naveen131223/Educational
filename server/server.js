@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
-import cheerio from 'cheerio';
 
 dotenv.config();
 
@@ -10,13 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Endpoint to fetch response from ChatGPT.com
-app.post('/fetch-from-chatgpt', async (req, res) => {
+const HF_API_URL = 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium';
+const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
+
+// Endpoint to fetch response from Hugging Face DialoGPT
+app.post('/fetch-from-dialoGPT', async (req, res) => {
   try {
     const userInput = req.body.message; // Assuming the client sends a 'message' field
 
-    // Fetch response from ChatGPT.com
-    const botResponse = await fetchChatGPTResponse(userInput);
+    // Fetch response from Hugging Face DialoGPT
+    const botResponse = await fetchDialoGPTResponse(userInput);
 
     res.status(200).json({
       bot: botResponse
@@ -27,27 +29,24 @@ app.post('/fetch-from-chatgpt', async (req, res) => {
   }
 });
 
-// Function to fetch response from ChatGPT.com
-async function fetchChatGPTResponse(userInput) {
+// Function to fetch response from Hugging Face DialoGPT
+async function fetchDialoGPTResponse(userInput) {
   try {
-    // Adjust the URL to the correct endpoint where the message can be posted
-    const response = await axios.post('https://chatgpt.com/', {
-      message: userInput,
+    const response = await axios.post(HF_API_URL, {
+      inputs: {
+        text: userInput,
+      },
     }, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${HF_API_KEY}`,
+        'Content-Type': 'application/json'
       }
     });
 
-    const html = response.data;
-    const $ = cheerio.load(html);
-
-    // Extract the bot response from the HTML (adjust based on the actual structure)
-    const botResponse = $('.response').text().trim(); // Example assuming a class "response"
-
+    const botResponse = response.data.generated_text.trim();
     return botResponse;
   } catch (error) {
-    console.error('Error fetching response from ChatGPT.com:', error);
+    console.error('Error fetching response from DialoGPT:', error);
     throw error;
   }
 }
