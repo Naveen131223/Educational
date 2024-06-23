@@ -5,7 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium';
+const HF_API_URL = 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-large'; // Updated model URL
 const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
 
 const app = express();
