@@ -5,8 +5,8 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill'; // Updated model URL
-const HF_API_KEY = process.env.HF_API_KEY; // Your Hugging Face API token
+const HF_API_URL = 'https://api-inference.huggingface.co/models/facebook/blenderbot-3B';
+const HF_API_KEY = process.env.HF_API_KEY;
 
 const app = express();
 app.use(cors());
@@ -35,10 +35,8 @@ app.post('/', async (req, res) => {
       }
     });
 
-    // Log the response for debugging
     console.log('Response from Hugging Face API:', response.data);
 
-    // Extract the bot response, handling different possible formats
     let botResponse;
     if (response.data.generated_text) {
       botResponse = response.data.generated_text.trim();
@@ -46,6 +44,27 @@ app.post('/', async (req, res) => {
       botResponse = response.data[0].generated_text.trim();
     } else {
       botResponse = 'No response generated';
+    }
+
+    // Adjust the response length based on the prompt length
+    const promptLength = prompt.split(' ').length;
+    let desiredWordCount;
+
+    if (promptLength <= 10) {
+      desiredWordCount = 30;
+    } else if (promptLength <= 20) {
+      desiredWordCount = 50;
+    } else {
+      desiredWordCount = 70;
+    }
+
+    // Trim or pad the bot response to fit the desired word count
+    const words = botResponse.split(' ');
+    if (words.length > desiredWordCount) {
+      botResponse = words.slice(0, desiredWordCount).join(' ') + '...';
+    } else if (words.length < desiredWordCount) {
+      const additionalWords = new Array(desiredWordCount - words.length).fill('...');
+      botResponse = botResponse + ' ' + additionalWords.join(' ');
     }
 
     res.status(200).send({ bot: botResponse });
@@ -58,4 +77,3 @@ app.post('/', async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
-                  
