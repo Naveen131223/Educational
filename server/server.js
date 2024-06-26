@@ -54,7 +54,7 @@ app.post('/', async (req, res) => {
       inputs: prompt,
       parameters: {
         temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: 3000, // maximum number of tokens to generate
+        max_new_tokens: 250, // maximum number of tokens to generate
         top_p: 1, // nucleus sampling
         frequency_penalty: 0.5, // penalize new tokens based on their frequency
         presence_penalty: 0 // penalize new tokens based on their presence in the text so far
