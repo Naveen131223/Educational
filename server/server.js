@@ -12,6 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// In-memory cache
+const responseCache = {};
+
 // Simulate a typing delay
 const simulateTypingDelay = (text) => {
   const typingSpeed = 20; // characters per second (slower for more detailed response)
@@ -40,6 +43,14 @@ app.post('/', async (req, res) => {
 
     if (!prompt) {
       return res.status(400).send({ error: 'Prompt is required' });
+    }
+
+    // Check cache for existing response
+    if (responseCache[prompt]) {
+      console.log('Cache hit for prompt:', prompt);
+      const cachedResponse = responseCache[prompt];
+      await simulateTypingDelay(cachedResponse);
+      return res.status(200).send({ bot: cachedResponse });
     }
 
     const response = await axios.post(HF_API_URL, {
@@ -82,6 +93,9 @@ app.post('/', async (req, res) => {
     }
 
     botResponse = enhanceResponse(botResponse, desiredWordCount);
+
+    // Store response in cache
+    responseCache[prompt] = botResponse;
 
     // Simulate typing delay
     await simulateTypingDelay(botResponse);
