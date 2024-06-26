@@ -12,6 +12,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+let modelLoaded = false;
+
+// Function to check if the model is loaded
+const checkModelLoaded = async () => {
+  try {
+    const response = await axios.get(HF_API_URL, {
+      headers: {
+        'Authorization': `Bearer ${HF_API_KEY}`
+      }
+    });
+    modelLoaded = response.status === 200;
+  } catch (error) {
+    console.error('Error checking model status:', error);
+  }
+};
+
+// Check model status every minute
+setInterval(checkModelLoaded, 60000);
+checkModelLoaded();
+
 app.get('/', async (req, res) => {
   res.status(200).send({
     message: 'Hello from CodeX!'
@@ -19,6 +39,10 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/', async (req, res) => {
+  if (!modelLoaded) {
+    return res.status(503).send({ error: 'Model is loading, please try again later' });
+  }
+
   try {
     const prompt = req.body.prompt;
 
@@ -28,6 +52,13 @@ app.post('/', async (req, res) => {
 
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
+      parameters: {
+        temperature: 0.7, // increased temperature for more creative responses
+        max_new_tokens: 3000, // maximum number of tokens to generate
+        top_p: 1, // nucleus sampling
+        frequency_penalty: 0.5, // penalize new tokens based on their frequency
+        presence_penalty: 0 // penalize new tokens based on their presence in the text so far
+      }
     }, {
       headers: {
         'Authorization': `Bearer ${HF_API_KEY}`,
@@ -58,13 +89,12 @@ app.post('/', async (req, res) => {
       desiredWordCount = 70;
     }
 
-    // Trim or pad the bot response to fit the desired word count
+    // Trim the bot response to fit the desired word count
     const words = botResponse.split(' ');
     if (words.length > desiredWordCount) {
       botResponse = words.slice(0, desiredWordCount).join(' ') + '...';
-    } else if (words.length < desiredWordCount) {
-      const additionalWords = new Array(desiredWordCount - words.length).fill('...');
-      botResponse = botResponse + ' ' + additionalWords.join(' ');
+    } else {
+      botResponse = words.join(' ');
     }
 
     res.status(200).send({ bot: botResponse });
