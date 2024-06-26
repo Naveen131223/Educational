@@ -100,7 +100,22 @@ app.post('/', async (req, res) => {
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error('Error fetching response from Hugging Face API:', error);
-    res.status(500).send({ error: error.message || 'Something went wrong' });
+
+    if (error.response) {
+      // The request was made and the server responded with a status code that falls out of the range of 2xx
+      console.error('Error response data:', error.response.data);
+      console.error('Error response status:', error.response.status);
+      console.error('Error response headers:', error.response.headers);
+      res.status(error.response.status).send({ error: error.response.data });
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('Error request:', error.request);
+      res.status(500).send({ error: 'No response received from Hugging Face API' });
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error('Error message:', error.message);
+      res.status(500).send({ error: error.message });
+    }
   }
 });
 
