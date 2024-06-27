@@ -54,7 +54,7 @@ app.post('/', async (req, res) => {
       inputs: prompt,
       parameters: {
         temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: 250, // maximum number of tokens to generate
+        max_new_tokens: 2000, // maximum number of tokens to generate
         top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
       }
     }, {
