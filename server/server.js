@@ -75,11 +75,10 @@ app.post('/', async (req, res) => {
       botResponse = 'No response generated';
     }
 
-    // Ensure the response does not repeat the prompt and does not end with ellipses unnecessarily
+    // Ensure the response does not repeat the prompt
     if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
       botResponse = botResponse.slice(prompt.length).trim();
     }
-    botResponse = botResponse.replace(/(\.\.\.|…)*$/, '');
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
