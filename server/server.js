@@ -50,11 +50,22 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
+    // Function to determine the maximum number of tokens based on the prompt length
+    const calculateMaxTokens = (length) => {
+      if (length <= 10) return 50;  // short response
+      if (length <= 20) return 200; // medium response
+      if (length <= 50) return 500; // long response
+      return 2000;                  // very long response
+    };
+
+    const promptLength = prompt.split(' ').length;
+    const maxTokens = calculateMaxTokens(promptLength);
+
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
         temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: 2000, // maximum number of tokens to generate
+        max_new_tokens: maxTokens, // dynamically set maximum number of tokens to generate
         top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
       }
     }, {
@@ -78,6 +89,12 @@ app.post('/', async (req, res) => {
     // Ensure the response does not repeat the prompt
     if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
       botResponse = botResponse.slice(prompt.length).trim();
+    }
+
+    // Adjust the response length based on the max tokens calculation
+    const words = botResponse.split(' ');
+    if (words.length > maxTokens) {
+      botResponse = words.slice(0, maxTokens).join(' ') + '...';
     }
 
     res.status(200).send({ bot: botResponse });
