@@ -44,20 +44,26 @@ app.post('/', async (req, res) => {
   }
 
   try {
-    let prompt = req.body.prompt;
+    let { prompt, maxWords } = req.body;
 
     if (!prompt) {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
-    // Append "give me correct answer" to the prompt
-    prompt += " give me correct answer";
+    // Determine max_new_tokens and whether to append "give me correct answer" based on the length of the prompt
+    let maxNewTokens = 1500; // default for longer prompts
+    if (prompt.split(' ').length <= 3) {
+      maxNewTokens = 50; // use fewer tokens for short prompts
+      maxWords = 40; // limit the response to 40 words
+    } else {
+      prompt += " give me correct answer";
+    }
 
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
         temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: 1500, // increased maximum number of tokens to generate
+        max_new_tokens: maxNewTokens, // adjust based on prompt length
         top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
       }
     }, {
@@ -88,6 +94,14 @@ app.post('/', async (req, res) => {
       botResponse = sentences.slice(0, -1).join('.').trim() + '.';
     } else {
       botResponse = botResponse.trim();
+    }
+
+    // If maxWords is specified, limit the response to the specified number of words
+    if (maxWords) {
+      const words = botResponse.split(' ');
+      if (words.length > maxWords) {
+        botResponse = words.slice(0, maxWords).join(' ') + '.';
+      }
     }
 
     res.status(200).send({ bot: botResponse });
