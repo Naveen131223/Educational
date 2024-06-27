@@ -51,8 +51,21 @@ app.post('/', async (req, res) => {
     }
 
     // Check for greetings
-    const greetings = ['hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'];
-    let isGreeting = greetings.some(greeting => prompt.toLowerCase().startsWith(greeting.toLowerCase()));
+    const greetings = [
+      'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there',
+      'Hi', 'Hello', 'Hey', 'Hi Bro', 'Hi Sister', 'Hello There', 'Hey There'
+    ];
+    const normalizedPrompt = prompt.trim().toLowerCase();
+    let isGreeting = greetings.some(greeting => normalizedPrompt === greeting.toLowerCase());
+
+    // Predefined responses for greetings
+    const greetingResponses = [
+      "How can I assist you?",
+      "How can I help you?",
+      "Is there anything else you'd like to know?",
+      "Feel free to ask any questions.",
+      "I'm here to help. What can I do for you?",
+    ];
 
     // Extract any specific word count, steps, or points requirement
     let maxNewTokens = 1500; // default for longer prompts
@@ -71,6 +84,11 @@ app.post('/', async (req, res) => {
     }
 
     if (isGreeting || prompt.split(' ').length <= 3) {
+      if (isGreeting) {
+        // Select a random greeting response
+        const responseIndex = Math.floor(Math.random() * greetingResponses.length);
+        return res.status(200).send({ bot: greetingResponses[responseIndex] });
+      }
       maxNewTokens = 50; // use fewer tokens for short prompts or greetings
       maxWords = 40; // limit the response to 40 words
     } else if (!specificRequirement) {
