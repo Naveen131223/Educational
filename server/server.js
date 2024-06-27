@@ -122,6 +122,9 @@ app.post('/', async (req, res) => {
       }
     }
 
+    // Remove any leading punctuation
+    botResponse = botResponse.replace(/^[!?.]*\s*/, '');
+
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error('Error fetching response from Hugging Face API:', error);
