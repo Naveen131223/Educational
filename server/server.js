@@ -66,20 +66,24 @@ app.post('/', async (req, res) => {
 
     console.log('Response from Hugging Face API:', response.data);
 
-    let botResponse;
-    if (response.data.generated_text) {
-      botResponse = response.data.generated_text.trim();
-    } else if (response.data[0] && response.data[0].generated_text) {
-      botResponse = response.data[0].generated_text.trim();
-    } else {
-      botResponse = 'No response generated';
+    let botResponse = 'No response generated';
+
+    if (response.data && response.data.length > 0) {
+      botResponse = response.data[0].generated_text || 'No response generated';
+    } else if (response.data && response.data.generated_text) {
+      botResponse = response.data.generated_text;
     }
 
-    // Ensure the response does not repeat the prompt and does not end with ellipses unnecessarily
+    // Ensure the response does not repeat the prompt and handle truncation more robustly
     if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
       botResponse = botResponse.slice(prompt.length).trim();
     }
-    botResponse = botResponse.replace(/(\.\.\.|…)*$/, '');
+
+    // Trim based on sentence boundaries or specific criteria
+    const sentences = botResponse.split('.'); // Split into sentences
+    if (sentences.length > 1) {
+      botResponse = sentences.slice(0, -1).join('.') + '.';
+    }
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
