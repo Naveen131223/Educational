@@ -44,17 +44,20 @@ app.post('/', async (req, res) => {
   }
 
   try {
-    const prompt = req.body.prompt;
+    let prompt = req.body.prompt;
 
     if (!prompt) {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
+    // Append "give me correct answer" to the prompt
+    prompt += " give me correct answer";
+
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
         temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: 1300, // maximum number of tokens to generate
+        max_new_tokens: 1500, // increased maximum number of tokens to generate
         top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
       }
     }, {
@@ -82,7 +85,9 @@ app.post('/', async (req, res) => {
     // Trim based on sentence boundaries or specific criteria
     const sentences = botResponse.split('.'); // Split into sentences
     if (sentences.length > 1) {
-      botResponse = sentences.slice(0, -1).join('.') + '.';
+      botResponse = sentences.slice(0, -1).join('.').trim() + '.';
+    } else {
+      botResponse = botResponse.trim();
     }
 
     res.status(200).send({ bot: botResponse });
