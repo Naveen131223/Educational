@@ -75,25 +75,11 @@ app.post('/', async (req, res) => {
       botResponse = 'No response generated';
     }
 
-    // Adjust the response length based on the prompt length
-    const promptLength = prompt.split(' ').length;
-    let desiredWordCount;
-
-    if (promptLength <= 10) {
-      desiredWordCount = 30;
-    } else if (promptLength <= 20) {
-      desiredWordCount = 50;
-    } else {
-      desiredWordCount = 70;
+    // Ensure the response does not repeat the prompt and does not end with ellipses unnecessarily
+    if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
+      botResponse = botResponse.slice(prompt.length).trim();
     }
-
-    // Trim the bot response to fit the desired word count
-    const words = botResponse.split(' ');
-    if (words.length > desiredWordCount) {
-      botResponse = words.slice(0, desiredWordCount).join(' ') + '...';
-    } else {
-      botResponse = words.join(' ');
-    }
+    botResponse = botResponse.replace(/(\.\.\.|…)*$/, '');
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
