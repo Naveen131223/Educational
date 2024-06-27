@@ -50,15 +50,11 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
-    // Calculate max_new_tokens based on prompt length
-    const promptLength = prompt.split(' ').length;
-    let maxNewTokens = Math.min(2000, Math.max(50, 1000 - promptLength * 10));
-
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
         temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: maxNewTokens, // maximum number of tokens to generate
+        max_new_tokens: 1300, // maximum number of tokens to generate
         top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
       }
     }, {
