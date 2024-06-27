@@ -44,19 +44,37 @@ app.post('/', async (req, res) => {
   }
 
   try {
-    let { prompt, maxWords } = req.body;
+    let { prompt } = req.body;
 
     if (!prompt) {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
-    // Determine max_new_tokens and whether to append "give me correct answer" based on the length of the prompt
+    // Check for greetings
+    const greetings = ['hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'];
+    let isGreeting = greetings.some(greeting => prompt.toLowerCase().startsWith(greeting.toLowerCase()));
+
+    // Extract any specific word count, steps, or points requirement
     let maxNewTokens = 1500; // default for longer prompts
-    if (prompt.split(' ').length <= 3) {
-      maxNewTokens = 50; // use fewer tokens for short prompts
+    let maxWords = null;
+    let specificRequirement = false;
+
+    const wordMatch = prompt.match(/(\d+)\s*words/i);
+    const pointsMatch = prompt.match(/(\d+)\s*(points|steps)/i);
+
+    if (wordMatch) {
+      maxWords = parseInt(wordMatch[1], 10);
+      specificRequirement = true;
+    } else if (pointsMatch) {
+      maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
+      specificRequirement = true;
+    }
+
+    if (isGreeting || prompt.split(' ').length <= 3) {
+      maxNewTokens = 50; // use fewer tokens for short prompts or greetings
       maxWords = 40; // limit the response to 40 words
-    } else {
-      prompt += " give me correct answer";
+    } else if (!specificRequirement) {
+      prompt += " provide an accurate answer.";
     }
 
     const response = await axios.post(HF_API_URL, {
