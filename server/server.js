@@ -94,7 +94,7 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
     } else {
-      prompt += " provide an accurate answer.";
+      prompt += " provide an accurate answer alone is enough.";
     }
 
     const response = await axios.post(HF_API_URL, {
