@@ -67,31 +67,33 @@ app.post('/', async (req, res) => {
       "I'm here to help. What can I do for you?",
     ];
 
-    // Extract any specific word count, steps, or points requirement
+    // Determine token allocation based on prompt complexity
+    const promptLength = prompt.split(' ').length;
     let maxNewTokens = 1500; // default for longer prompts
     let maxWords = null;
-    let specificRequirement = false;
 
+    if (isGreeting) {
+      // Select a random greeting response
+      const responseIndex = Math.floor(Math.random() * greetingResponses.length);
+      return res.status(200).send({ bot: greetingResponses[responseIndex] });
+    } else if (promptLength <= 3) {
+      maxNewTokens = 50; // use fewer tokens for short prompts
+      maxWords = 40; // limit the response to 40 words
+    } else if (promptLength <= 10) {
+      maxNewTokens = 200; // allocate more tokens for slightly longer prompts
+    } else if (promptLength <= 20) {
+      maxNewTokens = 500; // allocate more tokens for longer prompts
+    }
+
+    // Extract any specific word count, steps, or points requirement
     const wordMatch = prompt.match(/(\d+)\s*words/i);
     const pointsMatch = prompt.match(/(\d+)\s*(points|steps)/i);
 
     if (wordMatch) {
       maxWords = parseInt(wordMatch[1], 10);
-      specificRequirement = true;
     } else if (pointsMatch) {
       maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
-      specificRequirement = true;
-    }
-
-    if (isGreeting || prompt.split(' ').length <= 3) {
-      if (isGreeting) {
-        // Select a random greeting response
-        const responseIndex = Math.floor(Math.random() * greetingResponses.length);
-        return res.status(200).send({ bot: greetingResponses[responseIndex] });
-      }
-      maxNewTokens = 50; // use fewer tokens for short prompts or greetings
-      maxWords = 40; // limit the response to 40 words
-    } else if (!specificRequirement) {
+    } else {
       prompt += " provide an accurate answer.";
     }
 
@@ -142,6 +144,9 @@ app.post('/', async (req, res) => {
 
     // Remove any leading punctuation
     botResponse = botResponse.replace(/^[!?.]*\s*/, '');
+
+    // Remove unwanted symbols
+    botResponse = botResponse.replace(/[*#@]/g, '');
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
