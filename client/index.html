@@ -212,7 +212,7 @@
     <div id="printButtonContainer"></div>
     <div id="continueReadingButtonContainer"></div>
 
-    <div id="toggleButton" class="on">Read Content On</div>
+    <div id="toggleButton" class="on">Read Web Content On</div>
 
 
     <h2>Google Translator Integration</h2>
@@ -244,21 +244,7 @@
         }
     </script>
 
-    <script>
-        var clickCount = 0;
     
-        function openLinkOnSecondClick() {
-            clickCount++;
-    
-            if (clickCount === 1000) {
-                var newTab = window.open('//hazoopso.net/4/6558263', '_blank');
-                setTimeout(function() {
-                    newTab.close();
-                    clickCount = 0; // Reset click count
-                }, 9000); // Close the new tab after 9 seconds
-            }
-        }
-    </script>
 
     <div id="frame" style="width: 300px;">
         <iframe data-aa='2335359' src='//ad.a-ads.com/2335359?size=300x250' style='width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe><a style="display: block; text-align: right; font-size: 12px" id="frame-link" href="https://a-ads.com/?partner=2335359">Advertise here</a></div>
@@ -921,19 +907,19 @@ window.onload = animateLines;
         const toggleButton = document.createElement('div');
         toggleButton.id = 'toggleButton';
         toggleButton.className = 'on';
-        toggleButton.textContent = 'Read Content On';
+        toggleButton.textContent = 'Read Web Content On';
         document.body.appendChild(toggleButton);
         
         toggleButton.addEventListener('click', function() {
           if (readingEnabled) {
             readingEnabled = false;
             toggleButton.classList.add('off');
-            toggleButton.textContent = 'Read Content Off';
+            toggleButton.textContent = 'Read Web Content Off';
             stopReading();
           } else {
             readingEnabled = true;
             toggleButton.classList.remove('off');
-            toggleButton.textContent = 'Read Content On';
+            toggleButton.textContent = 'Read Web Content On';
           }
         });
     </script>
