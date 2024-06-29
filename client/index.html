@@ -215,7 +215,7 @@ const module = await import("./script.js?v=v7");
 	  <div id="printButtonContainer"></div>
   <div id="continueReadingButtonContainer"></div>
 
-	  <div id="toggleButton" class="on">Read Content On</div>
+	  <div id="toggleButton" class="on">Read Web Content On</div>
 
 	  
 <h2>Google Translator Integration</h2>
@@ -919,19 +919,19 @@ document.addEventListener('click', handleClick);
 const toggleButton = document.createElement('div');
 toggleButton.id = 'toggleButton';
 toggleButton.className = 'on';
-toggleButton.textContent = 'Read Content On';
+toggleButton.textContent = 'Read Web Content On';
 document.body.appendChild(toggleButton);
 
 toggleButton.addEventListener('click', function() {
   if (readingEnabled) {
     readingEnabled = false;
     toggleButton.classList.add('off');
-    toggleButton.textContent = 'Read Content Off';
+    toggleButton.textContent = 'Read Web Content Off';
     stopReading();
   } else {
     readingEnabled = true;
     toggleButton.classList.remove('off');
-    toggleButton.textContent = 'Read Content On';
+    toggleButton.textContent = 'Read Web Content On';
   }
 });
 
