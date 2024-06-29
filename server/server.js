@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
-import NodeCache from 'node-cache';
 
 dotenv.config();
 
@@ -12,9 +11,6 @@ const HF_API_KEY = process.env.HF_API_KEY;
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// Cache setup
-const cache = new NodeCache({ stdTTL: 3600, checkperiod: 120 }); // TTL of 1 hour, check every 2 minutes
 
 let modelLoaded = false;
 
@@ -75,16 +71,8 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
-    // Check cache
-    const cacheKey = `response_${prompt}`;
-    const cachedResponse = cache.get(cacheKey);
-    if (cachedResponse) {
-      return res.status(200).send({ bot: cachedResponse });
-    }
-
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      cache.set(cacheKey, randomResponse);
       return res.status(200).send({ bot: randomResponse });
     }
 
@@ -168,9 +156,6 @@ app.post('/', async (req, res) => {
     // Sanitize the response
     botResponse = sanitizeResponse(botResponse);
 
-    // Cache the response
-    cache.set(cacheKey, botResponse);
-
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error('Error fetching response from Hugging Face API:', error);
@@ -194,10 +179,9 @@ const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
 
-// Graceful shutdown with cache clearing
+// Graceful shutdown
 const gracefulShutdown = () => {
-  console.log('Received shutdown signal, clearing cache and closing HTTP server');
-  cache.flushAll(); // Clear the cache
+  console.log('Received shutdown signal, closing HTTP server');
   server.close(() => {
     console.log('HTTP server closed');
     process.exit(0);
@@ -206,4 +190,3 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-        
