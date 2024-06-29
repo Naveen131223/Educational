@@ -110,6 +110,8 @@ app.post('/', async (req, res) => {
       maxWords = parseInt(wordMatch[1], 10);
     } else if (pointsMatch) {
       maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
+    } else {
+      prompt += " provide an accurate answer.";
     }
 
     const response = await axios.post(HF_API_URL, {
@@ -204,3 +206,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
+        
