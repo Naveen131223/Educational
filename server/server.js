@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
-import NodeCache from 'node-cache';
 
 dotenv.config();
 
@@ -13,10 +12,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Cache setup
-const cache = new NodeCache({ stdTTL: 3600, checkperiod: 120 }); // TTL of 1 hour, check every 2 minutes
-
 let modelLoaded = false;
+const cache = {};
 
 // Function to check if the model is loaded
 const checkModelLoaded = async () => {
@@ -48,74 +45,23 @@ app.post('/', async (req, res) => {
   }
 
   try {
-    let { prompt } = req.body;
+    const prompt = req.body.prompt;
 
     if (!prompt) {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
-    // Check cache
-    const cacheKey = `response_${prompt}`;
-    const cachedResponse = cache.get(cacheKey);
-    if (cachedResponse) {
-      return res.status(200).send({ bot: cachedResponse });
-    }
-
-    // Check for greetings
-    const greetings = [
-      'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there',
-      'Hi', 'Hello', 'Hey', 'Hi Bro', 'Hi Sister', 'Hello There', 'Hey There'
-    ];
-    const normalizedPrompt = prompt.trim().toLowerCase();
-    let isGreeting = greetings.some(greeting => normalizedPrompt === greeting.toLowerCase());
-
-    // Predefined responses for greetings
-    const greetingResponses = [
-      "How can I assist you?",
-      "How can I help you?",
-      "Is there anything else you'd like to know?",
-      "Feel free to ask any questions.",
-      "I'm here to help. What can I do for you?",
-    ];
-
-    // Determine token allocation based on prompt complexity
-    const promptLength = prompt.split(' ').length;
-    let maxNewTokens = 1500; // default for longer prompts
-    let maxWords = null;
-
-    if (isGreeting) {
-      // Select a random greeting response
-      const responseIndex = Math.floor(Math.random() * greetingResponses.length);
-      const botResponse = greetingResponses[responseIndex];
-      cache.set(cacheKey, botResponse); // Cache the response
-      return res.status(200).send({ bot: botResponse });
-    } else if (promptLength <= 3) {
-      maxNewTokens = 50; // use fewer tokens for short prompts
-      maxWords = 40; // limit the response to 40 words
-    } else if (promptLength <= 10) {
-      maxNewTokens = 200; // allocate more tokens for slightly longer prompts
-    } else if (promptLength <= 20) {
-      maxNewTokens = 500; // allocate more tokens for longer prompts
-    }
-
-    // Extract any specific word count, steps, or points requirement
-    const wordMatch = prompt.match(/(\d+)\s*words/i);
-    const pointsMatch = prompt.match(/(\d+)\s*(points|steps)/i);
-
-    if (wordMatch) {
-      maxWords = parseInt(wordMatch[1], 10);
-    } else if (pointsMatch) {
-      maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
-    } else {
-      prompt += " provide an accurate response alone is enough.";
+    // Check if the response is in the cache
+    if (cache[prompt]) {
+      return res.status(200).send({ bot: cache[prompt] });
     }
 
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
-        temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: maxNewTokens, // adjust based on prompt length
-        top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
+        temperature: 0.7,
+        max_new_tokens: 1300,
+        top_p: 0.9
       }
     }, {
       headers: {
@@ -126,43 +72,23 @@ app.post('/', async (req, res) => {
 
     console.log('Response from Hugging Face API:', response.data);
 
-    let botResponse = 'No response generated';
-
-    if (response.data && response.data.length > 0) {
-      botResponse = response.data[0].generated_text || 'No response generated';
-    } else if (response.data && response.data.generated_text) {
-      botResponse = response.data.generated_text;
+    let botResponse;
+    if (response.data.generated_text) {
+      botResponse = response.data.generated_text.trim();
+    } else if (response.data[0] && response.data[0].generated_text) {
+      botResponse = response.data[0].generated_text.trim();
+    } else {
+      botResponse = 'No response generated';
     }
 
-    // Ensure the response does not repeat the prompt and handle truncation more robustly
+    // Ensure the response does not repeat the prompt and does not end with ellipses unnecessarily
     if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
       botResponse = botResponse.slice(prompt.length).trim();
     }
-
-    // Trim based on sentence boundaries or specific criteria
-    const sentences = botResponse.split('.'); // Split into sentences
-    if (sentences.length > 1) {
-      botResponse = sentences.slice(0, -1).join('.').trim() + '.';
-    } else {
-      botResponse = botResponse.trim();
-    }
-
-    // If maxWords is specified, limit the response to the specified number of words
-    if (maxWords) {
-      const words = botResponse.split(' ');
-      if (words.length > maxWords) {
-        botResponse = words.slice(0, maxWords).join(' ') + '.';
-      }
-    }
-
-    // Remove any leading punctuation
-    botResponse = botResponse.replace(/^[!?.]*\s*/, '');
-
-    // Remove unwanted symbols
-    botResponse = botResponse.replace(/[*#@]/g, '');
+    botResponse = botResponse.replace(/(\.\.\.|…)*$/, '');
 
     // Cache the response
-    cache.set(cacheKey, botResponse);
+    cache[prompt] = botResponse;
 
     res.status(200).send({ bot: botResponse });
   } catch (error) {
@@ -190,10 +116,9 @@ const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
 
-// Graceful shutdown with cache clearing
+// Graceful shutdown
 const gracefulShutdown = () => {
-  console.log('Received shutdown signal, clearing cache and closing HTTP server');
-  cache.flushAll(); // Clear the cache
+  console.log('Received shutdown signal, closing HTTP server');
   server.close(() => {
     console.log('HTTP server closed');
     process.exit(0);
@@ -202,4 +127,3 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-        
