@@ -1,7 +1,8 @@
-import express from 'express'; 
+import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
+import NodeCache from 'node-cache';
 
 dotenv.config();
 
@@ -11,6 +12,9 @@ const HF_API_KEY = process.env.HF_API_KEY;
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Cache setup
+const cache = new NodeCache({ stdTTL: 3600, checkperiod: 120 }); // TTL of 1 hour, check every 2 minutes
 
 let modelLoaded = false;
 
@@ -50,6 +54,13 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
+    // Check cache
+    const cacheKey = `response_${prompt}`;
+    const cachedResponse = cache.get(cacheKey);
+    if (cachedResponse) {
+      return res.status(200).send({ bot: cachedResponse });
+    }
+
     // Check for greetings
     const greetings = [
       'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there',
@@ -75,7 +86,9 @@ app.post('/', async (req, res) => {
     if (isGreeting) {
       // Select a random greeting response
       const responseIndex = Math.floor(Math.random() * greetingResponses.length);
-      return res.status(200).send({ bot: greetingResponses[responseIndex] });
+      const botResponse = greetingResponses[responseIndex];
+      cache.set(cacheKey, botResponse); // Cache the response
+      return res.status(200).send({ bot: botResponse });
     } else if (promptLength <= 3) {
       maxNewTokens = 50; // use fewer tokens for short prompts
       maxWords = 40; // limit the response to 40 words
@@ -94,7 +107,7 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
     } else {
-      prompt += " provide an accurate response alone is enough.";
+      prompt += " provide an accurate answer.";
     }
 
     const response = await axios.post(HF_API_URL, {
@@ -148,6 +161,9 @@ app.post('/', async (req, res) => {
     // Remove unwanted symbols
     botResponse = botResponse.replace(/[*#@]/g, '');
 
+    // Cache the response
+    cache.set(cacheKey, botResponse);
+
     res.status(200).send({ bot: botResponse });
   } catch (error) {
     console.error('Error fetching response from Hugging Face API:', error);
@@ -172,4 +188,18 @@ app.post('/', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+const server = app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+
+// Graceful shutdown with cache clearing
+const gracefulShutdown = () => {
+  console.log('Received shutdown signal, clearing cache and closing HTTP server');
+  cache.flushAll(); // Clear the cache
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+        
