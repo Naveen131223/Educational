@@ -23,17 +23,18 @@ const checkModelLoaded = async () => {
       }
     });
     modelLoaded = response.status === 200;
+    console.log('Model status checked successfully');
   } catch (error) {
     console.error('Error checking model status:', error);
   }
 };
 
-// Check model status every minute
-setInterval(checkModelLoaded, 60000);
+// Check model status every 5 minutes
+setInterval(checkModelLoaded, 5 * 60 * 1000); // Check every 5 minutes
 checkModelLoaded();
 
 const sanitizeResponse = (response) => {
-  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '');
+  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
 };
 
 const responses = [
@@ -46,8 +47,7 @@ const responses = [
 
 const isGreeting = (prompt) => {
   const greetings = [
-    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there',
-    'Hi', 'Hello', 'Hey', 'Hi Bro', 'Hi Sister', 'Hello There', 'Hey There'
+    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
   ];
   const normalizedPrompt = prompt.trim().toLowerCase();
   return greetings.includes(normalizedPrompt);
@@ -84,7 +84,7 @@ app.post('/', async (req, res) => {
       prompt += " (Please keep the response within 40 words.)";
       maxNewTokens = 50; // use fewer tokens for short prompts
     } else if (prompt.toLowerCase().includes('words') || prompt.toLowerCase().includes('points') || prompt.toLowerCase().includes('steps')) {
-      prompt += " (Please provide the correct answer.)";
+      prompt += " (Please provide the correct response alone is enough.)";
     } else if (promptLength <= 10) {
       maxNewTokens = 200; // allocate more tokens for slightly longer prompts
     } else if (promptLength <= 20) {
@@ -99,7 +99,7 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
     } else {
-      prompt += " provide an accurate answer.";
+      prompt += " provide an accurate response alone is enough.";
     }
 
     const response = await axios.post(HF_API_URL, {
@@ -151,9 +151,6 @@ app.post('/', async (req, res) => {
     botResponse = botResponse.replace(/^[!?.]*\s*/, '');
 
     // Remove unwanted symbols
-    botResponse = botResponse.replace(/[*#@]/g, '');
-
-    // Sanitize the response
     botResponse = sanitizeResponse(botResponse);
 
     res.status(200).send({ bot: botResponse });
@@ -177,7 +174,9 @@ app.post('/', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+const server = app.listen(PORT, () => {
+  console.log(`AI server started on http://localhost:${PORT}`);
+});
 
 // Graceful shutdown
 const gracefulShutdown = () => {
