@@ -81,10 +81,10 @@ app.post('/', async (req, res) => {
     let maxWords = null;
 
     if (promptLength <= 2) {
-      prompt += " (Please keep the response within 40 words.)";
+      // Line removed: prompt += " (Please keep the response within 40 words.)";
       maxNewTokens = 50; // use fewer tokens for short prompts
     } else if (prompt.toLowerCase().includes('words') || prompt.toLowerCase().includes('points') || prompt.toLowerCase().includes('steps')) {
-      prompt += " (Please provide the correct response alone is enough.)";
+      prompt += " (Please provide the correct answer.)";
     } else if (promptLength <= 10) {
       maxNewTokens = 200; // allocate more tokens for slightly longer prompts
     } else if (promptLength <= 20) {
@@ -99,7 +99,7 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
     } else {
-      prompt += " provide an accurate response alone is enough.";
+      prompt += " provide an accurate answer.";
     }
 
     const response = await axios.post(HF_API_URL, {
