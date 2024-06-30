@@ -58,14 +58,14 @@ const markCategories = {
   2: { words: 50 },
   3: { words: 70 },
   4: { words: 90 },
-  5: { words: 120 },
-  6: { words: 150 },
-  7: { words: 200 },
-  8: { words: 250, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
-  10: { words: 400, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
-  12: { words: 500, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
-  15: { words: 600, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
-  20: { words: 800, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
+  5: { words: 150 },
+  6: { words: 190 },
+  7: { words: 240 },
+  8: { words: 290, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
+  10: { words: 480, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
+  12: { words: 580, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
+  15: { words: 680, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
+  20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
 };
 
 app.get('/', async (req, res) => {
@@ -119,7 +119,7 @@ app.post('/', async (req, res) => {
       prompt += " Provide an accurate answer.";
     }
 
-    const maxNewTokens = Math.min((maxWords || 100) * 1.5, 1500); // Estimate tokens based on words
+    const maxNewTokens = Math.min((maxWords || 100) * 1.5, 1600); // Estimate tokens based on words
 
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
