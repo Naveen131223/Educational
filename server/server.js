@@ -53,6 +53,21 @@ const isGreeting = (prompt) => {
   return greetings.includes(normalizedPrompt);
 };
 
+const markCategories = {
+  1: { words: 20 },
+  2: { words: 50 },
+  3: { words: 70 },
+  4: { words: 90 },
+  5: { words: 120 },
+  6: { words: 150 },
+  7: { words: 200 },
+  8: { words: 250, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
+  10: { words: 400, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
+  12: { words: 500, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
+  15: { words: 600, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
+  20: { words: 800, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
+};
+
 app.get('/', async (req, res) => {
   res.status(200).send({
     message: 'Hello from CodeX!'
@@ -76,31 +91,35 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: randomResponse });
     }
 
-    const promptLength = prompt.split(' ').length;
-    let maxNewTokens = 1500; // default for longer prompts
+    const promptLowerCase = prompt.toLowerCase();
     let maxWords = null;
+    let subtopics = null;
 
-    if (promptLength <= 2) {
-      // Line removed: prompt += " (Please keep the response within 40 words.)";
-      maxNewTokens = 50; // use fewer tokens for short prompts
-    } else if (prompt.toLowerCase().includes('words') || prompt.toLowerCase().includes('points') || prompt.toLowerCase().includes('steps')) {
-      prompt += " (Please provide the correct answer.)";
-    } else if (promptLength <= 10) {
-      maxNewTokens = 200; // allocate more tokens for slightly longer prompts
-    } else if (promptLength <= 20) {
-      maxNewTokens = 500; // allocate more tokens for longer prompts
-    }
+    const markMatch = promptLowerCase.match(/(\d+)\s*marks?/i);
+    const wordMatch = promptLowerCase.match(/(\d+)\s*words?/i);
+    const pointsMatch = promptLowerCase.match(/(\d+)\s*(points?|steps?)/i);
 
-    const wordMatch = prompt.match(/(\d+)\s*words/i);
-    const pointsMatch = prompt.match(/(\d+)\s*(points|steps)/i);
-
-    if (wordMatch) {
+    if (markMatch) {
+      const marks = parseInt(markMatch[1], 10);
+      if (markCategories[marks]) {
+        maxWords = markCategories[marks].words;
+        subtopics = markCategories[marks].subtopics;
+      }
+    } else if (wordMatch) {
       maxWords = parseInt(wordMatch[1], 10);
     } else if (pointsMatch) {
       maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
-    } else {
-      prompt += " provide an accurate answer.";
     }
+
+    if (subtopics) {
+      prompt += ` Please cover the following subtopics: ${subtopics}.`;
+    } else if (maxWords) {
+      prompt += ` Please provide the answer in ${maxWords} words.`;
+    } else {
+      prompt += " Provide an accurate answer.";
+    }
+
+    const maxNewTokens = Math.min((maxWords || 100) * 1.5, 1500); // Estimate tokens based on words
 
     const response = await axios.post(HF_API_URL, {
       inputs: prompt,
@@ -199,3 +218,4 @@ const keepAlive = () => {
 
 // Ping every 5 minutes to keep the server awake
 setInterval(keepAlive, 5 * 60 * 1000);
+  
