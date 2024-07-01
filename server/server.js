@@ -94,6 +94,7 @@ app.post('/', async (req, res) => {
     const promptLowerCase = prompt.toLowerCase();
     let maxWords = null;
     let subtopics = null;
+    let points = null;
 
     const markMatch = promptLowerCase.match(/(\d+)\s*marks?/i);
     const wordMatch = promptLowerCase.match(/(\d+)\s*words?/i);
@@ -108,7 +109,8 @@ app.post('/', async (req, res) => {
     } else if (wordMatch) {
       maxWords = parseInt(wordMatch[1], 10);
     } else if (pointsMatch) {
-      maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
+      points = parseInt(pointsMatch[1], 10);
+      maxWords = points * 10; // assume roughly 10 words per point/step
     }
 
     if (subtopics) {
@@ -117,6 +119,10 @@ app.post('/', async (req, res) => {
       prompt += ` Please provide the answer in ${maxWords} words.`;
     } else {
       prompt += " Provide an accurate answer.";
+    }
+
+    if (points) {
+      prompt += ` Provide the response in ${points} points or steps.`;
     }
 
     const maxNewTokens = Math.min((maxWords || 100) * 1.5, 1600); // Estimate tokens based on words
@@ -164,6 +170,16 @@ app.post('/', async (req, res) => {
       if (words.length > maxWords) {
         botResponse = words.slice(0, maxWords).join(' ') + '.';
       }
+    }
+
+    // Ensure response is in the correct number of points or steps
+    if (points) {
+      const pointsList = botResponse.split('.').filter(point => point.trim().length > 0);
+      if (pointsList.length < points) {
+        const additionalPointsNeeded = points - pointsList.length;
+        botResponse += ` The answer seems to be missing ${additionalPointsNeeded} points.`;
+      }
+      botResponse = pointsList.slice(0, points).map(point => point.trim()).join('. ') + '.';
     }
 
     // Remove any leading punctuation
@@ -218,3 +234,4 @@ const keepAlive = () => {
 
 // Ping every 5 minutes to keep the server awake
 setInterval(keepAlive, 5 * 60 * 1000);
+            
