@@ -108,7 +108,9 @@ app.post('/', async (req, res) => {
     } else if (wordMatch) {
       maxWords = parseInt(wordMatch[1], 10);
     } else if (pointsMatch) {
-      maxWords = parseInt(pointsMatch[1], 10) * 10; // assume roughly 10 words per point/step
+      const pointsRequested = parseInt(pointsMatch[1], 10);
+      const adjustedPoints = pointsRequested + 3;
+      maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
     }
 
     if (subtopics) {
@@ -218,3 +220,4 @@ const keepAlive = () => {
 
 // Ping every 5 minutes to keep the server awake
 setInterval(keepAlive, 5 * 60 * 1000);
+  
