@@ -29,8 +29,9 @@ const checkModelLoaded = async () => {
   }
 };
 
-// Check model status every 5 minutes
-setInterval(checkModelLoaded, 5 * 60 * 1000); // Check every 5 minutes
+// Check model status every 6 hours
+const checkInterval = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+setInterval(checkModelLoaded, checkInterval);
 checkModelLoaded();
 
 const sanitizeResponse = (response) => {
@@ -210,13 +211,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-
-// Keep-alive mechanism to prevent spin-down
-const keepAlive = () => {
-  axios.get(`http://localhost:${PORT}/`)
-    .then(() => console.log('Keep-alive ping successful'))
-    .catch(err => console.error('Keep-alive ping failed:', err));
-};
-
-// Ping every 5 minutes to keep the server awake
-setInterval(keepAlive, 5 * 60 * 1000);
+               
