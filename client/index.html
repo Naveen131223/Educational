@@ -227,7 +227,57 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
+    <script>
+        function process_4(file_4){
+            document.querySelector(".result_4").innerHTML = "";
+            
+            // Preview Image
+            var src_4 = (window.URL ? URL : webkitURL).createObjectURL(file_4);
+            document.getElementById("image_4").src = src_4;
+            
+            // Process Image
+            Tesseract.recognize(file_4)
+            .progress(function(data_4){
+                console.log(data_4);
+                progress_4(data_4);
+            })
+            .then(function(data_4){
+                console.log(data_4);
+                result_4(data_4);
+            });
+        }
 
+        function progress_4(packet_4){
+            var r_4 = document.querySelector(".result_4");
+            
+            if(r_4 && r_4.querySelector(".status_4:last-child") && r_4.querySelector(".status_4:last-child").innerHTML == packet_4.status){
+                if('progress' in packet_4) {
+                    r_4.querySelector("progress_4:last-child").value = packet_4.progress;
+                }
+            } else {    
+                var tStatus_4 = "<div class='status_4 ten wide column'>" + packet_4.status +"</div>";
+                var tProgress_4 = "<div class='six wide column'>" + (typeof packet_4.progress == "undefined" ? "" : ("<progress_4 value='" + packet_4.progress + "' max='1'></progress_4>")) +"</div>";
+                                                                                                          
+                r_4.insertAdjacentHTML('beforeend', tStatus_4 + tProgress_4);
+            }
+        }
+
+        function result_4(data_4){
+            var r_4 = document.querySelector(".result_4");
+            r_4.insertAdjacentHTML('beforeend', 
+                "<div class='sixteen wide column output_4'>success" +
+                "<div class='ui message_4'><pre>" + data_4.text +"</pre></div>" + 
+                "</div>"
+            );
+        }
+
+        function reset_4(){
+            document.querySelector(".result_4").innerHTML = '<div class="column placeholder_4">No Output <br/><span>Choose a file to start</span></div>';
+            document.getElementById("image_4").src = "http://www.brainstormerbingo.com/Images/upload-empty.png";
+            document.getElementById("file_4").value = "";
+        }
+    </script>
 	  
 <h2>Request for Sentence Pronunciation</h2>
 
