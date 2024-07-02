@@ -63,8 +63,8 @@ const markCategories = {
   6: { words: 190 },
   7: { words: 240 },
   8: { words: 290, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
-  10: { words: 480, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
-  12: { words: 580, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
+  10: { words: 530, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
+  12: { words: 630, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
   15: { words: 680, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
   20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
 };
