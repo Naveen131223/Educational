@@ -56,17 +56,40 @@ const isGreeting = (prompt) => {
 
 const markCategories = {
   1: { words: 20 },
-  2: { words: 50 },
-  3: { words: 70 },
-  4: { words: 90 },
-  5: { words: 150 },
-  6: { words: 190 },
-  7: { words: 240 },
+  2: { words: 50, subtopics: 'brief explanation' },
+  3: { words: 70, subtopics: 'brief explanation with examples' },
+  4: { words: 90, subtopics: 'detailed explanation' },
+  5: { words: 150, subtopics: 'detailed explanation with examples' },
+  6: { words: 190, subtopics: 'detailed explanation with multiple examples' },
+  7: { words: 240, subtopics: 'detailed explanation, multiple examples, and analysis' },
   8: { words: 290, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
   10: { words: 530, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
   12: { words: 630, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
   15: { words: 680, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
   20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
+};
+
+const isAskingForDateTime = (prompt) => {
+  const dateTimeKeywords = [
+    'date', 'time', 'current time', 'current date', 'what time', 'what date', 'today\'s date', 'current day'
+  ];
+  const normalizedPrompt = prompt.trim().toLowerCase();
+  return dateTimeKeywords.some(keyword => normalizedPrompt.includes(keyword));
+};
+
+const getCurrentDateTime = () => {
+  const now = new Date();
+  const options = { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric', 
+    hour: 'numeric', 
+    minute: 'numeric', 
+    second: 'numeric', 
+    hour12: true 
+  };
+  return now.toLocaleString('en-US', options);
 };
 
 app.get('/', async (req, res) => {
@@ -90,6 +113,11 @@ app.post('/', async (req, res) => {
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       return res.status(200).send({ bot: randomResponse });
+    }
+
+    if (isAskingForDateTime(prompt)) {
+      const currentDateTime = getCurrentDateTime();
+      return res.status(200).send({ bot: `The current date and time is: ${currentDateTime}` });
     }
 
     const promptLowerCase = prompt.toLowerCase();
@@ -211,4 +239,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-               
+                                              
