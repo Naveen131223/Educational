@@ -56,11 +56,11 @@ const isGreeting = (prompt) => {
 
 const markCategories = {
   1: { words: 20 },
-  2: { words: 50, subtopics: 'brief explanation' },
-  3: { words: 70, subtopics: 'brief explanation with examples' },
-  4: { words: 90, subtopics: 'detailed explanation' },
-  5: { words: 150, subtopics: 'detailed explanation with examples' },
-  6: { words: 190, subtopics: 'detailed explanation with multiple examples' },
+  2: { words: 50 },
+  3: { words: 70 },
+  4: { words: 90 },
+  5: { words: 150 },
+  6: { words: 190 },
   7: { words: 240, subtopics: 'detailed explanation, multiple examples, and analysis' },
   8: { words: 290, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
   10: { words: 530, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
@@ -90,6 +90,10 @@ const getCurrentDateTime = () => {
     hour12: true 
   };
   return now.toLocaleString('en-US', options);
+};
+
+const mentionsDiagram = (prompt) => {
+  return prompt.toLowerCase().includes('diagram');
 };
 
 app.get('/', async (req, res) => {
@@ -150,6 +154,10 @@ app.post('/', async (req, res) => {
       prompt += " Provide an accurate answer.";
     }
 
+    if (mentionsDiagram(prompt)) {
+      prompt += " Include a title name with the diagram.";
+    }
+
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 1600)); // Ensure integer value
 
     const response = await axios.post(HF_API_URL, {
@@ -179,6 +187,11 @@ app.post('/', async (req, res) => {
     // Ensure the response does not repeat the prompt and handle truncation more robustly
     if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
       botResponse = botResponse.slice(prompt.length).trim();
+    }
+
+    // Remove the subtopics prompt from the response if present
+    if (subtopics && botResponse.includes(subtopics)) {
+      botResponse = botResponse.replace(subtopics, '').trim();
     }
 
     // Trim based on sentence boundaries or specific criteria
@@ -239,4 +252,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-                                              
+          
