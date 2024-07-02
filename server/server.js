@@ -2,8 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -13,17 +11,10 @@ const HF_API_KEY = process.env.HF_API_KEY;
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(helmet()); // Add helmet for basic security enhancements
-
-// Rate limiting middleware
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
 
 let modelLoaded = false;
 
+// Function to check if the model is loaded
 const checkModelLoaded = async () => {
   try {
     const response = await axios.get(HF_API_URL, {
@@ -82,11 +73,6 @@ app.get('/', async (req, res) => {
   res.status(200).send({
     message: 'Hi Sister'
   });
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).send({ status: 'Healthy' });
 });
 
 app.post('/', async (req, res) => {
@@ -162,10 +148,12 @@ app.post('/', async (req, res) => {
       botResponse = response.data.generated_text;
     }
 
+    // Ensure the response does not repeat the prompt and handle truncation more robustly
     if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
       botResponse = botResponse.slice(prompt.length).trim();
     }
 
+    // Trim based on sentence boundaries or specific criteria
     const sentences = botResponse.split('.'); // Split into sentences
     if (sentences.length > 1) {
       botResponse = sentences.slice(0, -1).join('.').trim() + '.';
@@ -173,6 +161,7 @@ app.post('/', async (req, res) => {
       botResponse = botResponse.trim();
     }
 
+    // If maxWords is specified, limit the response to the specified number of words
     if (maxWords) {
       const words = botResponse.split(' ');
       if (words.length > maxWords) {
@@ -180,7 +169,10 @@ app.post('/', async (req, res) => {
       }
     }
 
+    // Remove any leading punctuation
     botResponse = botResponse.replace(/^[!?.]*\s*/, '');
+
+    // Remove unwanted symbols
     botResponse = sanitizeResponse(botResponse);
 
     res.status(200).send({ bot: botResponse });
@@ -219,3 +211,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
+               
