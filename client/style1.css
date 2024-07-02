@@ -1,4 +1,85 @@
-    body_1 {
+body {
+    background: linear-gradient(90deg, #ffd700, #ffb400);
+    color: #333;
+}
+
+.ui.header_4 {
+    color: #333;
+    margin-bottom: 0;
+}
+
+.desc_4 {
+    color: #666;
+    margin-bottom: 2em;   
+}
+
+.container_4 {
+    padding: 2em 0;
+}
+
+.ui.card_4 {
+    width: 100%;
+}
+
+.content-result_4 {
+    min-height: 330px;
+}
+
+.result_4 .placeholder_4 {
+    padding-top: 100px;
+    font-size: 30px;
+    line-height: 1;
+    color: gray;
+    text-align: center;    
+}
+
+.result_4 .placeholder_4 span {
+    font-size: 15px;
+}
+
+.result_4 .status_4 {
+    margin-top: 5px;
+}
+
+.result_4 progress_4 {
+    width: 100%;
+}
+
+.ui.message_4 {
+    margin-top: 2rem;
+}
+
+.ui.message_4 pre {
+    white-space: pre-wrap;
+}
+
+#file_4 {
+    display: none;
+}
+
+.custom-file-upload {
+    background-color: #4CAF50;
+    color: white;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.reset-btn {
+    background-color: #ff5733;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+
+
+
+body_1 {
       font-family: Arial, sans-serif;
       text-align: center;
     }
