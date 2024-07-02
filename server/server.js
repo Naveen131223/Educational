@@ -7,8 +7,6 @@ dotenv.config();
 
 const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
-const NEWS_API_URL = 'https://newsapi.org/v2/top-headlines';
-const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
 const app = express();
 app.use(cors());
@@ -98,54 +96,6 @@ const mentionsDiagram = (prompt) => {
   return prompt.toLowerCase().includes('diagram');
 };
 
-const isAskingForNews = (prompt) => {
-  const newsKeywords = [
-    'news', 'headlines', 'latest news', 'current news'
-  ];
-  const normalizedPrompt = prompt.trim().toLowerCase();
-  return newsKeywords.some(keyword => normalizedPrompt.includes(keyword));
-};
-
-const fetchNews = async () => {
-  const countries = [
-    'ae', 'ar', 'at', 'au', 'be', 'bg', 'br', 'ca', 'ch', 'cn', 'co', 'cu', 
-    'cz', 'de', 'eg', 'fr', 'gb', 'gr', 'hk', 'hu', 'id', 'ie', 'il', 'in', 
-    'it', 'jp', 'kr', 'lt', 'lv', 'ma', 'mx', 'my', 'ng', 'nl', 'no', 'nz', 
-    'ph', 'pl', 'pt', 'ro', 'rs', 'ru', 'sa', 'se', 'sg', 'si', 'sk', 'th', 
-    'tr', 'tw', 'ua', 'us', 've', 'za'
-  ];
-
-  let newsArticles = [];
-
-  try {
-    for (const country of countries) {
-      const response = await axios.get(NEWS_API_URL, {
-        params: {
-          apiKey: NEWS_API_KEY,
-          country: country,
-          pageSize: 1 // Fetch one top article per country to avoid rate limits
-        }
-      });
-
-      if (response.data && response.data.articles) {
-        const articles = response.data.articles;
-        articles.forEach(article => {
-          newsArticles.push(`${article.title} - ${article.description}`);
-        });
-      }
-    }
-    
-    if (newsArticles.length === 0) {
-      return 'No news available at the moment.';
-    }
-
-    return newsArticles.join('\n');
-  } catch (error) {
-    console.error('Error fetching news:', error);
-    return 'Failed to fetch news.';
-  }
-};
-
 app.get('/', async (req, res) => {
   res.status(200).send({
     message: 'Hi Sister'
@@ -172,11 +122,6 @@ app.post('/', async (req, res) => {
     if (isAskingForDateTime(prompt)) {
       const currentDateTime = getCurrentDateTime();
       return res.status(200).send({ bot: `The current date and time is: ${currentDateTime}` });
-    }
-
-    if (isAskingForNews(prompt)) {
-      const news = await fetchNews();
-      return res.status(200).send({ bot: news });
     }
 
     const promptLowerCase = prompt.toLowerCase();
@@ -246,16 +191,65 @@ app.post('/', async (req, res) => {
 
     // Remove the subtopics prompt from the response if present
     if (subtopics && botResponse.includes(subtopics)) {
-      botResponse = botResponse.replace(`Please cover the following subtopics: ${subtopics}.`, '').trim();
+      botResponse = botResponse.replace(subtopics, '').trim();
     }
 
-    res.status(200).send({ bot: sanitizeResponse(botResponse) });
+    // Trim based on sentence boundaries or specific criteria
+    const sentences = botResponse.split('.'); // Split into sentences
+    if (sentences.length > 1) {
+      botResponse = sentences.slice(0, -1).join('.').trim() + '.';
+    } else {
+      botResponse = botResponse.trim();
+    }
 
+    // If maxWords is specified, limit the response to the specified number of words
+    if (maxWords) {
+      const words = botResponse.split(' ');
+      if (words.length > maxWords) {
+        botResponse = words.slice(0, maxWords).join(' ') + '.';
+      }
+    }
+
+    // Remove any leading punctuation
+    botResponse = botResponse.replace(/^[!?.]*\s*/, '');
+
+    // Remove unwanted symbols
+    botResponse = sanitizeResponse(botResponse);
+
+    res.status(200).send({ bot: botResponse });
   } catch (error) {
-    console.error('Error processing request:', error);
-    res.status(500).send({ error: 'Failed to process request' });
+    console.error('Error fetching response from Hugging Face API:', error);
+
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      console.error('Error response status:', error.response.status);
+      console.error('Error response headers:', error.response.headers);
+      res.status(error.response.status).send({ error: error.response.data });
+    } else if (error.request) {
+      console.error('Error request:', error.request);
+      res.status(500).send({ error: 'No response received from Hugging Face API' });
+    } else {
+      console.error('Error message:', error.message);
+      res.status(500).send({ error: error.message });
+    }
   }
 });
 
-app.listen(5000, () => console.log('AI server started on http://localhost:5000'));
-        
+const PORT = process.env.PORT || 5000;
+
+const server = app.listen(PORT, () => {
+  console.log(`AI server started on http://localhost:${PORT}`);
+});
+
+// Graceful shutdown
+const gracefulShutdown = () => {
+  console.log('Received shutdown signal, closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+          
