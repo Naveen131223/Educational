@@ -226,7 +226,8 @@ const module = await import("./script.js?v=v7");
 	  <div id="toggleButton" class="on">Read Web Content On</div>
 
 
-
+    <button id="textFileBtn_8" class="download-btn_8" onclick="downloadTxtFile_8()">Download Text File</button>
+    <button id="wordFileBtn_8" class="download-btn_8" onclick="downloadDocFile_8()">Download Word File</button>
 
 	  
 <h2>Google Translator Integration</h2>
@@ -239,7 +240,41 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 </script>
 
+<script>
+        function downloadTxtFile_8() {
+            const content_8 = document.getElementById('chat_container').innerText;
+            if (content_8.trim() === "") {
+                alert("Chat container is empty.");
+                return;
+            }
+            const txtBlob_8 = new Blob([content_8], { type: 'text/plain' });
+            const txtLink_8 = document.createElement('a');
+            txtLink_8.href = URL.createObjectURL(txtBlob_8);
+            txtLink_8.download = 'chat.txt';
+            txtLink_8.click();
+            document.getElementById('textFileBtn_8').style.backgroundColor = "#555555";
+        }
 
+        function downloadDocFile_8() {
+            const content_8 = document.getElementById('chat_container').innerText;
+            if (content_8.trim() === "") {
+                alert("Chat container is empty.");
+                return;
+            }
+            const preHtml_8 = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>";
+            const head_8 = "<head><meta charset='utf-8'><title>Document</title></head>";
+            const style_8 = "<style>body { font-family: 'Times New Roman'; font-size: 12pt; }</style>";
+            const body_8 = "<body>" + content_8 + "</body></html>";
+            const docHtml_8 = preHtml_8 + head_8 + style_8 + body_8;
+
+            const docBlob_8 = new Blob(['\ufeff', docHtml_8], { type: 'application/msword' });
+            const docLink_8 = document.createElement('a');
+            docLink_8.href = URL.createObjectURL(docBlob_8);
+            docLink_8.download = 'chat.doc';
+            docLink_8.click();
+            document.getElementById('wordFileBtn_8').style.backgroundColor = "#555555";
+        }
+    </script>
 
 
 	  
