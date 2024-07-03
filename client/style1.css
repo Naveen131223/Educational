@@ -5,27 +5,21 @@
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: transparent; /* Set initial background color as transparent */
-    color: black; /* Default text color */
     transition: background-color 0.3s ease; /* Smooth transition effect */
 }
 
 #textFileBtn_8 {
     background-color: #4CAF50; /* Green */
-    color: white;
+    color: white; /* Text color */
 }
 
 #wordFileBtn_8 {
     background-color: #008CBA; /* Blue */
-    color: white;
+    color: white; /* Text color */
 }
 
 .download-btn_8:active {
-    background-color: transparent; /* Revert to transparent when active (clicked) */
-}
-
-.download-btn_8:focus {
-    outline: none; /* Remove focus outline */
+    background-color: #555555; /* Dark Grey when clicked */
 }
 
 
