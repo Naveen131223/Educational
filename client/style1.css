@@ -1,25 +1,31 @@
- .download-btn_8 {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
+.download-btn_8 {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: transparent; /* Set initial background color as transparent */
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+}
 
-        #textFileBtn_8 {
-            background-color: #4CAF50; /* Green */
-            color: white;
-        }
+#textFileBtn_8 {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
 
-        #wordFileBtn_8 {
-            background-color: #008CBA; /* Blue */
-            color: white;
-        }
+#wordFileBtn_8 {
+    background-color: #008CBA; /* Blue */
+    color: white;
+}
 
-        .download-btn_8:active {
-            background-color: #555555; /* Dark Grey */
-        }
+.download-btn_8:active {
+    background-color: #555555; /* Dark Grey */
+}
+
+.download-btn_8:focus {
+    background-color: transparent; /* Return to original (transparent) on focus */
+}
 
 
 
