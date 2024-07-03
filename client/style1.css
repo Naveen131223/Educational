@@ -6,6 +6,7 @@
     border: none;
     border-radius: 5px;
     background-color: transparent; /* Set initial background color as transparent */
+    color: black; /* Default text color */
     transition: background-color 0.3s ease; /* Smooth transition effect */
 }
 
@@ -20,12 +21,13 @@
 }
 
 .download-btn_8:active {
-    background-color: #555555; /* Dark Grey */
+    background-color: transparent; /* Revert to transparent when active (clicked) */
 }
 
 .download-btn_8:focus {
-    background-color: transparent; /* Return to original (transparent) on focus */
+    outline: none; /* Remove focus outline */
 }
+
 
 
 
