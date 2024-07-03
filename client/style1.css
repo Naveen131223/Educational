@@ -10,15 +10,19 @@
 
 #textFileBtn_8 {
     background-color: #4CAF50; /* Green */
-    color: white; /* Text color */
+    color: white;
 }
 
 #wordFileBtn_8 {
     background-color: #008CBA; /* Blue */
-    color: white; /* Text color */
+    color: white;
 }
 
-.download-btn_8:active {
+#textFileBtn_8:active {
+    background-color: #555555; /* Dark Grey when clicked */
+}
+
+#wordFileBtn_8:active {
     background-color: #555555; /* Dark Grey when clicked */
 }
 
