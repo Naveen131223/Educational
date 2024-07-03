@@ -250,11 +250,14 @@ printButton.addEventListener("click", function() {
 
   // Apply styling to the printed content
   var style = `
-    <style> 
-      .question { color: blue; } 
-      .answer { color: red; } 
-      body { white-space: pre-wrap; } /* Preserve whitespace and line breaks */
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
     </style>`;
+
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
@@ -269,6 +272,7 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+
 
 
 var exportChatButton = document.createElement("button");
