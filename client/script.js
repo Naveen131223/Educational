@@ -233,7 +233,7 @@ const handleSubmit = async (e) => {
         // Re-enable the submit button after processing
         submitButton.disabled = false;
       }
-    }, 1000); // Adjust the AI delay duration as needed
+    }, 100); // Adjust the AI delay duration as needed
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
     console.error(error);
