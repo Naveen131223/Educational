@@ -23,6 +23,36 @@
 
 
 
+
+ /* Container with scrollable content */
+        .scrollable-container {
+            height: 500px; /* Set your desired height */
+            overflow-y: auto;
+            padding-right: 15px; /* To avoid content overlap with scrollbar */
+        }
+
+        /* Custom scrollbar styling */
+        .scrollable-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        /* Track */
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        /* Handle on hover */
+        .scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+
 body_1 {
       font-family: Arial, sans-serif;
       text-align: center;
