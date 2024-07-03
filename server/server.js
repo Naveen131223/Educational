@@ -54,20 +54,31 @@ const isGreeting = (prompt) => {
   return greetings.includes(normalizedPrompt);
 };
 
+const endSentence = 'Please provide the title name of the diagram in text if it is necessary alone.';
+
 const markCategories = {
-  1: { words: 20 },
-  2: { words: 50 },
-  3: { words: 70 },
-  4: { words: 90 },
-  5: { words: 150 },
-  6: { words: 190 },
-  7: { words: 240, subtopics: 'detailed explanation, multiple examples, and analysis' },
-  8: { words: 290, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
-  10: { words: 530, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
-  12: { words: 630, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
-  15: { words: 680, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
-  20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
+  1: { words: 20, subtopics: 'Very brief definition or description. ' + endSentence },
+  2: { words: 50, subtopics: 'Brief definition or description, one or two key points (if applicable). ' + endSentence },
+  3: { words: 70, subtopics: 'Short explanation, a few key points with brief descriptions (if applicable). ' + endSentence },
+  4: { words: 90, subtopics: 'Detailed definition, explanation of key points with some examples (if applicable). ' + endSentence },
+  5: { words: 150, subtopics: 'Brief introduction, key points with explanations, simple examples (if applicable). ' + endSentence },
+  6: { words: 190, subtopics: 'Introduction, main points with explanations, examples, and a brief conclusion (if applicable). ' + endSentence },
+  7: { words: 240, subtopics: 'Detailed explanation, multiple examples, and analysis (if applicable). ' + endSentence },
+  8: { words: 290, subtopics: 'Multiple subtopics, examples, explanations, and analysis (if applicable). ' + endSentence },
+  9: { words: 350, subtopics: 'Detailed explanations, multiple subtopics, examples, and a brief analysis (if applicable). ' + endSentence },
+  10: { words: 530, subtopics: 'Detailed exploration, several subtopics, introduction, main content, and conclusion (if applicable). ' + endSentence },
+  11: { words: 580, subtopics: 'Comprehensive explanation, several subtopics, detailed examples, and analysis (if applicable). ' + endSentence },
+  12: { words: 630, subtopics: 'Comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion (if applicable). ' + endSentence },
+  13: { words: 680, subtopics: 'Thorough exploration, multiple subtopics, detailed explanations, examples, and critical analysis (if applicable). ' + endSentence },
+  14: { words: 730, subtopics: 'Extensive explanations, several subtopics, detailed analysis, examples, and summary (if applicable). ' + endSentence },
+  15: { words: 780, subtopics: 'Extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion (if applicable). ' + endSentence },
+  16: { words: 830, subtopics: 'Detailed coverage, multiple subtopics, in-depth analysis, examples, and critical discussion (if applicable). ' + endSentence },
+  17: { words: 880, subtopics: 'Comprehensive exploration, several subtopics, detailed analysis, examples, and critical evaluation (if applicable). ' + endSentence },
+  18: { words: 930, subtopics: 'Thorough discussion, multiple subtopics, detailed analysis, examples, and strong conclusion (if applicable). ' + endSentence },
+  19: { words: 980, subtopics: 'Extensive exploration, numerous subtopics, detailed arguments, examples, and critical analysis (if applicable). ' + endSentence },
+  20: { words: 1030, subtopics: 'Thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion (if applicable). ' + endSentence }
 };
+
 
 const isAskingForDateTime = (prompt) => {
   const dateTimeKeywords = [
