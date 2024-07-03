@@ -390,7 +390,25 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 	  
 	  <div id="frame" style="width: 100%;"><iframe data-aa='2335359' src='//acceptable.a-ads.com/2335359' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe><a style="display: block; text-align: right; font-size: 12px" id="frame-link" href="https://a-ads.com/?partner=2335359">Advertise here</a></div>
 	  
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+    const textFileBtn = document.getElementById('textFileBtn_8');
+    const wordFileBtn = document.getElementById('wordFileBtn_8');
 
+    function handleClick(event) {
+        const button = event.target;
+        const originalColor = button.style.backgroundColor;
+        button.style.backgroundColor = '#555555'; // Dark Grey
+
+        setTimeout(function() {
+            button.style.backgroundColor = originalColor;
+        }, 200); // Change back to original color after 200ms
+    }
+
+    textFileBtn.addEventListener('click', handleClick);
+    wordFileBtn.addEventListener('click', handleClick);
+});
+</script>
 	  
 <h2>Tic Tac Toe Game</h2>
 
