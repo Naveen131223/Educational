@@ -241,7 +241,7 @@ const module = await import("./script.js?v=v7");
 <div id="google_translate_element"></div>
 
 	<script>
- var printButton = document.createElement("button");
+var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -249,7 +249,12 @@ printButton.addEventListener("click", function() {
   var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the printed content
-  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+  var style = `
+    <style> 
+      .question { color: blue; } 
+      .answer { color: red; } 
+      body { white-space: pre-wrap; } /* Preserve whitespace and line breaks */
+    </style>`;
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
