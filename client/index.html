@@ -242,20 +242,21 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
 
 <script>
        function downloadTxtFile_8() {
-            const content_8 = document.getElementById('chat_container').innerText;
-            if (content_8.trim() === "") {
-                alert("Chat container is empty.");
-                return;
-            }
-            const lines_8 = content_8.split('\n').map(line => ' ' + line); // Add single space at the beginning of each line
-            const formattedContent_8 = lines_8.join('\n');
-            const txtBlob_8 = new Blob([formattedContent_8], { type: 'text/plain' });
-            const txtLink_8 = document.createElement('a');
-            txtLink_8.href = URL.createObjectURL(txtBlob_8);
-            txtLink_8.download = 'chat.txt';
-            txtLink_8.click();
-            document.getElementById('textFileBtn_8').style.backgroundColor = "#555555";
-        }
+    const content_8 = document.getElementById('chat_container').innerText;
+    if (content_8.trim() === "") {
+        alert("Chat container is empty.");
+        return;
+    }
+    const lines_8 = content_8.split('\n').map(line => line.trimStart()); // Ensure no extra spaces at the start
+    const formattedContent_8 = lines_8.join('\n\n'); // Add an extra newline to create vertical space between lines
+    const txtBlob_8 = new Blob([formattedContent_8], { type: 'text/plain' });
+    const txtLink_8 = document.createElement('a');
+    txtLink_8.href = URL.createObjectURL(txtBlob_8);
+    txtLink_8.download = 'chat.txt';
+    txtLink_8.click();
+    document.getElementById('textFileBtn_8').style.backgroundColor = "#555555";
+}
+
 
         function downloadDocFile_8() {
             const content_8 = document.getElementById('chat_container').innerText;
