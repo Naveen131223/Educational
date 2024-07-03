@@ -266,7 +266,7 @@ var _0x862cf3=_0x6adb;function _0x6adb(_0x1ca676,_0x58d31d){var _0x2089ea=_0x208
             const preHtml_8 = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>";
             const head_8 = "<head><meta charset='utf-8'><title>Document</title></head>";
             const style_8 = "<style>body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }</style>";
-            const body_8 = "<body>" + content_8.split('\n').map(line => `<p style="margin: 0;"> ${line}</p>`).join('') + "</body></html>";
+            const body_8 = "<body>" + content_8.split('\n').map(line => `<p style="margin: 0 0 1em 0;"> ${line}</p>`).join('') + "</body></html>";
             const docHtml_8 = preHtml_8 + head_8 + style_8 + body_8;
 
             const docBlob_8 = new Blob(['\ufeff', docHtml_8], { type: 'application/msword' });
