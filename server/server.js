@@ -69,25 +69,21 @@ const markCategories = {
   20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
 };
 
-const isAskingForDateTime = (prompt) => {
-  const dateTimeKeywords = [
-    'date', 'time', 'current time', 'current date', 'what time', 'what date', 'today\'s date', 'current day'
+const isAskingForDate = (prompt) => {
+  const dateKeywords = [
+    'date', 'current date', 'what date', 'today\'s date', 'current day'
   ];
   const normalizedPrompt = prompt.trim().toLowerCase();
-  return dateTimeKeywords.some(keyword => normalizedPrompt.includes(keyword));
+  return dateKeywords.some(keyword => normalizedPrompt.includes(keyword));
 };
 
-const getCurrentDateTime = () => {
+const getCurrentDate = () => {
   const now = new Date();
   const options = { 
     weekday: 'long', 
     year: 'numeric', 
     month: 'long', 
     day: 'numeric', 
-    hour: 'numeric', 
-    minute: 'numeric', 
-    second: 'numeric', 
-    hour12: true 
   };
   return now.toLocaleString('en-US', options);
 };
@@ -119,9 +115,9 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: randomResponse });
     }
 
-    if (isAskingForDateTime(prompt)) {
-      const currentDateTime = getCurrentDateTime();
-      return res.status(200).send({ bot: `The current date and time is: ${currentDateTime}` });
+    if (isAskingForDate(prompt)) {
+      const currentDate = getCurrentDate();
+      return res.status(200).send({ bot: `The current date is: ${currentDate}` });
     }
 
     const promptLowerCase = prompt.toLowerCase();
@@ -252,4 +248,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-          
+        
