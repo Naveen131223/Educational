@@ -36,6 +36,13 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 	
   <body>
 
+	  <script type="text/javascript">
+		window.addEventListener('beforeunload', function (e) {
+			e.preventDefault();
+			e.returnValue = '';
+		});
+	  </script>
+
 <div class="gap"></div>
 	  
 	
@@ -96,12 +103,7 @@ const module = await import("./script.js?v=v7");
 </script>
 
 
-   <script type="text/javascript">
-		window.addEventListener('beforeunload', function (e) {
-			e.preventDefault();
-			e.returnValue = '';
-		});
-   </script>
+   
 	  
 	  
 	  
