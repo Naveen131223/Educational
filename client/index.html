@@ -99,18 +99,19 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
-    // Check if the confirmation dialog has been shown in this session
-    let isDialogShown = sessionStorage.getItem('isDialogShown');
-
-    window.addEventListener('beforeunload', function (event) {
-        if (!isDialogShown) {
-            // Show the confirmation dialog
-            sessionStorage.setItem('isDialogShown', true);
+    // Check if the confirmation has already been shown in this session
+    if (!sessionStorage.getItem('confirmationShown')) {
+        // Add event listener for beforeunload
+        window.addEventListener('beforeunload', function (event) {
+            // Prevent multiple confirmations
+            sessionStorage.setItem('confirmationShown', 'true');
+            // Display confirmation message
             event.preventDefault();
             event.returnValue = 'You have unsaved changes. Are you sure you want to leave this page?';
-        }
-    });
+        });
+    }
 </script>
+
 
 	  
 	  
