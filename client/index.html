@@ -99,8 +99,12 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
-    // Initialize the variable directly in the script
-    let hasConfirmed = false;
+    // Check if the page is newly loaded
+    if (performance.navigation.type === performance.navigation.TYPE_RELOAD || performance.navigation.type === performance.navigation.TYPE_BACK_FORWARD) {
+        hasConfirmed = false;
+    } else {
+        hasConfirmed = false;
+    }
 
     // Add event listener for beforeunload event
     window.addEventListener('beforeunload', function (e) {
@@ -121,6 +125,7 @@ const module = await import("./script.js?v=v7");
         hasConfirmed = false;
     };
    </script>
+	  
 	  
 	  
 
