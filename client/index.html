@@ -99,31 +99,17 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
-    // Check if the page is newly loaded
-    if (performance.navigation.type === performance.navigation.TYPE_RELOAD || performance.navigation.type === performance.navigation.TYPE_BACK_FORWARD) {
-        hasConfirmed = false;
-    } else {
-        hasConfirmed = false;
-    }
+        window.addEventListener('beforeunload', function (e) {
+            // Standard message for the confirmation dialog
+            const confirmationMessage = 'Are you sure you want to leave? Your changes may not be saved.';
 
-    // Add event listener for beforeunload event
-    window.addEventListener('beforeunload', function (e) {
-        if (hasConfirmed) {
-            return;
-        }
+            // Modern browsers will display this message in their own way.
+            // Some browsers may ignore the custom message.
+            (e || window.event).returnValue = confirmationMessage;
 
-        const confirmationMessage = 'Are you sure you want to leave? Your changes may not be saved.';
-        (e || window.event).returnValue = confirmationMessage;
-        
-        hasConfirmed = true;  // Set to true after the first confirmation
-
-        return confirmationMessage;
-    });
-
-    // Reset the variable when the page is fully loaded
-    window.onload = function() {
-        hasConfirmed = false;
-    };
+            // For older browsers
+            return confirmationMessage;
+        });
    </script>
 	  
 	  
