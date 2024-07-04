@@ -100,11 +100,20 @@ const module = await import("./script.js?v=v7");
 
    <script>
     window.addEventListener('beforeunload', function (event) {
-        // Some older browsers may still require return value
+        // Cancel the default behavior (not strictly necessary but good practice)
         event.preventDefault();
+        
+        // Set a custom message (not strictly necessary but good practice)
         event.returnValue = 'You have unsaved changes. Are you sure you want to leave this page?';
+        
+        // Attach an event listener for the 'unload' event
+        window.addEventListener('unload', function () {
+            // Navigate back when the user has chosen to stay on the page
+            history.back();
+        });
     });
    </script>
+	  
 	  
 	  
 	  
