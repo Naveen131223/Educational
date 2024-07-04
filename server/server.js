@@ -145,7 +145,7 @@ app.post('/', async (req, res) => {
     if (subtopics) {
       prompt += ` Please cover the following subtopics: ${subtopics}.`;
     } else if (maxWords) {
-      prompt += ` Please provide the answer in ${maxWords} words.`;
+      prompt += ` Please provide the correct response in ${maxWords} words.`;
     } else {
       prompt += " Provide an accurate response.";
     }
