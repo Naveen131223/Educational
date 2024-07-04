@@ -984,9 +984,9 @@ window.onload = animateLines;
 
 
 	  <script>
-let activeIndicator = null;
+	let activeIndicator = null;
 let activeUtterance = null;
-let readingEnabled = true;
+let readingEnabled = false; // Initially set to false
 
 function handleClick(event) {
   if (!readingEnabled) {
@@ -1074,8 +1074,8 @@ document.addEventListener('click', handleClick);
 // Toggle button functionality
 const toggleButton = document.createElement('div');
 toggleButton.id = 'toggleButton';
-toggleButton.className = 'on';
-toggleButton.textContent = 'Read Web Content On';
+toggleButton.className = 'off'; // Initially set to 'off'
+toggleButton.textContent = 'Read Web Content Off'; // Button text for off state
 document.body.appendChild(toggleButton);
 
 toggleButton.addEventListener('click', function() {
@@ -1090,6 +1090,6 @@ toggleButton.addEventListener('click', function() {
     toggleButton.textContent = 'Read Web Content On';
   }
 });
-
+		  
 </script>
 
