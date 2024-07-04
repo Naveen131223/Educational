@@ -99,17 +99,9 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
-        window.addEventListener('beforeunload', function (e) {
-            // Standard message for the confirmation dialog
-            const confirmationMessage = 'Are you sure you want to leave? Your changes may not be saved.';
-
-            // Modern browsers will display this message in their own way.
-            // Some browsers may ignore the custom message.
-            (e || window.event).returnValue = confirmationMessage;
-
-            // For older browsers
-            return confirmationMessage;
-        });
+        window.onbeforeunload = function() {
+  return "Are you sure you wish to leave this delightful page?";
+	   }
    </script>
 	  
 	  
