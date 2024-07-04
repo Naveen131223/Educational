@@ -147,11 +147,11 @@ app.post('/', async (req, res) => {
     } else if (maxWords) {
       prompt += ` Please provide the answer in ${maxWords} words.`;
     } else {
-      prompt += " Provide an accurate answer.";
+      prompt += " Provide an accurate response.";
     }
 
     if (mentionsDiagram(prompt)) {
-      prompt += " Include a title name with the diagram.";
+      prompt += " Include a title name with the diagram name in text.";
     }
 
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 1800)); // Ensure integer value
