@@ -99,19 +99,17 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
-    function attachBeforeUnload() {
-        window.addEventListener('beforeunload', function (event) {
-            // Some older browsers may still require return value
+    let isDialogShown = false;
+
+    window.addEventListener('beforeunload', function (event) {
+        if (!isDialogShown) {
+            isDialogShown = true;
             event.preventDefault();
             event.returnValue = 'You have unsaved changes. Are you sure you want to leave this page?';
-        });
-    }
-
-    attachBeforeUnload();
-
-    // Reattach the beforeunload event periodically
-    setInterval(attachBeforeUnload, 5000);
+        }
+    });
    </script>
+	  
 	  
 	  
     
