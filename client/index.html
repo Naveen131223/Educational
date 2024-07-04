@@ -99,10 +99,19 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
-        window.onbeforeunload = function() {
-  return "Are you sure you wish to leave this delightful page?";
-};
+    window.addEventListener('beforeunload', function (e) {
+        // Set a professional confirmation message
+        var confirmationMessage = 'You have unsaved changes. Are you sure you want to leave this page? Your progress may not be saved.';
+        
+        // For most modern browsers
+        e.preventDefault();
+        e.returnValue = confirmationMessage;
+        
+        // For older browsers
+        return confirmationMessage;
+    });
    </script>
+	  
 	  
 	  
 	  
