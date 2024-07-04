@@ -98,7 +98,14 @@ const module = await import("./script.js?v=v7");
 </script>
 
 
-        
+   <script>
+    window.addEventListener('beforeunload', function (event) {
+        // Some older browsers may still require return value
+        event.preventDefault();
+        event.returnValue = 'You have unsaved changes. Are you sure you want to leave this page?';
+    });
+   </script>
+	  
     
 
 
