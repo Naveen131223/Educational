@@ -99,19 +99,26 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
-    function attachBeforeUnload() {
-        window.addEventListener('beforeunload', function (event) {
-            // Some older browsers may still require return value
-            event.preventDefault();
-            event.returnValue = 'You have unsaved changes. Are you sure you want to leave this page?';
-        });
-    }
+    let hasConfirmed = false;
 
-    attachBeforeUnload();
+    window.addEventListener('load', function() {
+        hasConfirmed = false; // Reset on page load
+    });
 
-    // Reattach the beforeunload event periodically
-    setInterval(attachBeforeUnload, 5000);
-</script>
+    window.addEventListener('beforeunload', function (e) {
+        if (hasConfirmed) {
+            return;
+        }
+
+        const confirmationMessage = 'Are you sure you want to leave? Your changes may not be saved.';
+        (e || window.event).returnValue = confirmationMessage;
+        
+        hasConfirmed = true;  // Set to true after the first confirmation
+
+        return confirmationMessage;
+    });
+   </script>
+	  
 
 
 
