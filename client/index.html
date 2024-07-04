@@ -99,12 +99,10 @@ const module = await import("./script.js?v=v7");
 
 
    <script>
+    // Initialize the variable directly in the script
     let hasConfirmed = false;
 
-    window.addEventListener('load', function() {
-        hasConfirmed = false; // Reset on page load
-    });
-
+    // Add event listener for beforeunload event
     window.addEventListener('beforeunload', function (e) {
         if (hasConfirmed) {
             return;
@@ -117,7 +115,13 @@ const module = await import("./script.js?v=v7");
 
         return confirmationMessage;
     });
+
+    // Reset the variable when the page is fully loaded
+    window.onload = function() {
+        hasConfirmed = false;
+    };
    </script>
+	  
 	  
 
 
