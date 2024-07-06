@@ -493,10 +493,10 @@ h1 {
 
 
 
-
-h1, h2 {
+h1, h2, h3 {
   padding: 0 1em; /* Adjust the value as needed */
 }
+
 
 
 
