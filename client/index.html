@@ -286,14 +286,14 @@ exportChatButton.addEventListener("click", function() {
   var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the exported content
-  var style = "<style> .question { color: blue; cursor: pointer; } .answer { color: red; cursor: pointer; } </style>";
+  var style = "<style> .question { color: blue; } .answer { color: red; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  // Add event listeners to words
-  chatContent = chatContent.replace(/>([^<]+)</g, function(match, text) {
-    return ' data-text="' + text + '" onclick="readWord(this)" style="cursor: pointer;">' + text + '<';
+  // Wrap each sentence/message in a container with a microphone button
+  chatContent = chatContent.replace(/(<div class="message">.+?<\/div>)/g, function(match, message) {
+    return '<div class="message">' + message + '<span class="mike-button" onclick="readSentence(this)">🎤</span></div>';
   });
 
   var exportWindow = window.open("", "_blank");
@@ -301,11 +301,11 @@ exportChatButton.addEventListener("click", function() {
   exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
   exportWindow.document.close();
 
-  // Function to read word aloud with romantic female voice
-  function readWord(element) {
-    var text = element.getAttribute("data-text");
+  // Function to read entire sentence aloud
+  function readSentence(element) {
+    var sentence = element.parentNode.textContent.trim();
     var speech = new SpeechSynthesisUtterance();
-    speech.text = text;
+    speech.text = sentence;
     speech.voice = getRomanticFemaleVoice();
     window.speechSynthesis.speak(speech);
   }
@@ -319,6 +319,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
+
 
 	
 		</script>
