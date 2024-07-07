@@ -274,7 +274,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-		var printButton = document.createElement("button");
+var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -287,10 +287,6 @@ printButton.addEventListener("click", function() {
       .question { color: blue; }
       .answer { color: red; }
       .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-      .indicator { position: absolute; width: 20px; height: 20px; background: yellow; border-radius: 50%; opacity: 0; transition: opacity 0.3s; }
-      .indicator.visible { opacity: 1; }
-      #toggleButton { position: fixed; bottom: 10px; right: 10px; padding: 10px; background: grey; color: white; cursor: pointer; }
-      #toggleButton.off { background: red; }
     </style>`;
 
   // Replace line breaks with a styled span to add vertical space
@@ -301,7 +297,23 @@ printButton.addEventListener("click", function() {
 
   var printWindow = window.open("", "_blank");
   printWindow.document.open();
-  printWindow.document.write("<html><head><title>Print Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Print Chat</title>
+        ${style}
+      </head>
+      <body>${chatContent}</body>
+      <script>
+        document.body.addEventListener('click', function(event) {
+          if (event.target.nodeType === Node.TEXT_NODE) {
+            const word = event.target.textContent.trim();
+            const utterance = new SpeechSynthesisUtterance(word);
+            window.speechSynthesis.speak(utterance);
+          }
+        });
+      </script>
+    </html>`);
   printWindow.document.close();
 
   // Execute the print function
@@ -322,120 +334,34 @@ exportChatButton.addEventListener("click", function() {
     <style>
       .question { color: blue; }
       .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-      .indicator { position: absolute; width: 20px; height: 20px; background: yellow; border-radius: 50%; opacity: 0; transition: opacity 0.3s; }
-      .indicator.visible { opacity: 1; }
-      .mike-button { cursor: pointer; margin-left: 5px; }
-      #toggleButton { position: fixed; bottom: 10px; right: 10px; padding: 10px; background: grey; color: white; cursor: pointer; }
-      #toggleButton.off { background: red; }
     </style>`;
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  // Add the microphone button to each sentence
-  chatContent = chatContent.replace(/([.!?])\s*/g, '$1 <span class="mike-button">🎤</span> ');
-
-  // Add the JavaScript for Web Speech API
-  var script = `
-    <script>
-      let activeIndicator = null;
-      let activeUtterance = null;
-      let readingEnabled = false;
-
-      document.querySelectorAll('.mike-button').forEach(function(button) {
-        button.addEventListener('click', function(event) {
-          const sentence = event.target.previousSibling.textContent;
-          startReading(sentence, event.clientX, event.clientY + window.scrollY);
-        });
-      });
-
-      function startReading(text, x, y) {
-        if (activeUtterance) {
-          activeUtterance.onend = null;
-          stopReading();
-        }
-
-        activeUtterance = new SpeechSynthesisUtterance(text);
-        activeUtterance.voice = getRomanticVoice();
-        window.speechSynthesis.speak(activeUtterance);
-
-        activeIndicator = document.createElement('div');
-        activeIndicator.className = 'indicator';
-        activeIndicator.style.left = (x - 10) + 'px';
-        activeIndicator.style.top = (y - 10) + 'px';
-        document.body.appendChild(activeIndicator);
-
-        activeIndicator.classList.add('visible');
-
-        activeUtterance.onend = function() {
-          stopReading();
-        };
-      }
-
-      function stopReading() {
-        if (activeUtterance) {
-          window.speechSynthesis.cancel();
-          activeUtterance = null;
-        }
-        if (activeIndicator) {
-          activeIndicator.remove();
-          activeIndicator = null;
-        }
-      }
-
-      function getRomanticVoice() {
-        const voices = window.speechSynthesis.getVoices();
-        const romanticVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
-        return romanticVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
-      }
-
-      function processTextNodes(node) {
-        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
-          const words = node.textContent.trim().split(/\\s+/);
-          const spannedWords = words.map(word => \`<span>\${word}</span>\`).join(' ');
-          const spanContainer = document.createElement('span');
-          spanContainer.innerHTML = spannedWords;
-          node.parentNode.replaceChild(spanContainer, node);
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          node.childNodes.forEach(processTextNodes);
-        }
-      }
-
-      window.addEventListener('DOMContentLoaded', function() {
-        processTextNodes(document.body);
-      });
-
-      document.addEventListener('click', handleClick);
-
-      const toggleButton = document.createElement('div');
-      toggleButton.id = 'toggleButton';
-      toggleButton.className = 'off';
-      toggleButton.textContent = 'Read Web Content Off';
-      document.body.appendChild(toggleButton);
-
-      toggleButton.addEventListener('click', function() {
-        if (readingEnabled) {
-          readingEnabled = false;
-          toggleButton.classList.add('off');
-          toggleButton.textContent = 'Read Web Content Off';
-          stopReading();
-        } else {
-          readingEnabled = true;
-          toggleButton.classList.remove('off');
-          toggleButton.textContent = 'Read Web Content On';
-        }
-      });
-    </script>`;
-
   var exportWindow = window.open("", "_blank");
   exportWindow.document.open();
-  exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + script + "</body></html>");
+  exportWindow.document.write(`
+    <html>
+      <head>
+        <title>Export Chat</title>
+        ${style}
+      </head>
+      <body>${chatContent}</body>
+      <script>
+        document.body.addEventListener('click', function(event) {
+          if (event.target.nodeType === Node.TEXT_NODE) {
+            const word = event.target.textContent.trim();
+            const utterance = new SpeechSynthesisUtterance(word);
+            window.speechSynthesis.speak(utterance);
+          }
+        });
+      </script>
+    </html>`);
   exportWindow.document.close();
 });
 
 document.body.appendChild(exportChatButton);
-
 		</script>
 
 <script>
