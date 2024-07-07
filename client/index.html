@@ -274,94 +274,98 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-var printButton = document.createElement("button");
-printButton.textContent = "Print Chat"; // Updating the button text to "Print"
-printButton.className = "add-course-button-1";
-printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
+document.addEventListener("DOMContentLoaded", function() {
+  var printButton = document.createElement("button");
+  printButton.textContent = "Print Chat";
+  printButton.className = "add-course-button-1";
+  printButton.addEventListener("click", function() {
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerHTML;
 
-  // Apply styling to the printed content
-  var style = `
-    <style>
-      .question { color: blue; }
-      .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    </style>`;
+    // Apply styling to the printed content
+    var style = `
+      <style>
+        .question { color: blue; }
+        .answer { color: red; }
+        .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+      </style>`;
 
-  // Replace line breaks with a styled span to add vertical space
-  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+    // Replace line breaks with a styled span to add vertical space
+    chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
 
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+    // Remove user input keyboard printout
+    chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Print Chat</title>
-        ${style}
-      </head>
-      <body>${chatContent}</body>
-      <script>
-        document.body.addEventListener('click', function(event) {
-          if (event.target.nodeType === Node.TEXT_NODE || event.target.nodeType === Node.ELEMENT_NODE) {
-            const word = event.target.textContent.trim().split(' ')[0];
-            const utterance = new SpeechSynthesisUtterance(word);
-            window.speechSynthesis.speak(utterance);
-          }
-        });
-      </script>
-    </html>`);
-  printWindow.document.close();
+    var printWindow = window.open("", "_blank");
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Chat</title>
+          ${style}
+        </head>
+        <body>${chatContent}
+          <script>
+            document.body.addEventListener('click', function(event) {
+              if (event.target.nodeType === Node.ELEMENT_NODE) {
+                const word = event.target.textContent.trim().split(' ')[0];
+                const utterance = new SpeechSynthesisUtterance(word);
+                window.speechSynthesis.speak(utterance);
+              }
+            });
+          </script>
+        </body>
+      </html>`);
+    printWindow.document.close();
 
-  // Execute the print function
-  printWindow.print();
+    // Execute the print function
+    printWindow.print();
+  });
+
+  document.body.appendChild(printButton);
+
+  var exportChatButton = document.createElement("button");
+  exportChatButton.textContent = "Export Chat";
+  exportChatButton.className = "ExportChatButton";
+  exportChatButton.addEventListener("click", function() {
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerHTML;
+
+    // Apply styling to the exported content
+    var style = `
+      <style>
+        .question { color: blue; }
+        .answer { color: red; }
+      </style>`;
+
+    // Remove user input keyboard printout
+    chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+    var exportWindow = window.open("", "_blank");
+    exportWindow.document.open();
+    exportWindow.document.write(`
+      <html>
+        <head>
+          <title>Export Chat</title>
+          ${style}
+        </head>
+        <body>${chatContent}
+          <script>
+            document.body.addEventListener('click', function(event) {
+              if (event.target.nodeType === Node.ELEMENT_NODE) {
+                const word = event.target.textContent.trim().split(' ')[0];
+                const utterance = new SpeechSynthesisUtterance(word);
+                window.speechSynthesis.speak(utterance);
+              }
+            });
+          </script>
+        </body>
+      </html>`);
+    exportWindow.document.close();
+  });
+
+  document.body.appendChild(exportChatButton);
 });
-
-document.body.appendChild(printButton);
-
-var exportChatButton = document.createElement("button");
-exportChatButton.textContent = "Export Chat";
-exportChatButton.className = "ExportChatButton";
-exportChatButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
-
-  // Apply styling to the exported content
-  var style = `
-    <style>
-      .question { color: blue; }
-      .answer { color: red; }
-    </style>`;
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var exportWindow = window.open("", "_blank");
-  exportWindow.document.open();
-  exportWindow.document.write(`
-    <html>
-      <head>
-        <title>Export Chat</title>
-        ${style}
-      </head>
-      <body>${chatContent}</body>
-      <script>
-        document.body.addEventListener('click', function(event) {
-          if (event.target.nodeType === Node.TEXT_NODE || event.target.nodeType === Node.ELEMENT_NODE) {
-            const word = event.target.textContent.trim().split(' ')[0];
-            const utterance = new SpeechSynthesisUtterance(word);
-            window.speechSynthesis.speak(utterance);
-          }
-        });
-      </script>
-    </html>`);
-  exportWindow.document.close();
-});
-
-document.body.appendChild(exportChatButton);
 		</script>
 
 <script>
