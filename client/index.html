@@ -298,7 +298,7 @@ exportChatButton.addEventListener("click", function() {
       </head>
       <body>
         <div style="text-align: center;">
-          <h3>Click or touch a sentence to hear it aloud</h3>
+          <h3>Click or touch any sentence to hear it spoken in any language</h3>
         </div>
         ${chatContent}
       </body>
@@ -318,6 +318,7 @@ exportChatButton.addEventListener("click", function() {
   function readWord(word) {
     var speech = new SpeechSynthesisUtterance();
     speech.text = word;
+    speech.lang = 'en-US'; // Example: Set the language (e.g., English)
     speech.voice = getRomanticFemaleVoice();
     window.speechSynthesis.speak(speech);
   }
