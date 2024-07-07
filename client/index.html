@@ -283,7 +283,7 @@ exportChatButton.addEventListener("click", function() {
   var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the exported content
-  var style = "<style> .message { margin-bottom: 10px; text-align: center; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
+  var style = "<style> .message { margin-bottom: 10px; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
@@ -297,7 +297,9 @@ exportChatButton.addEventListener("click", function() {
         ${style}
       </head>
       <body>
-        <h3 style="text-align: center;">Click or touch a sentence to read it aloud</h3>
+        <div style="text-align: center;">
+          <h3>Click or touch a sentence to hear it aloud</h3>
+        </div>
         ${chatContent}
       </body>
     </html>
@@ -329,6 +331,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
+
 		
 		</script>
 
