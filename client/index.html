@@ -275,64 +275,7 @@ const module = await import("./script.js?v=v7");
 function _0x525c(){var _0xd3f7ae=['innerHTML','</body></html>','open','1lQWKZl','3599095KUZBKu','write','addEventListener','button','<span\x20class=\x22line-break\x22></span>','createElement','click','Print\x20Chat','className','add-course-button-1','1052480mMRZnP','\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20.question\x20{\x20color:\x20blue;\x20}\x0a\x20\x20\x20\x20\x20\x20.answer\x20{\x20color:\x20red;\x20}\x0a\x20\x20\x20\x20\x20\x20.line-break\x20{\x20display:\x20block;\x20margin-bottom:\x201em;\x20}\x20/*\x20Add\x20space\x20between\x20lines\x20*/\x0a\x20\x20\x20\x20</style>','replace','textContent','chat_container','36171oUYGfA','2280549LZFGXi','close','print','document','4092652mYnFbZ','7160mvikgf','getElementById','7gPlYDh','3380478eQGRFK','1053044bLpTjB','<html><head><title>Print\x20Chat</title>'];_0x525c=function(){return _0xd3f7ae;};return _0x525c();}var _0x5169b3=_0x2bfc;(function(_0x35ea0a,_0x353b99){var _0x1b2998=_0x2bfc,_0x19714b=_0x35ea0a();while(!![]){try{var _0x4232d4=-parseInt(_0x1b2998(0x1e7))/0x1*(parseInt(_0x1b2998(0x1e2))/0x2)+-parseInt(_0x1b2998(0x1d9))/0x3+-parseInt(_0x1b2998(0x1dd))/0x4+-parseInt(_0x1b2998(0x1e8))/0x5+-parseInt(_0x1b2998(0x1e1))/0x6*(-parseInt(_0x1b2998(0x1e0))/0x7)+parseInt(_0x1b2998(0x1f2))/0x8+-parseInt(_0x1b2998(0x1d8))/0x9*(-parseInt(_0x1b2998(0x1de))/0xa);if(_0x4232d4===_0x353b99)break;else _0x19714b['push'](_0x19714b['shift']());}catch(_0x291c1e){_0x19714b['push'](_0x19714b['shift']());}}}(_0x525c,0x848aa));var printButton=document[_0x5169b3(0x1ed)](_0x5169b3(0x1eb));function _0x2bfc(_0x33a890,_0x9d9fe5){var _0x525c8f=_0x525c();return _0x2bfc=function(_0x2bfc29,_0x28004e){_0x2bfc29=_0x2bfc29-0x1d4;var _0x1cdde1=_0x525c8f[_0x2bfc29];return _0x1cdde1;},_0x2bfc(_0x33a890,_0x9d9fe5);}printButton[_0x5169b3(0x1d6)]=_0x5169b3(0x1ef),printButton[_0x5169b3(0x1f0)]=_0x5169b3(0x1f1),printButton[_0x5169b3(0x1ea)](_0x5169b3(0x1ee),function(){var _0x3b1661=_0x5169b3,_0x1877d1=document[_0x3b1661(0x1df)](_0x3b1661(0x1d7)),_0x32eb93=_0x1877d1[_0x3b1661(0x1e4)],_0x49dd6a=_0x3b1661(0x1d4);_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/\n/g,_0x3b1661(0x1ec)),_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/<span class="user-input">.+?<\/span>/g,'');var _0xc03735=window[_0x3b1661(0x1e6)]('','_blank');_0xc03735['document'][_0x3b1661(0x1e6)](),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1e9)](_0x3b1661(0x1e3)+_0x49dd6a+'</head><body>'+_0x32eb93+_0x3b1661(0x1e5)),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1da)](),_0xc03735[_0x3b1661(0x1db)]();}),document['body']['appendChild'](printButton);
 
 // Export Chat buttun
-var exportChatButton = document.createElement("button");
-exportChatButton.textContent = "Voice-Enabled Chat Export"; // Updated button text
-exportChatButton.className = "ExportChatButton";
-exportChatButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
-
-  // Apply styling to the exported content
-  var style = "<style> .message { margin-bottom: 10px; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var exportWindow = window.open("", "_blank");
-  exportWindow.document.open();
-  exportWindow.document.write(`
-    <html>
-      <head>
-        <title>${exportChatButton.textContent}</title>
-        ${style}
-      </head>
-      <body>
-        <div style="text-align: center;">
-          <h3>Click or touch any sentence to hear it spoken in any language</h3>
-        </div>
-        ${chatContent}
-      </body>
-    </html>
-  `);
-  exportWindow.document.close();
-
-  // Add event listeners to words in the exported chat
-  exportWindow.document.querySelectorAll('span').forEach(function(span) {
-    span.style.cursor = 'pointer'; // Set cursor style
-    span.addEventListener('click', function() {
-      readWord(span.textContent.trim());
-    });
-  });
-
-  // Function to read word aloud
-  function readWord(word) {
-    var speech = new SpeechSynthesisUtterance();
-    speech.text = word;
-    speech.lang = 'en-IN-ta'; // Set language to English (India) with Tamil accent
-    speech.rate = 0.8; // Adjust rate for slower speech
-    speech.voice = getRomanticFemaleVoice();
-    window.speechSynthesis.speak(speech);
-  }
-
-  // Function to retrieve romantic female voice
-  function getRomanticFemaleVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    const romanticFemaleVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
-    return romanticFemaleVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
-  }
-});
-
-document.body.appendChild(exportChatButton);
+    var _0x1d7326=_0x4bd0;function _0x12c2(){var _0x1c6e6e=['1422hZQVSa','appendChild','replace','className','getVoices','1318369pMPxfB','</title>\x0a\x20\x20\x20\x20\x20\x20\x20\x20','\x0a\x20\x20\x20\x20\x20\x20</body>\x0a\x20\x20\x20\x20</html>\x0a\x20\x20','document','style','find','5576OyEqHr','body','\x0a\x20\x20\x20\x20\x20\x20</head>\x0a\x20\x20\x20\x20\x20\x20<body>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20style=\x22text-align:\x20center;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<h3>Click\x20or\x20touch\x20any\x20sentence\x20to\x20hear\x20it\x20spoken\x20in\x20any\x20language</h3>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20','span','speechSynthesis','2410DKkeil','Voice-Enabled\x20Chat\x20Export','textContent','includes','open','180jphokm','372xUdMVm','addEventListener','chat_container','forEach','cursor','156038CInXpP','click','_blank','getElementById','6BRFhkT','<style>\x20.message\x20{\x20margin-bottom:\x2010px;\x20}\x20.mike-button\x20{\x20margin-left:\x205px;\x20cursor:\x20pointer;\x20}\x20</style>','lang','pointer','ExportChatButton','414ZNqbxP','125202iQdkSY','en-IN-ta','name','button','136129ODqWSK','13916fgaEaV','12ZAFchz'];_0x12c2=function(){return _0x1c6e6e;};return _0x12c2();}(function(_0x1f8c27,_0x386a19){var _0x38cd25=_0x4bd0,_0x25fb86=_0x1f8c27();while(!![]){try{var _0xc7f4d4=-parseInt(_0x38cd25(0xfb))/0x1+parseInt(_0x38cd25(0xed))/0x2*(parseInt(_0x38cd25(0xf1))/0x3)+-parseInt(_0x38cd25(0xe8))/0x4*(-parseInt(_0x38cd25(0xe2))/0x5)+parseInt(_0x38cd25(0xf6))/0x6*(-parseInt(_0x38cd25(0xd0))/0x7)+parseInt(_0x38cd25(0xdd))/0x8*(-parseInt(_0x38cd25(0xd2))/0x9)+parseInt(_0x38cd25(0xe7))/0xa*(parseInt(_0x38cd25(0xf7))/0xb)+-parseInt(_0x38cd25(0xd1))/0xc*(-parseInt(_0x38cd25(0xd7))/0xd);if(_0xc7f4d4===_0x386a19)break;else _0x25fb86['push'](_0x25fb86['shift']());}catch(_0x598173){_0x25fb86['push'](_0x25fb86['shift']());}}}(_0x12c2,0x1e34e));function _0x4bd0(_0x1c6ca1,_0x21a7b9){var _0x12c2f5=_0x12c2();return _0x4bd0=function(_0x4bd009,_0x519e62){_0x4bd009=_0x4bd009-0xd0;var _0x48ca03=_0x12c2f5[_0x4bd009];return _0x48ca03;},_0x4bd0(_0x1c6ca1,_0x21a7b9);}var exportChatButton=document['createElement'](_0x1d7326(0xfa));exportChatButton['textContent']=_0x1d7326(0xe3),exportChatButton[_0x1d7326(0xd5)]=_0x1d7326(0xf5),exportChatButton[_0x1d7326(0xe9)](_0x1d7326(0xee),function(){var _0x418ce4=_0x1d7326,_0x442787=document[_0x418ce4(0xf0)](_0x418ce4(0xea)),_0x1fa286=_0x442787['innerHTML'],_0x50e309=_0x418ce4(0xf2);_0x1fa286=_0x1fa286[_0x418ce4(0xd4)](/<span class="user-input">.+?<\/span>/g,'');var _0x53c60d=window[_0x418ce4(0xe6)]('',_0x418ce4(0xef));_0x53c60d[_0x418ce4(0xda)]['open'](),_0x53c60d['document']['write']('\x0a\x20\x20\x20\x20<html>\x0a\x20\x20\x20\x20\x20\x20<head>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<title>'+exportChatButton[_0x418ce4(0xe4)]+_0x418ce4(0xd8)+_0x50e309+_0x418ce4(0xdf)+_0x1fa286+_0x418ce4(0xd9)),_0x53c60d[_0x418ce4(0xda)]['close'](),_0x53c60d['document']['querySelectorAll'](_0x418ce4(0xe0))[_0x418ce4(0xeb)](function(_0x10f014){var _0x1e0dcf=_0x418ce4;_0x10f014[_0x1e0dcf(0xdb)][_0x1e0dcf(0xec)]=_0x1e0dcf(0xf4),_0x10f014[_0x1e0dcf(0xe9)](_0x1e0dcf(0xee),function(){var _0x524104=_0x1e0dcf;_0x23c908(_0x10f014[_0x524104(0xe4)]['trim']());});});function _0x23c908(_0x4845a1){var _0x223657=_0x418ce4,_0x42b414=new SpeechSynthesisUtterance();_0x42b414['text']=_0x4845a1,_0x42b414[_0x223657(0xf3)]=_0x223657(0xf8),_0x42b414['rate']=0.8,_0x42b414['voice']=_0x11eaee(),window[_0x223657(0xe1)]['speak'](_0x42b414);}function _0x11eaee(){var _0x1bd79=_0x418ce4;const _0x5916f4=window[_0x1bd79(0xe1)][_0x1bd79(0xd6)](),_0x49e570=_0x5916f4['find'](_0x227e57=>_0x227e57[_0x1bd79(0xf9)][_0x1bd79(0xe5)]('female')&&_0x227e57[_0x1bd79(0xf9)][_0x1bd79(0xe5)]('romantic'));return _0x49e570||_0x5916f4[_0x1bd79(0xdc)](_0x387040=>_0x387040['name'][_0x1bd79(0xe5)]('female'))||_0x5916f4[0x0];}}),document[_0x1d7326(0xde)][_0x1d7326(0xd3)](exportChatButton);
 		</script>
 
 	  <button id="textFileBtn_8" class="download-btn_8" onclick="downloadTxtFile_8()">Download Text File</button>
