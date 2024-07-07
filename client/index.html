@@ -298,7 +298,7 @@ exportChatButton.addEventListener("click", function() {
       </head>
       <body>
         <div style="text-align: center;">
-          <h3>Click or touch any sentence to hear it spoken in any language</h3>
+          <h3>Click or touch any sentence to hear it read slowly and clearly</h3>
         </div>
         ${chatContent}
       </body>
@@ -318,7 +318,8 @@ exportChatButton.addEventListener("click", function() {
   function readWord(word) {
     var speech = new SpeechSynthesisUtterance();
     speech.text = word;
-    speech.lang = 'en-US'; // Example: Set the language (e.g., English)
+    speech.lang = 'en-IN-ta'; // Set language to English (India) with Tamil accent
+    speech.rate = 0.8; // Adjust rate for slower speech
     speech.voice = getRomanticFemaleVoice();
     window.speechSynthesis.speak(speech);
   }
@@ -332,8 +333,6 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
-
-		
 		</script>
 
 	  <button id="textFileBtn_8" class="download-btn_8" onclick="downloadTxtFile_8()">Download Text File</button>
