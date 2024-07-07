@@ -278,7 +278,7 @@ function _0x525c(){var _0xd3f7ae=['innerHTML','</body></html>','open','1lQWKZl',
 
 // Export Chat buttun
 
-var exportChatButton = document.createElement("button");
+ var exportChatButton = document.createElement("button");
 exportChatButton.textContent = "Export Chat";
 exportChatButton.className = "ExportChatButton";
 exportChatButton.addEventListener("click", function() {
@@ -286,14 +286,14 @@ exportChatButton.addEventListener("click", function() {
   var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the exported content
-  var style = "<style> .question { color: blue; } .answer { color: red; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
+  var style = "<style> .message { margin-bottom: 10px; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  // Wrap each sentence/message in a container with a microphone button
+  // Wrap each message in a container with a microphone button
   chatContent = chatContent.replace(/(<div class="message">.+?<\/div>)/g, function(match, message) {
-    return '<div class="message">' + message + '<span class="mike-button" onclick="readSentence(this)">🎤</span></div>';
+    return '<div class="message">' + message + '<span class="mike-button" onclick="readMessage(this)">🎤</span></div>';
   });
 
   var exportWindow = window.open("", "_blank");
@@ -301,11 +301,11 @@ exportChatButton.addEventListener("click", function() {
   exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
   exportWindow.document.close();
 
-  // Function to read entire sentence aloud
-  function readSentence(element) {
-    var sentence = element.parentNode.textContent.trim();
+  // Function to read entire message aloud
+  function readMessage(element) {
+    var message = element.parentNode.textContent.trim();
     var speech = new SpeechSynthesisUtterance();
-    speech.text = sentence;
+    speech.text = message;
     speech.voice = getRomanticFemaleVoice();
     window.speechSynthesis.speak(speech);
   }
@@ -319,7 +319,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
-
+		
 
 	
 		</script>
