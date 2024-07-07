@@ -306,8 +306,8 @@ printButton.addEventListener("click", function() {
       <body>${chatContent}</body>
       <script>
         document.body.addEventListener('click', function(event) {
-          if (event.target.nodeType === Node.TEXT_NODE) {
-            const word = event.target.textContent.trim();
+          if (event.target.nodeType === Node.TEXT_NODE || event.target.nodeType === Node.ELEMENT_NODE) {
+            const word = event.target.textContent.trim().split(' ')[0];
             const utterance = new SpeechSynthesisUtterance(word);
             window.speechSynthesis.speak(utterance);
           }
@@ -350,8 +350,8 @@ exportChatButton.addEventListener("click", function() {
       <body>${chatContent}</body>
       <script>
         document.body.addEventListener('click', function(event) {
-          if (event.target.nodeType === Node.TEXT_NODE) {
-            const word = event.target.textContent.trim();
+          if (event.target.nodeType === Node.TEXT_NODE || event.target.nodeType === Node.ELEMENT_NODE) {
+            const word = event.target.textContent.trim().split(' ')[0];
             const utterance = new SpeechSynthesisUtterance(word);
             window.speechSynthesis.speak(utterance);
           }
