@@ -291,21 +291,23 @@ exportChatButton.addEventListener("click", function() {
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  // Wrap each message in a container with a microphone button
-  chatContent = chatContent.replace(/(<div class="message">.+?<\/div>)/g, function(match, message) {
-    return '<div class="message">' + message + '<span class="mike-button" onclick="readMessage(this)">🎤</span></div>';
-  });
-
   var exportWindow = window.open("", "_blank");
   exportWindow.document.open();
   exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
   exportWindow.document.close();
 
-  // Function to read entire message aloud
-  function readMessage(element) {
-    var message = element.parentNode.textContent.trim();
+  // Add event listeners to words in the exported chat
+  exportWindow.document.querySelectorAll('span').forEach(function(span) {
+    span.style.cursor = 'pointer'; // Set cursor style
+    span.addEventListener('click', function() {
+      readWord(span.textContent.trim());
+    });
+  });
+
+  // Function to read word aloud
+  function readWord(word) {
     var speech = new SpeechSynthesisUtterance();
-    speech.text = message;
+    speech.text = word;
     speech.voice = getRomanticFemaleVoice();
     window.speechSynthesis.speak(speech);
   }
@@ -321,7 +323,9 @@ exportChatButton.addEventListener("click", function() {
 document.body.appendChild(exportChatButton);
 		
 
-	
+  
+
+			
 		</script>
 
 <script>
