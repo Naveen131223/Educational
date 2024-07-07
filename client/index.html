@@ -274,98 +274,31 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-document.addEventListener("DOMContentLoaded", function() {
-  var printButton = document.createElement("button");
-  printButton.textContent = "Print Chat";
-  printButton.className = "add-course-button-1";
-  printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerHTML;
+function _0x525c(){var _0xd3f7ae=['innerHTML','</body></html>','open','1lQWKZl','3599095KUZBKu','write','addEventListener','button','<span\x20class=\x22line-break\x22></span>','createElement','click','Print\x20Chat','className','add-course-button-1','1052480mMRZnP','\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20.question\x20{\x20color:\x20blue;\x20}\x0a\x20\x20\x20\x20\x20\x20.answer\x20{\x20color:\x20red;\x20}\x0a\x20\x20\x20\x20\x20\x20.line-break\x20{\x20display:\x20block;\x20margin-bottom:\x201em;\x20}\x20/*\x20Add\x20space\x20between\x20lines\x20*/\x0a\x20\x20\x20\x20</style>','replace','textContent','chat_container','36171oUYGfA','2280549LZFGXi','close','print','document','4092652mYnFbZ','7160mvikgf','getElementById','7gPlYDh','3380478eQGRFK','1053044bLpTjB','<html><head><title>Print\x20Chat</title>'];_0x525c=function(){return _0xd3f7ae;};return _0x525c();}var _0x5169b3=_0x2bfc;(function(_0x35ea0a,_0x353b99){var _0x1b2998=_0x2bfc,_0x19714b=_0x35ea0a();while(!![]){try{var _0x4232d4=-parseInt(_0x1b2998(0x1e7))/0x1*(parseInt(_0x1b2998(0x1e2))/0x2)+-parseInt(_0x1b2998(0x1d9))/0x3+-parseInt(_0x1b2998(0x1dd))/0x4+-parseInt(_0x1b2998(0x1e8))/0x5+-parseInt(_0x1b2998(0x1e1))/0x6*(-parseInt(_0x1b2998(0x1e0))/0x7)+parseInt(_0x1b2998(0x1f2))/0x8+-parseInt(_0x1b2998(0x1d8))/0x9*(-parseInt(_0x1b2998(0x1de))/0xa);if(_0x4232d4===_0x353b99)break;else _0x19714b['push'](_0x19714b['shift']());}catch(_0x291c1e){_0x19714b['push'](_0x19714b['shift']());}}}(_0x525c,0x848aa));var printButton=document[_0x5169b3(0x1ed)](_0x5169b3(0x1eb));function _0x2bfc(_0x33a890,_0x9d9fe5){var _0x525c8f=_0x525c();return _0x2bfc=function(_0x2bfc29,_0x28004e){_0x2bfc29=_0x2bfc29-0x1d4;var _0x1cdde1=_0x525c8f[_0x2bfc29];return _0x1cdde1;},_0x2bfc(_0x33a890,_0x9d9fe5);}printButton[_0x5169b3(0x1d6)]=_0x5169b3(0x1ef),printButton[_0x5169b3(0x1f0)]=_0x5169b3(0x1f1),printButton[_0x5169b3(0x1ea)](_0x5169b3(0x1ee),function(){var _0x3b1661=_0x5169b3,_0x1877d1=document[_0x3b1661(0x1df)](_0x3b1661(0x1d7)),_0x32eb93=_0x1877d1[_0x3b1661(0x1e4)],_0x49dd6a=_0x3b1661(0x1d4);_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/\n/g,_0x3b1661(0x1ec)),_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/<span class="user-input">.+?<\/span>/g,'');var _0xc03735=window[_0x3b1661(0x1e6)]('','_blank');_0xc03735['document'][_0x3b1661(0x1e6)](),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1e9)](_0x3b1661(0x1e3)+_0x49dd6a+'</head><body>'+_0x32eb93+_0x3b1661(0x1e5)),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1da)](),_0xc03735[_0x3b1661(0x1db)]();}),document['body']['appendChild'](printButton);
 
-    // Apply styling to the printed content
-    var style = `
-      <style>
-        .question { color: blue; }
-        .answer { color: red; }
-        .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-      </style>`;
+// Export Chat buttun
 
-    // Replace line breaks with a styled span to add vertical space
-    chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+var exportChatButton = document.createElement("button");
+exportChatButton.textContent = "Export Chat";
+exportChatButton.className = "ExportChatButton";
+exportChatButton.addEventListener("click", function() {
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
-    // Remove user input keyboard printout
-    chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+  // Apply styling to the exported content
+  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
 
-    var printWindow = window.open("", "_blank");
-    printWindow.document.open();
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Chat</title>
-          ${style}
-        </head>
-        <body>${chatContent}
-          <script>
-            document.body.addEventListener('click', function(event) {
-              if (event.target.nodeType === Node.ELEMENT_NODE) {
-                const word = event.target.textContent.trim().split(' ')[0];
-                const utterance = new SpeechSynthesisUtterance(word);
-                window.speechSynthesis.speak(utterance);
-              }
-            });
-          </script>
-        </body>
-      </html>`);
-    printWindow.document.close();
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-    // Execute the print function
-    printWindow.print();
-  });
-
-  document.body.appendChild(printButton);
-
-  var exportChatButton = document.createElement("button");
-  exportChatButton.textContent = "Export Chat";
-  exportChatButton.className = "ExportChatButton";
-  exportChatButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerHTML;
-
-    // Apply styling to the exported content
-    var style = `
-      <style>
-        .question { color: blue; }
-        .answer { color: red; }
-      </style>`;
-
-    // Remove user input keyboard printout
-    chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-    var exportWindow = window.open("", "_blank");
-    exportWindow.document.open();
-    exportWindow.document.write(`
-      <html>
-        <head>
-          <title>Export Chat</title>
-          ${style}
-        </head>
-        <body>${chatContent}
-          <script>
-            document.body.addEventListener('click', function(event) {
-              if (event.target.nodeType === Node.ELEMENT_NODE) {
-                const word = event.target.textContent.trim().split(' ')[0];
-                const utterance = new SpeechSynthesisUtterance(word);
-                window.speechSynthesis.speak(utterance);
-              }
-            });
-          </script>
-        </body>
-      </html>`);
-    exportWindow.document.close();
-  });
-
-  document.body.appendChild(exportChatButton);
+  var exportWindow = window.open("", "_blank");
+  exportWindow.document.open();
+  exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
+  exportWindow.document.close();
 });
+
+document.body.appendChild(exportChatButton);
+		
 		</script>
 
 <script>
