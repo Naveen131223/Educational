@@ -286,10 +286,15 @@ exportChatButton.addEventListener("click", function() {
   var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the exported content
-  var style = "<style> .question { color: blue; } .answer { color: red; } </style>";
+  var style = "<style> .question { color: blue; cursor: pointer; } .answer { color: red; cursor: pointer; } </style>";
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  // Add event listeners to words
+  chatContent = chatContent.replace(/>([^<]+)</g, function(match, text) {
+    return ' data-text="' + text + '" onclick="readWord(this)" style="cursor: pointer;">' + text + '<';
+  });
 
   var exportWindow = window.open("", "_blank");
   exportWindow.document.open();
@@ -298,7 +303,14 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
-		
+
+function readWord(element) {
+  var text = element.getAttribute("data-text");
+  var speech = new SpeechSynthesisUtterance();
+  speech.text = text;
+  window.speechSynthesis.speak(speech);
+}
+	
 		</script>
 
 <script>
