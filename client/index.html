@@ -300,16 +300,26 @@ exportChatButton.addEventListener("click", function() {
   exportWindow.document.open();
   exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
   exportWindow.document.close();
+
+  // Function to read word aloud with romantic female voice
+  function readWord(element) {
+    var text = element.getAttribute("data-text");
+    var speech = new SpeechSynthesisUtterance();
+    speech.text = text;
+    speech.voice = getRomanticFemaleVoice();
+    window.speechSynthesis.speak(speech);
+  }
+
+  // Function to retrieve romantic female voice
+  function getRomanticFemaleVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const romanticFemaleVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
+    return romanticFemaleVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
+  }
 });
 
 document.body.appendChild(exportChatButton);
 
-function readWord(element) {
-  var text = element.getAttribute("data-text");
-  var speech = new SpeechSynthesisUtterance();
-  speech.text = text;
-  window.speechSynthesis.speak(speech);
-}
 	
 		</script>
 
