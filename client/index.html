@@ -275,55 +275,8 @@ const module = await import("./script.js?v=v7");
 function _0x525c(){var _0xd3f7ae=['innerHTML','</body></html>','open','1lQWKZl','3599095KUZBKu','write','addEventListener','button','<span\x20class=\x22line-break\x22></span>','createElement','click','Print\x20Chat','className','add-course-button-1','1052480mMRZnP','\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20.question\x20{\x20color:\x20blue;\x20}\x0a\x20\x20\x20\x20\x20\x20.answer\x20{\x20color:\x20red;\x20}\x0a\x20\x20\x20\x20\x20\x20.line-break\x20{\x20display:\x20block;\x20margin-bottom:\x201em;\x20}\x20/*\x20Add\x20space\x20between\x20lines\x20*/\x0a\x20\x20\x20\x20</style>','replace','textContent','chat_container','36171oUYGfA','2280549LZFGXi','close','print','document','4092652mYnFbZ','7160mvikgf','getElementById','7gPlYDh','3380478eQGRFK','1053044bLpTjB','<html><head><title>Print\x20Chat</title>'];_0x525c=function(){return _0xd3f7ae;};return _0x525c();}var _0x5169b3=_0x2bfc;(function(_0x35ea0a,_0x353b99){var _0x1b2998=_0x2bfc,_0x19714b=_0x35ea0a();while(!![]){try{var _0x4232d4=-parseInt(_0x1b2998(0x1e7))/0x1*(parseInt(_0x1b2998(0x1e2))/0x2)+-parseInt(_0x1b2998(0x1d9))/0x3+-parseInt(_0x1b2998(0x1dd))/0x4+-parseInt(_0x1b2998(0x1e8))/0x5+-parseInt(_0x1b2998(0x1e1))/0x6*(-parseInt(_0x1b2998(0x1e0))/0x7)+parseInt(_0x1b2998(0x1f2))/0x8+-parseInt(_0x1b2998(0x1d8))/0x9*(-parseInt(_0x1b2998(0x1de))/0xa);if(_0x4232d4===_0x353b99)break;else _0x19714b['push'](_0x19714b['shift']());}catch(_0x291c1e){_0x19714b['push'](_0x19714b['shift']());}}}(_0x525c,0x848aa));var printButton=document[_0x5169b3(0x1ed)](_0x5169b3(0x1eb));function _0x2bfc(_0x33a890,_0x9d9fe5){var _0x525c8f=_0x525c();return _0x2bfc=function(_0x2bfc29,_0x28004e){_0x2bfc29=_0x2bfc29-0x1d4;var _0x1cdde1=_0x525c8f[_0x2bfc29];return _0x1cdde1;},_0x2bfc(_0x33a890,_0x9d9fe5);}printButton[_0x5169b3(0x1d6)]=_0x5169b3(0x1ef),printButton[_0x5169b3(0x1f0)]=_0x5169b3(0x1f1),printButton[_0x5169b3(0x1ea)](_0x5169b3(0x1ee),function(){var _0x3b1661=_0x5169b3,_0x1877d1=document[_0x3b1661(0x1df)](_0x3b1661(0x1d7)),_0x32eb93=_0x1877d1[_0x3b1661(0x1e4)],_0x49dd6a=_0x3b1661(0x1d4);_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/\n/g,_0x3b1661(0x1ec)),_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/<span class="user-input">.+?<\/span>/g,'');var _0xc03735=window[_0x3b1661(0x1e6)]('','_blank');_0xc03735['document'][_0x3b1661(0x1e6)](),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1e9)](_0x3b1661(0x1e3)+_0x49dd6a+'</head><body>'+_0x32eb93+_0x3b1661(0x1e5)),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1da)](),_0xc03735[_0x3b1661(0x1db)]();}),document['body']['appendChild'](printButton);
 
 // Export Chat buttun
-
- var exportChatButton = document.createElement("button");
-exportChatButton.textContent = "Voice-Enabled Chat Export";
-exportChatButton.className = "ExportChatButton";
-exportChatButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
-
-  // Apply styling to the exported content
-  var style = "<style> .message { margin-bottom: 10px; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var exportWindow = window.open("", "_blank");
-  exportWindow.document.open();
-  exportWindow.document.write("<html><head><title>Export Chat</title>" + style + "</head><body>" + chatContent + "</body></html>");
-  exportWindow.document.close();
-
-  // Add event listeners to words in the exported chat
-  exportWindow.document.querySelectorAll('span').forEach(function(span) {
-    span.style.cursor = 'pointer'; // Set cursor style
-    span.addEventListener('click', function() {
-      readWord(span.textContent.trim());
-    });
-  });
-
-  // Function to read word aloud
-  function readWord(word) {
-    var speech = new SpeechSynthesisUtterance();
-    speech.text = word;
-    speech.voice = getRomanticFemaleVoice();
-    window.speechSynthesis.speak(speech);
-  }
-
-  // Function to retrieve romantic female voice
-  function getRomanticFemaleVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    const romanticFemaleVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
-    return romanticFemaleVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
-  }
-});
-
-document.body.appendChild(exportChatButton);
+function _0x3b3e(){var _0x3e6ced=['trim','18566pqanhd','find','innerHTML','includes','document','className','button','<html><head><title>Export\x20Chat</title>','8178952uwPhmJ','romantic','_blank','134nOsrOH','877430sTLrZf','chat_container','ExportChatButton','84HrFpoE','getElementById','click','style','body','textContent','voice','44WYyRCG','pointer','name','3183355dmmXdA','Voice-Enabled\x20Chat\x20Export','getVoices','cursor','2869239UcmDzP','speak','speechSynthesis','9kpzVbo','<style>\x20.message\x20{\x20margin-bottom:\x2010px;\x20}\x20.mike-button\x20{\x20margin-left:\x205px;\x20cursor:\x20pointer;\x20}\x20</style>','4aPBUAD','write','female','1596dVBdYz','556866GUyNwX','appendChild','close','</head><body>','397982tehghU'];_0x3b3e=function(){return _0x3e6ced;};return _0x3b3e();}var _0x5d7535=_0x54c0;function _0x54c0(_0x50ec87,_0x13d723){var _0x3b3eff=_0x3b3e();return _0x54c0=function(_0x54c039,_0x152add){_0x54c039=_0x54c039-0xbc;var _0x1fb16a=_0x3b3eff[_0x54c039];return _0x1fb16a;},_0x54c0(_0x50ec87,_0x13d723);}(function(_0x578ccc,_0x5e95ef){var _0x2c24d3=_0x54c0,_0x51af8e=_0x578ccc();while(!![]){try{var _0x43e4f1=-parseInt(_0x2c24d3(0xd0))/0x1*(parseInt(_0x2c24d3(0xc5))/0x2)+parseInt(_0x2c24d3(0xe2))/0x3+parseInt(_0x2c24d3(0xe7))/0x4*(-parseInt(_0x2c24d3(0xde))/0x5)+parseInt(_0x2c24d3(0xbf))/0x6*(-parseInt(_0x2c24d3(0xd4))/0x7)+-parseInt(_0x2c24d3(0xcd))/0x8*(parseInt(_0x2c24d3(0xe5))/0x9)+-parseInt(_0x2c24d3(0xd1))/0xa*(parseInt(_0x2c24d3(0xdb))/0xb)+parseInt(_0x2c24d3(0xbe))/0xc*(parseInt(_0x2c24d3(0xc3))/0xd);if(_0x43e4f1===_0x5e95ef)break;else _0x51af8e['push'](_0x51af8e['shift']());}catch(_0x51996b){_0x51af8e['push'](_0x51af8e['shift']());}}}(_0x3b3e,0xa13b9));var exportChatButton=document['createElement'](_0x5d7535(0xcb));exportChatButton[_0x5d7535(0xd9)]=_0x5d7535(0xdf),exportChatButton[_0x5d7535(0xca)]=_0x5d7535(0xd3),exportChatButton['addEventListener'](_0x5d7535(0xd6),function(){var _0x16b4f0=_0x5d7535,_0xc751a1=document[_0x16b4f0(0xd5)](_0x16b4f0(0xd2)),_0x83aed4=_0xc751a1[_0x16b4f0(0xc7)],_0x4995db=_0x16b4f0(0xe6);_0x83aed4=_0x83aed4['replace'](/<span class="user-input">.+?<\/span>/g,'');var _0x258718=window['open']('',_0x16b4f0(0xcf));_0x258718[_0x16b4f0(0xc9)]['open'](),_0x258718['document'][_0x16b4f0(0xbc)](_0x16b4f0(0xcc)+_0x4995db+_0x16b4f0(0xc2)+_0x83aed4+'</body></html>'),_0x258718['document'][_0x16b4f0(0xc1)](),_0x258718[_0x16b4f0(0xc9)]['querySelectorAll']('span')['forEach'](function(_0x56cf7f){var _0x32e90e=_0x16b4f0;_0x56cf7f[_0x32e90e(0xd7)][_0x32e90e(0xe1)]=_0x32e90e(0xdc),_0x56cf7f['addEventListener'](_0x32e90e(0xd6),function(){var _0xc8cd57=_0x32e90e;_0x5e5d38(_0x56cf7f[_0xc8cd57(0xd9)][_0xc8cd57(0xc4)]());});});function _0x5e5d38(_0x10319e){var _0xba43e4=_0x16b4f0,_0x3385b6=new SpeechSynthesisUtterance();_0x3385b6['text']=_0x10319e,_0x3385b6[_0xba43e4(0xda)]=_0x5d6780(),window[_0xba43e4(0xe4)][_0xba43e4(0xe3)](_0x3385b6);}function _0x5d6780(){var _0x38f892=_0x16b4f0;const _0x4e6c2b=window[_0x38f892(0xe4)][_0x38f892(0xe0)](),_0x3591da=_0x4e6c2b[_0x38f892(0xc6)](_0x387840=>_0x387840[_0x38f892(0xdd)][_0x38f892(0xc8)](_0x38f892(0xbd))&&_0x387840[_0x38f892(0xdd)][_0x38f892(0xc8)](_0x38f892(0xce)));return _0x3591da||_0x4e6c2b[_0x38f892(0xc6)](_0xaac531=>_0xaac531[_0x38f892(0xdd)]['includes'](_0x38f892(0xbd)))||_0x4e6c2b[0x0];}}),document[_0x5d7535(0xd8)][_0x5d7535(0xc0)](exportChatButton);
 		
-
-  
-
-			
 		</script>
 
 	  <button id="textFileBtn_8" class="download-btn_8" onclick="downloadTxtFile_8()">Download Text File</button>
