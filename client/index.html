@@ -283,7 +283,27 @@ exportChatButton.addEventListener("click", function() {
   var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the exported content
-  var style = "<style> .message { margin-bottom: 10px; } .mike-button { margin-left: 5px; cursor: pointer; } </style>";
+  var style = `
+    <style>
+      .message { margin-bottom: 10px; }
+      .mike-button { margin-left: 5px; cursor: pointer; }
+      .toggle-voice-button {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        padding: 10px;
+        background-color: #ffc107;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .toggle-voice-button.off {
+        background-color: #ffc107;
+      }
+    </style>
+  `;
 
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
@@ -301,16 +321,38 @@ exportChatButton.addEventListener("click", function() {
           <h3>Click or touch any sentence to hear it spoken in any language</h3>
         </div>
         ${chatContent}
+        <button id="toggleVoiceButton" class="toggle-voice-button off">Voice Off</button>
       </body>
     </html>
   `);
   exportWindow.document.close();
 
+  // Voice toggle functionality
+  let readingEnabled = false;
+
+  function toggleVoice() {
+    readingEnabled = !readingEnabled;
+    const toggleButton = exportWindow.document.getElementById('toggleVoiceButton');
+    if (readingEnabled) {
+      toggleButton.textContent = 'Voice On';
+      toggleButton.classList.remove('off');
+    } else {
+      toggleButton.textContent = 'Voice Off';
+      toggleButton.classList.add('off');
+      stopReading();
+    }
+  }
+
+  // Add event listener to toggle button
+  exportWindow.document.getElementById('toggleVoiceButton').addEventListener('click', toggleVoice);
+
   // Add event listeners to words in the exported chat
   exportWindow.document.querySelectorAll('span').forEach(function(span) {
     span.style.cursor = 'pointer'; // Set cursor style
     span.addEventListener('click', function() {
-      readWord(span.textContent.trim());
+      if (readingEnabled) {
+        readWord(span.textContent.trim());
+      }
     });
   });
 
@@ -344,7 +386,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
-		
+
     	</script>
 
 	  <button id="textFileBtn_8" class="download-btn_8" onclick="downloadTxtFile_8()">Download Text File</button>
