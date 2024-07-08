@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 let modelLoaded = false;
+let cache = {};
 
 // Function to check if the model is loaded
 const checkModelLoaded = async () => {
@@ -29,9 +30,18 @@ const checkModelLoaded = async () => {
   }
 };
 
-// Check model status every 6 hours
-const checkInterval = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+// Function to clear the cache
+const clearCache = () => {
+  cache = {};
+  console.log('Cache cleared successfully');
+};
+
+// Set intervals
+const checkInterval = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+const cacheClearInterval = 30 * 60 * 1000; // 30 minutes in milliseconds
+
 setInterval(checkModelLoaded, checkInterval);
+setInterval(clearCache, cacheClearInterval);
 checkModelLoaded();
 
 const sanitizeResponse = (response) => {
@@ -248,4 +258,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-        
+  
