@@ -291,16 +291,17 @@ exportChatButton.addEventListener("click", function() {
         position: fixed;
         bottom: 10px;
         right: 10px;
-        padding: 10px;
-        background-color: #ffc107;
-        color: black;
+        padding: 20px; /* Increase padding for larger button */
+        font-size: 18px; /* Increase font size */
+        background-color: #28a745; /* Green for "Voice On" */
+        color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         font-weight: bold;
       }
       .toggle-voice-button.off {
-        background-color: #ffc107;
+        background-color: #dc3545; /* Red for "Voice Off" */
       }
     </style>
   `;
@@ -321,14 +322,14 @@ exportChatButton.addEventListener("click", function() {
           <h3>Click or touch any sentence to hear it spoken in any language</h3>
         </div>
         ${chatContent}
-        <button id="toggleVoiceButton" class="toggle-voice-button off">Voice Off</button>
+        <button id="toggleVoiceButton" class="toggle-voice-button">Voice On</button>
       </body>
     </html>
   `);
   exportWindow.document.close();
 
   // Voice toggle functionality
-  let readingEnabled = false;
+  let readingEnabled = true; // Initially set to true
 
   function toggleVoice() {
     readingEnabled = !readingEnabled;
