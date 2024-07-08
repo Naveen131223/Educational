@@ -330,7 +330,7 @@ exportChatButton.addEventListener("click", function() {
         <div style="text-align: center;">
           <h3>Click or touch any sentence to hear it spoken in any language</h3>
         </div>
-        <div style="max-width: 800px; margin: 0 auto;"> <!-- Adjust max-width and center content -->
+        <div id="exportedChat" style="max-width: 800px; margin: 0 auto;"> <!-- Adjust max-width and center content -->
           ${chatContent}
         </div>
         <button id="toggleVoiceButton" class="toggle-voice-button">Voice On</button>
@@ -361,13 +361,10 @@ exportChatButton.addEventListener("click", function() {
   // Add event listeners to words in the exported chat
   exportWindow.document.querySelectorAll('.message').forEach(function(message) {
     message.style.fontSize = '18px'; // Increase font size of each message
-  });
-
-  exportWindow.document.querySelectorAll('span').forEach(function(span) {
-    span.style.cursor = 'pointer'; // Set cursor style
-    span.addEventListener('click', function() {
+    message.style.cursor = 'pointer'; // Set cursor style
+    message.addEventListener('click', function() {
       if (readingEnabled) {
-        readWord(span.textContent.trim());
+        readWord(message.textContent.trim());
       }
     });
   });
@@ -402,6 +399,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
+		
 		
     	</script>
 
