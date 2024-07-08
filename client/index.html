@@ -285,13 +285,11 @@ exportChatButton.addEventListener("click", function() {
   // Apply styling to the exported content
   var style = `
     <style>
-      body, html {
-        height: 100%;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
+      body {
+        width: 100%; /* Ensure full width */
+        height: 100%; /* Ensure full height */
+        padding: 20px; /* Increase padding for inner content */
+        font-size: 16px; /* Adjust font size */
       }
       .message { margin-bottom: 10px; }
       .mike-button { margin-left: 5px; cursor: pointer; }
@@ -326,8 +324,10 @@ exportChatButton.addEventListener("click", function() {
         ${style}
       </head>
       <body>
-        <div>
+        <div style="text-align: center;">
           <h3>Click or touch any sentence to hear it spoken in any language</h3>
+        </div>
+        <div style="max-width: 800px; margin: 0 auto;"> <!-- Adjust max-width and center content -->
           ${chatContent}
         </div>
         <button id="toggleVoiceButton" class="toggle-voice-button">Voice On</button>
@@ -369,7 +369,7 @@ exportChatButton.addEventListener("click", function() {
   function readWord(word) {
     var speech = new SpeechSynthesisUtterance();
     speech.text = word;
-    speech.lang = 'en-IN-ta'; // Set language to English (India) with Tamil accent
+    speech.lang = 'en-IN'; // Set language to English (India)
     speech.rate = 0.8; // Adjust rate for slower speech
     speech.voice = getRomanticFemaleVoice();
     window.speechSynthesis.speak(speech);
@@ -395,6 +395,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
+		
 		
     	</script>
 
