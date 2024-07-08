@@ -55,7 +55,7 @@ const isGreeting = (prompt) => {
 };
 
 const markCategories = {
-  1: { words: 20 },
+  1: { words: 21 },
   2: { words: 50 },
   3: { words: 70 },
   4: { words: 90 },
