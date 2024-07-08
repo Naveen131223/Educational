@@ -285,6 +285,14 @@ exportChatButton.addEventListener("click", function() {
   // Apply styling to the exported content
   var style = `
     <style>
+      body, html {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
       .message { margin-bottom: 10px; }
       .mike-button { margin-left: 5px; cursor: pointer; }
       .toggle-voice-button {
@@ -318,10 +326,10 @@ exportChatButton.addEventListener("click", function() {
         ${style}
       </head>
       <body>
-        <div style="text-align: center;">
+        <div>
           <h3>Click or touch any sentence to hear it spoken in any language</h3>
+          ${chatContent}
         </div>
-        ${chatContent}
         <button id="toggleVoiceButton" class="toggle-voice-button">Voice On</button>
       </body>
     </html>
@@ -387,7 +395,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
-
+		
     	</script>
 
 	  <button id="textFileBtn_8" class="download-btn_8" onclick="downloadTxtFile_8()">Download Text File</button>
