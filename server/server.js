@@ -12,23 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let modelLoaded = false;
 let cache = {};
-
-// Function to check if the model is loaded
-const checkModelLoaded = async () => {
-  try {
-    const response = await axios.get(HF_API_URL, {
-      headers: {
-        'Authorization': `Bearer ${HF_API_KEY}`
-      }
-    });
-    modelLoaded = response.status === 200;
-    console.log('Model status checked successfully');
-  } catch (error) {
-    console.error('Error checking model status:', error);
-  }
-};
 
 // Function to clear the cache
 const clearCache = () => {
@@ -37,12 +21,8 @@ const clearCache = () => {
 };
 
 // Set intervals
-const checkInterval = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-const cacheClearInterval = 6 * 60 * 1000; // 6 minutes in milliseconds
-
-setInterval(checkModelLoaded, checkInterval);
+const cacheClearInterval = 4 * 60 * 1000; // 4 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
-checkModelLoaded();
 
 const sanitizeResponse = (response) => {
   return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
@@ -102,6 +82,22 @@ const mentionsDiagram = (prompt) => {
   return prompt.toLowerCase().includes('diagram');
 };
 
+// Function to retrieve cached response or null if not cached
+const getCachedResponse = (prompt) => {
+  return cache[prompt] || null;
+};
+
+// Function to cache response
+const cacheResponse = (prompt, response) => {
+  cache[prompt] = response;
+};
+
+// Middleware to measure request processing time
+app.use((req, res, next auth)=> {
+  console.time('Request processed in');
+  next();
+});
+
 app.get('/', async (req, res) => {
   res.status(200).send({
     message: 'Hi Sister'
@@ -109,10 +105,6 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-  if (!modelLoaded) {
-    return res.status(503).send({ error: 'Model is loading, please try again later' });
-  }
-
   try {
     let { prompt } = req.body;
 
@@ -120,13 +112,21 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
+    const cachedResponse = getCachedResponse(prompt);
+    if (cachedResponse) {
+      console.log('Response retrieved from cache:', cachedResponse);
+      return res.status(200).send({ bot: cachedResponse });
+    }
+
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      cacheResponse(prompt, randomResponse);
       return res.status(200).send({ bot: randomResponse });
     }
 
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
+      cacheResponse(prompt, `The current date is: ${currentDate}`);
       return res.status(200).send({ bot: `The current date is: ${currentDate}` });
     }
 
@@ -161,7 +161,7 @@ app.post('/', async (req, res) => {
     }
 
     if (mentionsDiagram(prompt)) {
-      prompt += " Include a title name with the diagram name in text.";
+      prompt += " give a title name with the diagram names needed for this question in text.";
     }
 
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 1800)); // Ensure integer value
@@ -222,7 +222,12 @@ app.post('/', async (req, res) => {
     // Remove unwanted symbols
     botResponse = sanitizeResponse(botResponse);
 
+    // Cache the response for future requests with the same prompt
+    cacheResponse(prompt, botResponse);
+
     res.status(200).send({ bot: botResponse });
+
+    console.timeEnd('Request processed in');
   } catch (error) {
     console.error('Error fetching response from Hugging Face API:', error);
 
@@ -258,4 +263,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-  
+        
