@@ -38,7 +38,7 @@ const clearCache = () => {
 
 // Set intervals
 const checkInterval = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-const cacheClearInterval = 9 * 60 * 1000; // 9 minutes in milliseconds
+const cacheClearInterval = 6 * 60 * 1000; // 6 minutes in milliseconds
 
 setInterval(checkModelLoaded, checkInterval);
 setInterval(clearCache, cacheClearInterval);
