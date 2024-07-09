@@ -245,12 +245,26 @@ app.post('/', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
+const startTime = new Date();
+
 const server = app.listen(PORT, () => {
   console.log(`AI server started on http://localhost:${PORT}`);
 });
 
+const formatDuration = (duration) => {
+  const minutes = Math.floor(duration / 60000);
+  const seconds = ((duration % 60000) / 1000).toFixed(0);
+  return `${minutes} minutes and ${seconds < 10 ? '0' : ''}${seconds} seconds`;
+};
+
 // Graceful shutdown
 const gracefulShutdown = () => {
+  const shutdownTime = new Date();
+  const duration = shutdownTime - startTime;
+  console.log(`Server started at: ${startTime}`);
+  console.log(`Server shut down at: ${shutdownTime}`);
+  console.log(`Server running duration: ${formatDuration(duration)}`);
+
   console.log('Received shutdown signal, closing HTTP server');
   server.close(() => {
     console.log('HTTP server closed');
@@ -260,3 +274,4 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
+      
