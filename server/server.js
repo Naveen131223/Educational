@@ -93,7 +93,7 @@ const cacheResponse = (prompt, response) => {
 };
 
 // Middleware to measure request processing time
-app.use((req, res, next auth)=> {
+app.use((req, res, next) => {
   console.time('Request processed in');
   next();
 });
@@ -161,12 +161,12 @@ app.post('/', async (req, res) => {
     }
 
     if (mentionsDiagram(prompt)) {
-      prompt += " give a title name with the diagram names needed for this question in text.";
+      prompt += " Include a title name with the diagram name in text.";
     }
 
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 1800)); // Ensure integer value
 
-    const response = await axios.post(HF_API_URL, {
+    axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
         temperature: 0.7, // increased temperature for more creative responses
@@ -178,71 +178,75 @@ app.post('/', async (req, res) => {
         'Authorization': `Bearer ${HF_API_KEY}`,
         'Content-Type': 'application/json',
       }
+    }).then(response => {
+      console.log('Response from Hugging Face API:', response.data);
+
+      let botResponse = 'No response generated';
+
+      if (response.data && response.data.length > 0) {
+        botResponse = response.data[0].generated_text || 'No response generated';
+      } else if (response.data && response.data.generated_text) {
+        botResponse = response.data.generated_text;
+      }
+
+      // Ensure the response does not repeat the prompt and handle truncation more robustly
+      if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
+        botResponse = botResponse.slice(prompt.length).trim();
+      }
+
+      // Remove the subtopics prompt from the response if present
+      if (subtopics && botResponse.includes(subtopics)) {
+        botResponse = botResponse.replace(subtopics, '').trim();
+      }
+
+      // Trim based on sentence boundaries or specific criteria
+      const sentences = botResponse.split('.'); // Split into sentences
+      if (sentences.length > 1) {
+        botResponse = sentences.slice(0, -1).join('.').trim() + '.';
+      } else {
+        botResponse = botResponse.trim();
+      }
+
+      // If maxWords is specified, limit the response to the specified number of words
+      if (maxWords) {
+        const words = botResponse.split(' ');
+        if (words.length > maxWords) {
+          botResponse = words.slice(0, maxWords).join(' ') + '.';
+        }
+      }
+
+      // Remove any leading punctuation
+      botResponse = botResponse.replace(/^[!?.]*\s*/, '');
+
+      // Remove unwanted symbols
+      botResponse = sanitizeResponse(botResponse);
+
+      // Cache the response for future requests with the same prompt
+      cacheResponse(prompt, botResponse);
+
+      res.status(200).send({ bot: botResponse });
+
+      console.timeEnd('Request processed in');
+    }).catch(error => {
+      console.error('Error fetching response from Hugging Face API:', error);
+
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+        res.status(error.response.status).send({ error: error.response.data });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        res.status(500).send({ error: 'No response received from Hugging Face API' });
+      } else {
+        console.error('Error message:', error.message);
+        res.status(500).send({ error: error.message });
+      }
     });
 
-    console.log('Response from Hugging Face API:', response.data);
-
-    let botResponse = 'No response generated';
-
-    if (response.data && response.data.length > 0) {
-      botResponse = response.data[0].generated_text || 'No response generated';
-    } else if (response.data && response.data.generated_text) {
-      botResponse = response.data.generated_text;
-    }
-
-    // Ensure the response does not repeat the prompt and handle truncation more robustly
-    if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
-      botResponse = botResponse.slice(prompt.length).trim();
-    }
-
-    // Remove the subtopics prompt from the response if present
-    if (subtopics && botResponse.includes(subtopics)) {
-      botResponse = botResponse.replace(subtopics, '').trim();
-    }
-
-    // Trim based on sentence boundaries or specific criteria
-    const sentences = botResponse.split('.'); // Split into sentences
-    if (sentences.length > 1) {
-      botResponse = sentences.slice(0, -1).join('.').trim() + '.';
-    } else {
-      botResponse = botResponse.trim();
-    }
-
-    // If maxWords is specified, limit the response to the specified number of words
-    if (maxWords) {
-      const words = botResponse.split(' ');
-      if (words.length > maxWords) {
-        botResponse = words.slice(0, maxWords).join(' ') + '.';
-      }
-    }
-
-    // Remove any leading punctuation
-    botResponse = botResponse.replace(/^[!?.]*\s*/, '');
-
-    // Remove unwanted symbols
-    botResponse = sanitizeResponse(botResponse);
-
-    // Cache the response for future requests with the same prompt
-    cacheResponse(prompt, botResponse);
-
-    res.status(200).send({ bot: botResponse });
-
-    console.timeEnd('Request processed in');
   } catch (error) {
-    console.error('Error fetching response from Hugging Face API:', error);
-
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      console.error('Error response status:', error.response.status);
-      console.error('Error response headers:', error.response.headers);
-      res.status(error.response.status).send({ error: error.response.data });
-    } else if (error.request) {
-      console.error('Error request:', error.request);
-      res.status(500).send({ error: 'No response received from Hugging Face API' });
-    } else {
-      console.error('Error message:', error.message);
-      res.status(500).send({ error: error.message });
-    }
+    console.error('Unexpected error occurred:', error);
+    res.status(500).send({ error: 'Unexpected error occurred' });
   }
 });
 
@@ -263,4 +267,3 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-        
