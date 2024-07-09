@@ -92,12 +92,6 @@ const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
 };
 
-// Middleware to measure request processing time
-app.use((req, res, next) => {
-  console.time('Request processed in');
-  next();
-});
-
 app.get('/', async (req, res) => {
   res.status(200).send({
     message: 'Hi Sister'
@@ -226,7 +220,6 @@ app.post('/', async (req, res) => {
 
       res.status(200).send({ bot: botResponse });
 
-      console.timeEnd('Request processed in');
     }).catch(error => {
       console.error('Error fetching response from Hugging Face API:', error);
 
