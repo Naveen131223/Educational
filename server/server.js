@@ -21,7 +21,7 @@ const clearCache = () => {
 };
 
 // Set intervals
-const cacheClearInterval = 4 * 60 * 1000; // 4 minutes in milliseconds
+const cacheClearInterval = 1 * 60 * 1000; // 1 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
 const sanitizeResponse = (response) => {
