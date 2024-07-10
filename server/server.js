@@ -158,7 +158,7 @@ app.post('/', async (req, res) => {
       prompt += " Include a title name with the diagram name in text.";
     }
 
-    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 1800)); // Ensure integer value
+    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
 
     axios.post(HF_API_URL, {
       inputs: prompt,
