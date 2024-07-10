@@ -333,8 +333,107 @@ var _0x21b557=_0x261f;(function(_0x5b3011,_0x32131d){var _0x2343f9=_0x261f,_0x95
 });
 </script>
 
-
+<body class="body_13">
+    <div class="container_13">
+        <h3 class="h3_13">Image Text Extractor</h3>
+        <label for="imageInput_13" id="imageLabel_13">Upload Image</label>
+        <input type="file" id="imageInput_13" accept="image/*">
+        <img id="imagePreview_13" alt="Image Preview">
+        <button id="extractButton_13">Extract Text</button>
+        <div id="loading_13">Loading...</div>
+        <div id="progressContainer_13">
+            <div id="progressBar_13">0%</div>
+        </div>
+        <div id="result_13">
+            <h3 class="h3_13">Extracted Text:</h3>
+            <pre id="extractedText_13" contenteditable="true"></pre>
+            <button id="copyButton_13">Copy Text</button>
+        </div>
+    </div>
  
+
+ <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
+    <script>
+        document.getElementById('extractButton_13').addEventListener('click', () => {
+            const imageInput_13 = document.getElementById('imageInput_13');
+            const imagePreview_13 = document.getElementById('imagePreview_13');
+            const extractedTextPre_13 = document.getElementById('extractedText_13');
+            const loadingDiv_13 = document.getElementById('loading_13');
+            const progressContainer_13 = document.getElementById('progressContainer_13');
+            const progressBar_13 = document.getElementById('progressBar_13');
+
+            if (imageInput_13.files.length === 0) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            const file_13 = imageInput_13.files[0];
+            const reader_13 = new FileReader();
+
+            reader_13.onload = function(event) {
+                const imageUrl_13 = event.target.result;
+                imagePreview_13.src = imageUrl_13;
+                loadingDiv_13.style.display = 'block';
+                progressContainer_13.style.display = 'block';
+                progressBar_13.style.width = '0%';
+                progressBar_13.textContent = '0%';
+
+                Tesseract.recognize(
+                    imageUrl_13,
+                    'eng',
+                    {
+                        logger: m => {
+                            if (m.status === 'recognizing text') {
+                                const progress_13 = Math.round(m.progress * 100);
+                                progressBar_13.style.width = `${progress_13}%`;
+                                progressBar_13.textContent = `${progress_13}%`;
+                            }
+                        }
+                    }
+                ).then(({ data: { text } }) => {
+                    extractedTextPre_13.textContent = text;
+                    loadingDiv_13.style.display = 'none';
+                    progressContainer_13.style.display = 'none';
+                }).catch(err_13 => {
+                    console.error(err_13);
+                    alert('Failed to extract text from the image.');
+                    loadingDiv_13.style.display = 'none';
+                    progressContainer_13.style.display = 'none';
+                });
+            };
+
+            reader_13.readAsDataURL(file_13);
+        });
+
+        document.getElementById('imageInput_13').addEventListener('change', () => {
+            const imageInput_13 = document.getElementById('imageInput_13');
+            const imagePreview_13 = document.getElementById('imagePreview_13');
+
+            if (imageInput_13.files.length === 0) {
+                imagePreview_13.src = '';
+                return;
+            }
+
+            const file_13 = imageInput_13.files[0];
+            const reader_13 = new FileReader();
+
+            reader_13.onload = function(event) {
+                const imageUrl_13 = event.target.result;
+                imagePreview_13.src = imageUrl_13;
+            };
+
+            reader_13.readAsDataURL(file_13);
+        });
+
+        document.getElementById('copyButton_13').addEventListener('click', () => {
+            const extractedText_13 = document.getElementById('extractedText_13').textContent;
+            navigator.clipboard.writeText(extractedText_13).then(() => {
+                alert('Text copied to clipboard.');
+            }).catch(err_13 => {
+                console.error('Failed to copy text: ', err_13);
+            });
+        });
+    </script>
 
 	  
 <h3>Tic Tac Toe Game</h3>
