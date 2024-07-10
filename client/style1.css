@@ -1,4 +1,4 @@
- body_13 {
+  body_13 {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
@@ -69,6 +69,21 @@
             background-color: #e64a19;
         }
 
+        #resetButton_13 {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #d84315;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #resetButton_13:hover {
+            background-color: #bf360c;
+        }
+
         #result_13 {
             margin-top: 20px;
         }
@@ -117,7 +132,6 @@
             line-height: 20px;
             color: black;
         }
-
 
 
 
