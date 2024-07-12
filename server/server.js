@@ -1,4 +1,4 @@
-import express from 'express'; 
+import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
@@ -69,11 +69,11 @@ const isAskingForDate = (prompt) => {
 
 const getCurrentDate = () => {
   const now = new Date();
-  const options = { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric', 
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   };
   return now.toLocaleString('en-US', options);
 };
@@ -249,6 +249,11 @@ const server = app.listen(PORT, () => {
   console.log(`AI server started on http://localhost:${PORT}`);
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Graceful shutdown
 const gracefulShutdown = () => {
   console.log('Received shutdown signal, closing HTTP server');
@@ -260,3 +265,28 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
+
+// Function to check health and restart server if necessary
+const checkHealthAndRestart = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/health');
+    if (response.status !== 200) {
+      console.log('Health check failed, restarting server...');
+      gracefulShutdown();
+      server.listen(PORT, () => {
+        console.log(`AI server restarted on http://localhost:${PORT}`);
+      });
+    }
+  } catch (error) {
+    console.log('Health check failed, restarting server...');
+    gracefulShutdown();
+    server.listen(PORT, () => {
+      console.log(`AI server restarted on http://localhost:${PORT}`);
+    });
+  }
+};
+
+// Set interval for health checks
+const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
+setInterval(checkHealthAndRestart, healthCheckInterval);
+            
