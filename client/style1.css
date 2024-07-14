@@ -5,50 +5,7 @@
         
 
         
-        #extractedText_13 {
-            white-space: pre-wrap;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            border: 2px solid #333;
-            min-height: 150px;
-            overflow: auto;
-        }
-
-        #imagePreview_13 {
-            display: block;
-            max-width: 100%;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        #loading_13 {
-            display: none;
-            margin: 20px auto;
-            padding: 10px;
-            background-color: #ffc107;
-            border-radius: 5px;
-            text-align: center;
-        }
-
-        #progressContainer_13 {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        #progressBar_13 {
-            width: 0%;
-            height: 20px;
-            background-color: #ffeb3b;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 20px;
-            color: black;
-        }
+        
 
 
 
