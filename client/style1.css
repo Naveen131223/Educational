@@ -4,25 +4,7 @@
 
         
 
-        #resetButton_13 {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #d84315;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #resetButton_13:hover {
-            background-color: #bf360c;
-        }
-
-        #result_13 {
-            margin-top: 20px;
-        }
-
+        
         #extractedText_13 {
             white-space: pre-wrap;
             background: #f9f9f9;
