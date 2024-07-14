@@ -2,51 +2,7 @@
 
         
 
-        #imageLabel_13 {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #9c27b0;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        #imageLabel_13:hover {
-            background-color: #7b1fa2;
-        }
-
-        #extractButton_13 {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #ffeb3b;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #extractButton_13:hover {
-            background-color: #fdd835;
-        }
-
-        #copyButton_13 {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #copyButton_13:hover {
-            background-color: #e64a19;
-        }
+        
 
         #resetButton_13 {
             display: block;
