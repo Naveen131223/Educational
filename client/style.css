@@ -21,6 +21,26 @@ body {
 }
 
 
+.download-btn_8 {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+
+#textFileBtn_8 {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+#wordFileBtn_8 {
+    background-color: #008CBA; /* Blue */
+    color: white;
+}
+
 #extractedText_13 {
             white-space: pre-wrap;
             background: #f9f9f9;
