@@ -1,22 +1,6 @@
   
 
-        .container_13 {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h3_13 {
-            text-align: center;
-            color: #333;
-        }
-
-        #imageInput_13 {
-            display: none;
-        }
+        
 
         #imageLabel_13 {
             display: block;
