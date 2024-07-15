@@ -263,11 +263,165 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-function _0x525c(){var _0xd3f7ae=['innerHTML','</body></html>','open','1lQWKZl','3599095KUZBKu','write','addEventListener','button','<span\x20class=\x22line-break\x22></span>','createElement','click','Print\x20Chat','className','add-course-button-1','1052480mMRZnP','\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20.question\x20{\x20color:\x20blue;\x20}\x0a\x20\x20\x20\x20\x20\x20.answer\x20{\x20color:\x20red;\x20}\x0a\x20\x20\x20\x20\x20\x20.line-break\x20{\x20display:\x20block;\x20margin-bottom:\x201em;\x20}\x20/*\x20Add\x20space\x20between\x20lines\x20*/\x0a\x20\x20\x20\x20</style>','replace','textContent','chat_container','36171oUYGfA','2280549LZFGXi','close','print','document','4092652mYnFbZ','7160mvikgf','getElementById','7gPlYDh','3380478eQGRFK','1053044bLpTjB','<html><head><title>Print\x20Chat</title>'];_0x525c=function(){return _0xd3f7ae;};return _0x525c();}var _0x5169b3=_0x2bfc;(function(_0x35ea0a,_0x353b99){var _0x1b2998=_0x2bfc,_0x19714b=_0x35ea0a();while(!![]){try{var _0x4232d4=-parseInt(_0x1b2998(0x1e7))/0x1*(parseInt(_0x1b2998(0x1e2))/0x2)+-parseInt(_0x1b2998(0x1d9))/0x3+-parseInt(_0x1b2998(0x1dd))/0x4+-parseInt(_0x1b2998(0x1e8))/0x5+-parseInt(_0x1b2998(0x1e1))/0x6*(-parseInt(_0x1b2998(0x1e0))/0x7)+parseInt(_0x1b2998(0x1f2))/0x8+-parseInt(_0x1b2998(0x1d8))/0x9*(-parseInt(_0x1b2998(0x1de))/0xa);if(_0x4232d4===_0x353b99)break;else _0x19714b['push'](_0x19714b['shift']());}catch(_0x291c1e){_0x19714b['push'](_0x19714b['shift']());}}}(_0x525c,0x848aa));var printButton=document[_0x5169b3(0x1ed)](_0x5169b3(0x1eb));function _0x2bfc(_0x33a890,_0x9d9fe5){var _0x525c8f=_0x525c();return _0x2bfc=function(_0x2bfc29,_0x28004e){_0x2bfc29=_0x2bfc29-0x1d4;var _0x1cdde1=_0x525c8f[_0x2bfc29];return _0x1cdde1;},_0x2bfc(_0x33a890,_0x9d9fe5);}printButton[_0x5169b3(0x1d6)]=_0x5169b3(0x1ef),printButton[_0x5169b3(0x1f0)]=_0x5169b3(0x1f1),printButton[_0x5169b3(0x1ea)](_0x5169b3(0x1ee),function(){var _0x3b1661=_0x5169b3,_0x1877d1=document[_0x3b1661(0x1df)](_0x3b1661(0x1d7)),_0x32eb93=_0x1877d1[_0x3b1661(0x1e4)],_0x49dd6a=_0x3b1661(0x1d4);_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/\n/g,_0x3b1661(0x1ec)),_0x32eb93=_0x32eb93[_0x3b1661(0x1d5)](/<span class="user-input">.+?<\/span>/g,'');var _0xc03735=window[_0x3b1661(0x1e6)]('','_blank');_0xc03735['document'][_0x3b1661(0x1e6)](),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1e9)](_0x3b1661(0x1e3)+_0x49dd6a+'</head><body>'+_0x32eb93+_0x3b1661(0x1e5)),_0xc03735[_0x3b1661(0x1dc)][_0x3b1661(0x1da)](),_0xc03735[_0x3b1661(0x1db)]();}),document['body']['appendChild'](printButton);
+var printButton = document.createElement("button");
+printButton.textContent = "Print Chat"; // Updating the button text to "Print"
+printButton.className = "add-course-button-1";
+printButton.addEventListener("click", function() {
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
+  // Apply styling to the printed content
+  var style = `
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>`;
+
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
+
+  // Execute the print function
+  printWindow.print();
+});
+
+document.body.appendChild(printButton);
+		
 // Export Chat buttun
-var _0x21b557=_0x261f;(function(_0x5b3011,_0x32131d){var _0x2343f9=_0x261f,_0x9556d3=_0x5b3011();while(!![]){try{var _0x232694=-parseInt(_0x2343f9(0xb7))/0x1*(-parseInt(_0x2343f9(0xd5))/0x2)+parseInt(_0x2343f9(0xbc))/0x3+-parseInt(_0x2343f9(0xb9))/0x4*(-parseInt(_0x2343f9(0xd0))/0x5)+-parseInt(_0x2343f9(0xc5))/0x6+-parseInt(_0x2343f9(0xc9))/0x7*(-parseInt(_0x2343f9(0xe5))/0x8)+-parseInt(_0x2343f9(0xbf))/0x9*(-parseInt(_0x2343f9(0xc8))/0xa)+-parseInt(_0x2343f9(0xc2))/0xb*(parseInt(_0x2343f9(0xda))/0xc);if(_0x232694===_0x32131d)break;else _0x9556d3['push'](_0x9556d3['shift']());}catch(_0x186b0c){_0x9556d3['push'](_0x9556d3['shift']());}}}(_0x5566,0xbcead));function _0x261f(_0x128852,_0x38345d){var _0x55663d=_0x5566();return _0x261f=function(_0x261f3b,_0x250564){_0x261f3b=_0x261f3b-0xb0;var _0xe086fe=_0x55663d[_0x261f3b];return _0xe086fe;},_0x261f(_0x128852,_0x38345d);}var exportChatButton=document[_0x21b557(0xe1)]('button');exportChatButton['textContent']=_0x21b557(0xb8),exportChatButton[_0x21b557(0xb5)]=_0x21b557(0xdc),exportChatButton[_0x21b557(0xc6)](_0x21b557(0xd4),function(){var _0x201b38=_0x21b557,_0x19a840=document['getElementById'](_0x201b38(0xcf)),_0x37dc0d=_0x19a840[_0x201b38(0xce)],_0x28de42=_0x201b38(0xdb);_0x37dc0d=_0x37dc0d[_0x201b38(0xbd)](/<span class="user-input">.+?<\/span>/g,'');var _0x408114=window[_0x201b38(0xb2)]('','_blank');_0x408114[_0x201b38(0xd9)][_0x201b38(0xb2)](),_0x408114[_0x201b38(0xd9)][_0x201b38(0xe7)]('\x0a\x20\x20\x20\x20<html>\x0a\x20\x20\x20\x20\x20\x20<head>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<title>'+exportChatButton[_0x201b38(0xe0)]+_0x201b38(0xdd)+_0x28de42+_0x201b38(0xbe)+_0x37dc0d+_0x201b38(0xb0)),_0x408114[_0x201b38(0xd9)][_0x201b38(0xd7)]();let _0x5b1a82=!![];function _0x5d8e83(){var _0x3f4fc9=_0x201b38;_0x5b1a82=!_0x5b1a82;const _0x2e05dd=_0x408114['document'][_0x3f4fc9(0xd3)](_0x3f4fc9(0xd6));_0x5b1a82?(_0x2e05dd[_0x3f4fc9(0xe0)]=_0x3f4fc9(0xb3),_0x2e05dd['classList'][_0x3f4fc9(0xd1)]('off')):(_0x2e05dd['textContent']=_0x3f4fc9(0xb1),_0x2e05dd[_0x3f4fc9(0xe4)][_0x3f4fc9(0xcd)](_0x3f4fc9(0xcb)),_0x1440e3());}_0x408114['document'][_0x201b38(0xd3)]('toggleVoiceButton')['addEventListener'](_0x201b38(0xd4),_0x5d8e83),_0x408114[_0x201b38(0xd9)][_0x201b38(0xc4)](_0x201b38(0xd8))['forEach'](function(_0x1dd268){var _0x42bb4d=_0x201b38;_0x1dd268[_0x42bb4d(0xc3)][_0x42bb4d(0xbb)]=_0x42bb4d(0xe3),_0x1dd268[_0x42bb4d(0xc3)]['cursor']=_0x42bb4d(0xc7),_0x1dd268['addEventListener'](_0x42bb4d(0xd4),function(){var _0x4676c3=_0x42bb4d;_0x5b1a82&&_0x68a60a(_0x1dd268[_0x4676c3(0xe0)]['trim']());});});function _0x68a60a(_0x4f090b){var _0x4b00c4=_0x201b38,_0x54cb5c=new SpeechSynthesisUtterance();_0x54cb5c[_0x4b00c4(0xc1)]=_0x4f090b,_0x54cb5c[_0x4b00c4(0xca)]='en-IN-ta',_0x54cb5c[_0x4b00c4(0xdf)]=0.8,_0x54cb5c['voice']=_0x8a858b(),window[_0x4b00c4(0xe2)]['speak'](_0x54cb5c);}function _0x8a858b(){var _0x48fb44=_0x201b38;const _0x3ce4b0=window[_0x48fb44(0xe2)][_0x48fb44(0xde)](),_0x57f465=_0x3ce4b0[_0x48fb44(0xe6)](_0x28f033=>_0x28f033[_0x48fb44(0xba)]['includes'](_0x48fb44(0xb6))&&_0x28f033['name'][_0x48fb44(0xc0)]('romantic'));return _0x57f465||_0x3ce4b0[_0x48fb44(0xe6)](_0x57afbe=>_0x57afbe[_0x48fb44(0xba)]['includes'](_0x48fb44(0xb6)))||_0x3ce4b0[0x0];}function _0x1440e3(){var _0x57025a=_0x201b38;window[_0x57025a(0xe2)]['cancel']();}_0x408114['addEventListener'](_0x201b38(0xb4),_0x1440e3),window[_0x201b38(0xc6)](_0x201b38(0xb4),_0x1440e3);}),document[_0x21b557(0xd2)][_0x21b557(0xcc)](exportChatButton);function _0x5566(){var _0x41d59=['addEventListener','pointer','348610twRUph','208306VsGMUm','lang','off','appendChild','add','innerHTML','chat_container','1487510FwnRUm','remove','body','getElementById','click','36PORwXX','toggleVoiceButton','close','.message','document','60kHAsUe','\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20body\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x20/*\x20Ensure\x20full\x20width\x20*/\x0a\x20\x20\x20\x20\x20\x20\x20\x20height:\x20100%;\x20/*\x20Ensure\x20full\x20height\x20*/\x0a\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2020px;\x20/*\x20Increase\x20padding\x20for\x20inner\x20content\x20*/\x0a\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2016px;\x20/*\x20Adjust\x20font\x20size\x20*/\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20.message\x20{\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2010px;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2018px;\x20/*\x20Increase\x20font\x20size\x20of\x20chat\x20messages\x20*/\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20.mike-button\x20{\x20margin-left:\x205px;\x20cursor:\x20pointer;\x20}\x0a\x20\x20\x20\x20\x20\x20.toggle-voice-button\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20position:\x20fixed;\x0a\x20\x20\x20\x20\x20\x20\x20\x20bottom:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20right:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2020px;\x20/*\x20Increase\x20padding\x20for\x20larger\x20button\x20*/\x0a\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2018px;\x20/*\x20Increase\x20font\x20size\x20*/\x0a\x20\x20\x20\x20\x20\x20\x20\x20background-color:\x20#28a745;\x20/*\x20Green\x20for\x20\x22Voice\x20On\x22\x20*/\x0a\x20\x20\x20\x20\x20\x20\x20\x20color:\x20white;\x0a\x20\x20\x20\x20\x20\x20\x20\x20border:\x20none;\x0a\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x205px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20cursor:\x20pointer;\x0a\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20bold;\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20.toggle-voice-button.off\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20background-color:\x20#dc3545;\x20/*\x20Red\x20for\x20\x22Voice\x20Off\x22\x20*/\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20</style>\x0a\x20\x20','ExportChatButton','</title>\x0a\x20\x20\x20\x20\x20\x20\x20\x20','getVoices','rate','textContent','createElement','speechSynthesis','18px','classList','80kcBMCz','find','write','\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<button\x20id=\x22toggleVoiceButton\x22\x20class=\x22toggle-voice-button\x22>Voice\x20On</button>\x0a\x20\x20\x20\x20\x20\x20</body>\x0a\x20\x20\x20\x20</html>\x0a\x20\x20','Voice\x20Off','open','Voice\x20On','beforeunload','className','female','50587lkSadt','Voice-Enabled\x20Chat\x20Export','4zrIFIP','name','fontSize','3210129RjbFdV','replace','\x0a\x20\x20\x20\x20\x20\x20</head>\x0a\x20\x20\x20\x20\x20\x20<body>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20style=\x22text-align:\x20center;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<h3>Click\x20or\x20touch\x20any\x20sentence\x20to\x20hear\x20it\x20spoken\x20in\x20any\x20language</h3>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20id=\x22exportedChat\x22\x20style=\x22max-width:\x20800px;\x20margin:\x200\x20auto;\x22>\x20<!--\x20Adjust\x20max-width\x20and\x20center\x20content\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','162edyuNc','includes','text','3437324pCghHn','style','querySelectorAll','5201784fsPqTg'];_0x5566=function(){return _0x41d59;};return _0x5566();}
-    	</script>
+		
+var exportChatButton = document.createElement("button");
+exportChatButton.textContent = "Voice-Enabled Chat Export"; // Updated button text
+exportChatButton.className = "ExportChatButton";
+exportChatButton.addEventListener("click", function() {
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
+
+  // Apply styling to the exported content
+  var style = `
+    <style>
+      body {
+        width: 100%; /* Ensure full width */
+        height: 100%; /* Ensure full height */
+        padding: 20px; /* Increase padding for inner content */
+        font-size: 16px; /* Adjust font size */
+      }
+      .message { 
+        margin-bottom: 10px; 
+        font-size: 18px; /* Increase font size of chat messages */
+      }
+      .mike-button { margin-left: 5px; cursor: pointer; }
+      .toggle-voice-button {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        padding: 20px; /* Increase padding for larger button */
+        font-size: 18px; /* Increase font size */
+        background-color: #28a745; /* Green for "Voice On" */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .toggle-voice-button.off {
+        background-color: #dc3545; /* Red for "Voice Off" */
+      }
+    </style>
+  `;
+
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  var exportWindow = window.open("", "_blank");
+  exportWindow.document.open();
+  exportWindow.document.write(`
+    <html>
+      <head>
+       
+        ${style}
+      </head>
+      <body>
+        <div style="text-align: center;">
+          <h3>Click or touch any sentence to hear it spoken in any language</h3>
+        </div>
+        <div id="exportedChat" style="max-width: 800px; margin: 0 auto;"> <!-- Adjust max-width and center content -->
+          ${chatContent}
+        </div>
+        <button id="toggleVoiceButton" class="toggle-voice-button">Voice On</button>
+      </body>
+    </html>
+  `);
+  exportWindow.document.close();
+
+  // Voice toggle functionality
+  let readingEnabled = true; // Initially set to true
+
+  function toggleVoice() {
+    readingEnabled = !readingEnabled;
+    const toggleButton = exportWindow.document.getElementById('toggleVoiceButton');
+    if (readingEnabled) {
+      toggleButton.textContent = 'Voice On';
+      toggleButton.classList.remove('off');
+    } else {
+      toggleButton.textContent = 'Voice Off';
+      toggleButton.classList.add('off');
+      stopReading();
+    }
+  }
+
+  // Add event listener to toggle button
+  exportWindow.document.getElementById('toggleVoiceButton').addEventListener('click', toggleVoice);
+
+  // Add event listeners to words in the exported chat
+  exportWindow.document.querySelectorAll('.message').forEach(function(message) {
+    message.style.fontSize = '18px'; // Increase font size of each message
+    message.style.cursor = 'pointer'; // Set cursor style
+    message.addEventListener('click', function() {
+      if (readingEnabled) {
+        readWord(message.textContent.trim());
+      }
+    });
+  });
+
+  // Function to read word aloud
+  function readWord(word) {
+    var speech = new SpeechSynthesisUtterance();
+    speech.text = word;
+    speech.lang = 'en-IN-ta'; // Set language to English (India) with Tamil accent
+    speech.rate = 0.8; // Adjust rate for slower speech
+    speech.voice = getRomanticFemaleVoice();
+    window.speechSynthesis.speak(speech);
+  }
+
+  // Function to retrieve romantic female voice
+  function getRomanticFemaleVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const romanticFemaleVoice = voices.find(voice => voice.name.includes('female') && voice.name.includes('romantic'));
+    return romanticFemaleVoice || voices.find(voice => voice.name.includes('female')) || voices[0];
+  }
+
+  // Function to stop reading
+  function stopReading() {
+    window.speechSynthesis.cancel();
+  }
+
+  // Stop reading when the new tab is closed
+  exportWindow.addEventListener('beforeunload', stopReading);
+
+  // Stop reading if the current window is closed
+  window.addEventListener('beforeunload', stopReading);
+});
+
+document.body.appendChild(exportChatButton);
+</script>
 
 	  <button id="textFileBtn_8" class="download-btn_8" onclick="downloadTxtFile_8()">Download Text File</button>
     <button id="wordFileBtn_8" class="download-btn_8" onclick="downloadDocFile_8()">Download Word File</button>
@@ -275,8 +429,45 @@ var _0x21b557=_0x261f;(function(_0x5b3011,_0x32131d){var _0x2343f9=_0x261f,_0x95
 
 <script>
        //word and text
-	(function(_0x1481be,_0x393699){const _0x26655a=_0x1146,_0x33ab7f=_0x1481be();while(!![]){try{const _0x53518a=-parseInt(_0x26655a(0xd2))/0x1*(-parseInt(_0x26655a(0xde))/0x2)+parseInt(_0x26655a(0xcb))/0x3*(-parseInt(_0x26655a(0xce))/0x4)+parseInt(_0x26655a(0xc8))/0x5*(parseInt(_0x26655a(0xc5))/0x6)+-parseInt(_0x26655a(0xbf))/0x7*(parseInt(_0x26655a(0xd6))/0x8)+-parseInt(_0x26655a(0xda))/0x9+parseInt(_0x26655a(0xd1))/0xa+-parseInt(_0x26655a(0xd7))/0xb*(-parseInt(_0x26655a(0xc4))/0xc);if(_0x53518a===_0x393699)break;else _0x33ab7f['push'](_0x33ab7f['shift']());}catch(_0x2bdef8){_0x33ab7f['push'](_0x33ab7f['shift']());}}}(_0x498a,0xe00a3));function downloadTxtFile_8(){const _0x294196=_0x1146,_0xa3c9e6=document[_0x294196(0xd9)](_0x294196(0xd8))[_0x294196(0xd5)];if(_0xa3c9e6[_0x294196(0xc6)]()===''){alert(_0x294196(0xbd));return;}const _0x58204c=_0xa3c9e6[_0x294196(0xcc)]('\x0a')[_0x294196(0xca)](_0x34f43d=>'\x20'+_0x34f43d[_0x294196(0xdc)]()),_0x99df3e=_0x58204c[_0x294196(0xe0)]('\x0a'),_0x164bed=new Blob([_0x99df3e],{'type':_0x294196(0xc3)}),_0x114ec1=document[_0x294196(0xc2)]('a');_0x114ec1['href']=URL[_0x294196(0xbc)](_0x164bed),_0x114ec1['download']='chat.txt',_0x114ec1[_0x294196(0xcf)](),document[_0x294196(0xd9)]('textFileBtn_8')[_0x294196(0xc9)][_0x294196(0xcd)]=_0x294196(0xc1);}function downloadDocFile_8(){const _0xbe3989=_0x1146,_0x392735=document[_0xbe3989(0xd9)](_0xbe3989(0xd8))[_0xbe3989(0xd5)];if(_0x392735['trim']()===''){alert(_0xbe3989(0xbd));return;}const _0x297746=_0xbe3989(0xdb),_0xcd4d=_0xbe3989(0xd0),_0x1faf79=_0xbe3989(0xbe),_0x25e67e=_0xbe3989(0xc7)+_0x392735['split']('\x0a')['map'](_0x2bf376=>_0xbe3989(0xd3)+_0x2bf376+_0xbe3989(0xdf))[_0xbe3989(0xe0)]('')+'</body></html>',_0x5e182c=_0x297746+_0xcd4d+_0x1faf79+_0x25e67e,_0xa51368=new Blob(['\ufeff',_0x5e182c],{'type':'application/msword'}),_0xb1da5f=document[_0xbe3989(0xc2)]('a');_0xb1da5f['href']=URL[_0xbe3989(0xbc)](_0xa51368),_0xb1da5f[_0xbe3989(0xd4)]=_0xbe3989(0xdd),_0xb1da5f[_0xbe3989(0xcf)](),document[_0xbe3989(0xd9)](_0xbe3989(0xc0))[_0xbe3989(0xc9)][_0xbe3989(0xcd)]=_0xbe3989(0xc1);}function _0x1146(_0x7fb5a8,_0x5bfacc){const _0x498a14=_0x498a();return _0x1146=function(_0x1146aa,_0xa261d){_0x1146aa=_0x1146aa-0xbc;let _0x37e03d=_0x498a14[_0x1146aa];return _0x37e03d;},_0x1146(_0x7fb5a8,_0x5bfacc);}function _0x498a(){const _0x40833e=['5634VoEqYt','trim','<body>','8085WyhfNA','style','map','5138790vVBKMW','split','backgroundColor','4kmeEvu','click','<head><meta\x20charset=\x27utf-8\x27><title>Document</title></head>','4454830cufUQY','97CHcIXL','<p\x20style=\x22margin:\x200\x200\x201em\x200;\x22>\x20','download','innerText','13704968vIswVm','11HYBQGA','chat_container','getElementById','1227951lvBCgX','<html\x20xmlns:o=\x27urn:schemas-microsoft-com:office:office\x27\x20xmlns:w=\x27urn:schemas-microsoft-com:office:word\x27\x20xmlns=\x27http://www.w3.org/TR/REC-html40\x27>','trimStart','chat.doc','20858UbgYcy','</p>','join','createObjectURL','Chat\x20container\x20is\x20empty.','<style>body\x20{\x20font-family:\x20\x27Times\x20New\x20Roman\x27;\x20font-size:\x2012pt;\x20margin-left:\x201em;\x20}</style>','7jOzaap','wordFileBtn_8','#555555','createElement','text/plain','18056376UeDVer'];_0x498a=function(){return _0x40833e;};return _0x498a();}
-    </script>
+	
+function downloadTxtFile_8() {
+    const content_8 = document.getElementById('chat_container').innerText;
+    if (content_8.trim() === "") {
+        alert("Chat container is empty.");
+        return;
+    }
+    const lines_8 = content_8.split('\n').map(line => ' ' + line.trimStart()); // Ensure only one space at the start
+    const formattedContent_8 = lines_8.join('\n'); // Join lines with a single newline
+    const txtBlob_8 = new Blob([formattedContent_8], { type: 'text/plain' });
+    const txtLink_8 = document.createElement('a');
+    txtLink_8.href = URL.createObjectURL(txtBlob_8);
+    txtLink_8.download = 'chat.txt';
+    txtLink_8.click();
+    document.getElementById('textFileBtn_8').style.backgroundColor = "#555555";
+}
+
+
+
+        function downloadDocFile_8() {
+            const content_8 = document.getElementById('chat_container').innerText;
+            if (content_8.trim() === "") {
+                alert("Chat container is empty.");
+                return;
+            }
+            const preHtml_8 = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>";
+            const head_8 = "<head><meta charset='utf-8'></head>";
+            const style_8 = "<style>body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }</style>";
+            const body_8 = "<body>" + content_8.split('\n').map(line => `<p style="margin: 0 0 1em 0;"> ${line}</p>`).join('') + "</body></html>";
+            const docHtml_8 = preHtml_8 + head_8 + style_8 + body_8;
+
+            const docBlob_8 = new Blob(['\ufeff', docHtml_8], { type: 'application/msword' });
+            const docLink_8 = document.createElement('a');
+            docLink_8.href = URL.createObjectURL(docBlob_8);
+            docLink_8.download = 'chat.doc';
+            docLink_8.click();
+            document.getElementById('wordFileBtn_8').style.backgroundColor = "#555555";
+        }
+</script>
 
 <div id="frame" style="width: 100%;"><iframe data-aa='2335359' src='//acceptable.a-ads.com/2335359' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe><a style="display: block; text-align: right; font-size: 12px" id="frame-link" href="https://a-ads.com/?partner=2335359">Advertise here</a></div>    
 	  
