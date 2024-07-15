@@ -192,6 +192,7 @@ const handleSubmit = async (e) => {
 
         if (response.ok) {
           const data = await response.json();
+          console.log('Response data:', data); // Log response data
           const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
           // Display the bot's response instantly
@@ -212,6 +213,7 @@ const handleSubmit = async (e) => {
           listenForFeedback(prompt, parsedData);
         } else {
           const err = await response.text();
+          console.error('Error response:', err); // Log error response
 
           messageDiv.textContent = 'Something went wrong';
           alert(err);
@@ -221,7 +223,7 @@ const handleSubmit = async (e) => {
         }
       } catch (error) {
         messageDiv.textContent = 'Something went wrong';
-        console.error(error);
+        console.error('Error:', error); // Log error
 
         // Re-enable the submit button after processing
         submitButton.disabled = false;
@@ -229,7 +231,7 @@ const handleSubmit = async (e) => {
     }, 100); // Adjust the AI delay duration as needed
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
-    console.error(error);
+    console.error('Error:', error); // Log error
 
     // Re-enable the submit button after processing
     submitButton.disabled = false;
