@@ -28,6 +28,11 @@ const sanitizeResponse = (response) => {
   return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
 };
 
+const greetings = [
+  'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there',
+  'good morning', 'good afternoon', 'good evening', 'good night'
+];
+
 const responses = [
   "How can I assist you?",
   "How can I help you?",
@@ -37,11 +42,12 @@ const responses = [
 ];
 
 const isGreeting = (prompt) => {
-  const greetings = [
-    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
-  ];
   const normalizedPrompt = prompt.trim().toLowerCase();
-  return greetings.includes(normalizedPrompt);
+  return greetings.some(greeting => normalizedPrompt.includes(greeting));
+};
+
+const getRandomResponse = () => {
+  return responses[Math.floor(Math.random() * responses.length)];
 };
 
 const markCategories = {
@@ -113,7 +119,7 @@ app.post('/', async (req, res) => {
     }
 
     if (isGreeting(prompt)) {
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      const randomResponse = getRandomResponse();
       cacheResponse(prompt, randomResponse);
       return res.status(200).send({ bot: randomResponse });
     }
@@ -144,14 +150,6 @@ app.post('/', async (req, res) => {
       const pointsRequested = parseInt(pointsMatch[1], 10);
       const adjustedPoints = pointsRequested + 3;
       maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
-    }
-
-    if (subtopics) {
-      prompt += ` Please cover the following subtopics: ${subtopics}.`;
-    } else if (maxWords) {
-      prompt += ` Please provide the correct response in ${maxWords} words.`;
-    } else {
-      prompt += " Provide an accurate response.";
     }
 
     if (mentionsDiagram(prompt)) {
@@ -289,4 +287,3 @@ const checkHealthAndRestart = async () => {
 // Set interval for health checks
 const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
 setInterval(checkHealthAndRestart, healthCheckInterval);
-            
