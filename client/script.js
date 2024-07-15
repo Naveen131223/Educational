@@ -14,6 +14,9 @@ let utterance;
 let currentUtteranceIndex = -1; // Variable to keep track of the current message being read
 let isReading = false;
 
+
+
+
 printButton.style.cssText = `
   background-color: #007bff;
   color: #fff;
@@ -34,6 +37,7 @@ continueReadingButton.style.cssText = `
   cursor: pointer;
   margin-left: 10px;
 `;
+
 
 printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
@@ -83,9 +87,9 @@ printButton.addEventListener('click', () => {
 chatContainer.appendChild(printButton);
 
 continueReadingButton.addEventListener('click', () => {
-  const nextBotChat = botChats[currentUtteranceIndex + 1];
-  if (nextBotChat) {
-    toggleReading(nextBotChat.value, currentUtteranceIndex + 1);
+  const lastBotChat = botChats[currentUtteranceIndex];
+  if (lastBotChat) {
+    toggleReading(lastBotChat.value, currentUtteranceIndex);
   }
 });
 chatContainer.appendChild(continueReadingButton);
@@ -192,7 +196,6 @@ const handleSubmit = async (e) => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Response data:', data); // Log response data
           const parsedData = data.bot.trim(); // Trim any trailing spaces or '\n'
 
           // Display the bot's response instantly
@@ -211,9 +214,11 @@ const handleSubmit = async (e) => {
 
           // Listen for user feedback on the response
           listenForFeedback(prompt, parsedData);
+
+          // Start reading the AI output
+          toggleReading(parsedData, botChats.length - 1);
         } else {
           const err = await response.text();
-          console.error('Error response:', err); // Log error response
 
           messageDiv.textContent = 'Something went wrong';
           alert(err);
@@ -223,7 +228,7 @@ const handleSubmit = async (e) => {
         }
       } catch (error) {
         messageDiv.textContent = 'Something went wrong';
-        console.error('Error:', error); // Log error
+        console.error(error);
 
         // Re-enable the submit button after processing
         submitButton.disabled = false;
@@ -231,7 +236,7 @@ const handleSubmit = async (e) => {
     }, 100); // Adjust the AI delay duration as needed
   } catch (error) {
     messageDiv.textContent = 'Something went wrong';
-    console.error('Error:', error); // Log error
+    console.error(error);
 
     // Re-enable the submit button after processing
     submitButton.disabled = false;
