@@ -53,9 +53,9 @@ function toggleReading(message, index) {
       currentUtteranceIndex = index;
       utterance.voiceURI = 'Google US English';
       utterance.lang = 'en-IN-ta';
-      utterance.volume = 2; // Adjust volume as needed
-      utterance.rate = 0.9; // Adjust rate as needed
-      utterance.pitch = 1.2; // Adjust pitch as needed
+      utterance.volume = 2;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.2;
       utterance.onend = () => {
         isReading = false;
         printButton.textContent = 'Read AI Output';
@@ -83,9 +83,9 @@ printButton.addEventListener('click', () => {
 chatContainer.appendChild(printButton);
 
 continueReadingButton.addEventListener('click', () => {
-  const lastBotChat = botChats[currentUtteranceIndex + 1];
-  if (lastBotChat) {
-    toggleReading(lastBotChat.value, currentUtteranceIndex + 1);
+  const nextBotChat = botChats[currentUtteranceIndex + 1];
+  if (nextBotChat) {
+    toggleReading(nextBotChat.value, currentUtteranceIndex + 1);
   }
 });
 chatContainer.appendChild(continueReadingButton);
