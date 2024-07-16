@@ -215,6 +215,9 @@ app.post('/', async (req, res) => {
       // Remove unwanted symbols
       botResponse = sanitizeResponse(botResponse);
 
+      // Add a space at the beginning of the response
+      botResponse = ' ' + botResponse;
+
       // Cache the response for future requests with the same prompt
       cacheResponse(prompt, botResponse);
 
@@ -289,4 +292,4 @@ const checkHealthAndRestart = async () => {
 // Set interval for health checks
 const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
 setInterval(checkHealthAndRestart, healthCheckInterval);
-            
+      
