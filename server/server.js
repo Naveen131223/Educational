@@ -36,9 +36,20 @@ const responses = [
   "I'm here to help. What can I do for you?",
 ];
 
+const greetingResponses = {
+  'hi': 'Hi there!',
+  'hello': 'Hello!',
+  'hey': 'Hey!',
+  'good morning': 'Good morning!',
+  'good afternoon': 'Good afternoon!',
+  'good evening': 'Good evening!',
+  'good night': 'Good night!',
+};
+
 const isGreeting = (prompt) => {
   const greetings = [
-    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
+    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there',
+    'good morning', 'good afternoon', 'good evening', 'good night'
   ];
   const normalizedPrompt = prompt.trim().toLowerCase();
   return greetings.includes(normalizedPrompt);
@@ -113,9 +124,10 @@ app.post('/', async (req, res) => {
     }
 
     if (isGreeting(prompt)) {
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      cacheResponse(prompt, randomResponse);
-      return res.status(200).send({ bot: randomResponse });
+      const normalizedPrompt = prompt.trim().toLowerCase();
+      const greetingResponse = greetingResponses[normalizedPrompt] || responses[Math.floor(Math.random() * responses.length)];
+      cacheResponse(prompt, greetingResponse);
+      return res.status(200).send({ bot: greetingResponse });
     }
 
     if (isAskingForDate(prompt)) {
@@ -292,4 +304,4 @@ const checkHealthAndRestart = async () => {
 // Set interval for health checks
 const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
 setInterval(checkHealthAndRestart, healthCheckInterval);
-      
+        
