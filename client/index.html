@@ -76,31 +76,7 @@ const module = await import("./script.js?v=v7");
  
 
   
-<script>
-  // JavaScript to add gaps between buttons in mobile view
-  function addGapsForMobileView() {
-    const container = document.querySelector('.button-container');
-    const buttons = container.querySelectorAll('.button');
-    const containerWidth = container.offsetWidth;
-    const totalButtonsWidth = Array.from(buttons).reduce((acc, button) => acc + button.offsetWidth, 0);
-    const availableGap = containerWidth - totalButtonsWidth;
 
-    if (availableGap > 0) {
-      const gapsCount = buttons.length - 1;
-      const gapSize = Math.floor(availableGap / gapsCount);
-      const lastGapSize = availableGap - (gapSize * gapsCount);
-
-      buttons.forEach((button, index) => {
-        const marginRight = index < buttons.length - 1 ? gapSize + 'px' : lastGapSize + 'px';
-        button.style.marginRight = marginRight;
-      });
-    }
-  }
-
-  // Call the function initially and on window resize to adjust the gaps
-  addGapsForMobileView();
-  window.addEventListener('resize', addGapsForMobileView);
-</script>
 
 
    
