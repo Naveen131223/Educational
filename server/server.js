@@ -36,10 +36,10 @@ const responses = [
   "I'm here to help. What can I do for you?",
 ];
 
-const greetings = [
-  'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there',
-  'good morning', 'good afternoon', 'good evening', 'good night'
-];
+const isGreeting = (prompt) => {
+  const greetings = [
+    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
+  ];
   const normalizedPrompt = prompt.trim().toLowerCase();
   return greetings.includes(normalizedPrompt);
 };
