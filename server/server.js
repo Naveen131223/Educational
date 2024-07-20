@@ -25,8 +25,13 @@ const cacheClearInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
 const sanitizeResponse = (response) => {
-  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
+  // Remove unwanted phrases
+  let sanitized = response.replace("Here is the response:", "");
+
+  // Remove unwanted symbols and trim the result
+  return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
 };
+
 
 const responses = [
   "How can I assist you?",
