@@ -24,14 +24,14 @@ const clearCache = () => {
 const cacheClearInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
-const sanitizeResponse = (response) => {
+ const sanitizeResponse = (response) => {
   // Remove unwanted phrases
+  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
   let sanitized = response.replace("Here is the response:", "");
 
   // Remove unwanted symbols and trim the result
   return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
-};
-
+ };
 
 const responses = [
   "How can I assist you?",
@@ -95,29 +95,6 @@ const getCachedResponse = (prompt) => {
 // Function to cache response
 const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
-};
-
-// Function to load the model
-const loadModel = async () => {
-  try {
-    const response = await axios.post(HF_API_URL, {
-      inputs: "Initialize model",
-      parameters: {
-        temperature: 0.7,
-        max_new_tokens: 10,
-        top_p: 0.9,
-      }
-    }, {
-      headers: {
-        'Authorization': `Bearer ${HF_API_KEY}`,
-        'Content-Type': 'application/json',
-      }
-    });
-
-    console.log('Model loaded successfully:', response.data);
-  } catch (error) {
-    console.error('Error loading model:', error);
-  }
 };
 
 app.get('/', async (req, res) => {
@@ -278,8 +255,6 @@ const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
   console.log(`AI server started on http://localhost:${PORT}`);
-  // Load the model when the server starts
-  loadModel();
 });
 
 // Health check endpoint
@@ -322,4 +297,4 @@ const checkHealthAndRestart = async () => {
 // Set interval for health checks
 const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
 setInterval(checkHealthAndRestart, healthCheckInterval);
-      
+    
