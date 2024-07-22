@@ -264,7 +264,7 @@ const gracefulShutdown = () => {
 
 // Health check and server restart logic
 let failedHealthChecks = 0;
-const MAX_FAILED_CHECKS = 39; // Set to 39 as per your requirement
+const MAX_FAILED_CHECKS = 99; // Set to 99 as per your requirement
 
 const checkHealthAndRestart = async () => {
   try {
