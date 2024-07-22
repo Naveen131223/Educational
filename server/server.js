@@ -1,19 +1,22 @@
-import express from 'express'; // Import express for creating the server
-import * as dotenv from 'dotenv'; // Import dotenv for environment variables
-import cors from 'cors'; // Import cors for handling cross-origin requests
-import axios from 'axios'; // Import axios for making HTTP requests
+import express from 'express';
+import * as dotenv from 'dotenv';
+import cors from 'cors';
+import axios from 'axios';
 
-dotenv.config(); // Load environment variables from .env file
+// Load environment variables from .env file
+dotenv.config();
 
 // Hugging Face API URL and API Key from environment variables
 const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
 
-const app = express(); // Create an express application
-app.use(cors()); // Enable CORS for all routes
-app.use(express.json()); // Parse JSON request bodies
+// Initialize Express application
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-let cache = {}; // Initialize an empty cache
+// In-memory cache for storing responses
+let cache = {};
 
 // Function to clear the cache
 const clearCache = () => {
@@ -21,34 +24,30 @@ const clearCache = () => {
   console.log('Cache cleared successfully');
 };
 
-// Function to clear the module cache
-const clearModuleCache = () => {
+// Function to clear the module cache using dynamic import
+const clearModuleCache = async () => {
   console.log('Clearing module cache...');
-  for (const key in import.meta.url) {
-    if (import.meta.url.hasOwnProperty(key)) {
-      delete import.meta.url[key];
-    }
-  }
+  const moduleCache = await import('module');
+  Object.keys(moduleCache.default._cache).forEach((key) => {
+    delete moduleCache.default._cache[key];
+  });
   console.log('Module cache cleared successfully');
 };
 
-// Set intervals to clear cache and module cache
+// Set intervals for clearing caches
 const cacheClearInterval = 7 * 60 * 1000; // 7 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
 const moduleCacheClearInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 setInterval(clearModuleCache, moduleCacheClearInterval);
 
-// Function to sanitize response by removing unwanted characters
+// Function to sanitize the response by removing unwanted characters and phrases
 const sanitizeResponse = (response) => {
   // Remove unwanted phrases like "Here is the response:"
   let sanitized = response.replace("Here is the response:", "");
 
   // Remove unwanted symbols and trim the result
-  return sanitized
-    .replace(/[!@#*]/g, '') // Remove symbols such as !, @, #, *
-    .replace(/(\.\.\.|…)*$/, '') // Remove trailing ellipses or other unwanted characters
-    .trim(); // Remove leading and trailing whitespace
+  return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
 };
 
 // Predefined responses for greetings
@@ -96,7 +95,14 @@ const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
 };
 
-// Main route for handling POST requests
+// Default route
+app.get('/', (req, res) => {
+  res.status(200).send({
+    message: 'Hi Sister'
+  });
+});
+
+// Main endpoint for processing user prompts
 app.post('/', async (req, res) => {
   try {
     let { prompt } = req.body;
@@ -105,33 +111,32 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
-    // Check if response is cached
+    // Check for cached response
     const cachedResponse = getCachedResponse(prompt);
     if (cachedResponse) {
       console.log('Response retrieved from cache:', cachedResponse);
-      return res.status(200).send({ bot: ' ' + cachedResponse });
+      return res.status(200).send({ bot: ` ${cachedResponse}` });
     }
 
-    // Handle greetings
+    // Handle greeting prompts
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       cacheResponse(prompt, randomResponse);
-      return res.status(200).send({ bot: ' ' + randomResponse });
+      return res.status(200).send({ bot: ` ${randomResponse}` });
     }
 
-    // Handle requests for the current date
+    // Handle date-related prompts
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
-      cacheResponse(prompt, 'The current date is: ' + currentDate);
-      return res.status(200).send({ bot: ' The current date is: ' + currentDate });
+      cacheResponse(prompt, ` The current date is: ${currentDate}`);
+      return res.status(200).send({ bot: ` The current date is: ${currentDate}` });
     }
 
-    // Process prompt for word count and subtopics
+    // Define prompt adjustments based on categories
     const promptLowerCase = prompt.toLowerCase();
     let maxWords = null;
     let subtopics = null;
 
-    // Extract marks, word counts, or points from the prompt
     const markMatch = promptLowerCase.match(/(\d+)\s*marks?/i);
     const wordMatch = promptLowerCase.match(/(\d+)\s*words?/i);
     const pointsMatch = promptLowerCase.match(/(\d+)\s*(points?|steps?)/i);
@@ -147,7 +152,7 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       const pointsRequested = parseInt(pointsMatch[1], 10);
       const adjustedPoints = pointsRequested + 3;
-      maxWords = adjustedPoints * 10; // Assume roughly 10 words per point/step
+      maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
     }
 
     if (subtopics) {
@@ -164,13 +169,12 @@ app.post('/', async (req, res) => {
 
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
 
-    // Request to Hugging Face API
     axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
-        temperature: 0.7, // Increased temperature for more creative responses
-        max_new_tokens: maxNewTokens, // Ensure this is an integer
-        top_p: 0.9 // Nucleus sampling, adjusted to be within the valid range
+        temperature: 0.7, // increased temperature for more creative responses
+        max_new_tokens: maxNewTokens, // ensure this is an integer
+        top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
       }
     }, {
       headers: {
@@ -193,10 +197,31 @@ app.post('/', async (req, res) => {
         botResponse = botResponse.slice(prompt.length).trim();
       }
 
+      // Remove the subtopics prompt from the response if present
+      if (subtopics && botResponse.includes(subtopics)) {
+        botResponse = botResponse.replace(subtopics, '').trim();
+      }
+
+      // Trim based on sentence boundaries or specific criteria
+      const sentences = botResponse.split('.'); // Split into sentences
+      if (sentences.length > 1) {
+        botResponse = sentences.slice(0, -1).join('.').trim() + '.';
+      } else {
+        botResponse = botResponse.trim();
+      }
+
+      // If maxWords is specified, limit the response to the specified number of words
+      if (maxWords) {
+        const words = botResponse.split(' ');
+        if (words.length > maxWords) {
+          botResponse = words.slice(0, maxWords).join(' ') + '.';
+        }
+      }
+
       // Remove any leading punctuation
       botResponse = botResponse.replace(/^[!?.]*\s*/, '');
 
-      // Remove unwanted symbols
+      // Sanitize the response
       botResponse = sanitizeResponse(botResponse);
 
       // Add a space at the beginning of the response
@@ -219,12 +244,7 @@ app.post('/', async (req, res) => {
   }
 });
 
-// Route for health check
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
-
-// Function to start the server
+// Start the server
 const startServer = () => {
   try {
     const port = process.env.PORT || 5000;
@@ -236,8 +256,13 @@ const startServer = () => {
   }
 };
 
-// Start the server
+// Initialize server
 startServer();
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // Graceful shutdown function
 const gracefulShutdown = () => {
@@ -248,10 +273,11 @@ const gracefulShutdown = () => {
   });
 };
 
+// Handle termination signals for graceful shutdown
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
 
-// Function to check health and restart server if necessary
+// Function to check server health and restart if necessary
 const checkHealthAndRestart = async () => {
   try {
     const response = await axios.get('http://localhost:5000/health');
@@ -268,5 +294,5 @@ const checkHealthAndRestart = async () => {
 };
 
 // Set interval for health checks
-setInterval(checkHealthAndRestart, 5 * 60 * 1000); // Every 5 minutes
-                  
+const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
+setInterval(checkHealthAndRestart, healthCheckInterval); 
