@@ -22,9 +22,18 @@ const clearCache = () => {
   console.log('Cache cleared successfully');
 };
 
-// Set intervals to clear cache every 2 minutes
+// Function to clear the built-in module cache
+const clearModuleCache = () => {
+  Object.keys(require.cache).forEach((key) => {
+    delete require.cache[key];
+  });
+  console.log('Module cache cleared successfully');
+};
+
+// Set intervals to clear caches every 2 minutes
 const cacheClearInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
+setInterval(clearModuleCache, cacheClearInterval);
 
 // Function to sanitize response text by removing unwanted characters
 const sanitizeResponse = (response) => {
@@ -223,27 +232,16 @@ app.post('/', async (req, res) => {
       if (maxWords) {
         const words = botResponse.split(' ');
         if (words.length > maxWords) {
-          botResponse = words.slice(0, maxWords).join(' ') + '.';
+          botResponse = words.slice(0, maxWords).join(' ');
         }
       }
 
-      // Remove any leading punctuation
-      botResponse = botResponse.replace(/^[!?.]*\s*/, '');
-
-      // Sanitize the response text
+      // Sanitize the response
       botResponse = sanitizeResponse(botResponse);
-
-      // Add a space at the beginning of the response
-      botResponse = ' ' + botResponse;
-
-      // Cache the response for future requests
-      cacheResponse(prompt, botResponse);
-
-      // Send the response back to the client
+      cacheResponse(prompt, botResponse); // Cache the response
       res.status(200).send({ bot: botResponse });
-
     }).catch(error => {
-      console.error('Error fetching response from Hugging Face API:', error);
+      console.error('Error occurred while fetching response:', error);
       res.status(500).send({ error: 'Error occurred while fetching response' });
     });
 
@@ -299,3 +297,4 @@ const checkHealthAndRestart = async () => {
 // Set interval for health checks every 2 minutes
 const healthCheckInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 setInterval(checkHealthAndRestart, healthCheckInterval);
+          
