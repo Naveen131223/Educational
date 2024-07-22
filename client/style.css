@@ -932,7 +932,7 @@ h1, h2, h3 {
 
 /* hides */
 ::-webkit-scrollbar {
-  display: none;
+  display: block;
 }
 
 
