@@ -5,6 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
+// Hugging Face API details
 const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
 
@@ -12,24 +13,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// In-memory cache to store responses
 let cache = {};
 
 // Function to clear the cache
 const clearCache = () => {
-  cache = {};
+  cache = {}; // Reset cache
   console.log('Cache cleared successfully');
 };
 
-// Set intervals
-const cacheClearInterval = 7 * 60 * 1000; // 7 minutes in milliseconds
+// Set intervals to clear cache every 2 minutes
+const cacheClearInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
+// Function to sanitize response text by removing unwanted characters
 const sanitizeResponse = (response) => {
-  // Remove unwanted phrases and symbols
-  let sanitized = response.replace("Here is the response:", "").replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
-  return sanitized;
+  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
 };
 
+// Predefined responses for greetings
 const responses = [
   "How can I assist you?",
   "How can I help you?",
@@ -38,12 +40,15 @@ const responses = [
   "I'm here to help. What can I do for you?",
 ];
 
+// Function to check if prompt is a greeting
 const isGreeting = (prompt) => {
-  const greetings = ['hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'];
-  const normalizedPrompt = prompt.trim().toLowerCase();
-  return greetings.includes(normalizedPrompt);
+  const greetings = [
+    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
+  ];
+  return greetings.includes(prompt.trim().toLowerCase());
 };
 
+// Categories for word count based on marks or points
 const markCategories = {
   1: { words: 20 },
   2: { words: 50 },
@@ -59,12 +64,15 @@ const markCategories = {
   20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
 };
 
+// Function to check if prompt is asking for the date
 const isAskingForDate = (prompt) => {
-  const dateKeywords = ['date', 'current date', 'what date', 'today\'s date', 'current day'];
-  const normalizedPrompt = prompt.trim().toLowerCase();
-  return dateKeywords.some(keyword => normalizedPrompt.includes(keyword));
+  const dateKeywords = [
+    'date', 'current date', 'what date', 'today\'s date', 'current day'
+  ];
+  return dateKeywords.some(keyword => prompt.trim().toLowerCase().includes(keyword));
 };
 
+// Function to get the current date in a readable format
 const getCurrentDate = () => {
   const now = new Date();
   const options = {
@@ -76,50 +84,60 @@ const getCurrentDate = () => {
   return now.toLocaleString('en-US', options);
 };
 
+// Function to check if the prompt mentions a diagram
 const mentionsDiagram = (prompt) => {
   return prompt.toLowerCase().includes('diagram');
 };
 
-// Function to retrieve cached response or null if not cached
+// Function to retrieve cached response
 const getCachedResponse = (prompt) => {
   return cache[prompt] || null;
 };
 
-// Function to cache response
+// Function to cache response for a prompt
 const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
 };
 
-app.get('/', async (req, res) => {
-  res.status(200).send({ message: 'Hi Sister' });
+// Endpoint to handle GET requests to root
+app.get('/', (req, res) => {
+  res.status(200).send({
+    message: 'Hi Sister'
+  });
 });
 
+// Endpoint to handle POST requests to root
 app.post('/', async (req, res) => {
   try {
     let { prompt } = req.body;
 
+    // Check if prompt is provided
     if (!prompt) {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
+    // Check if response is cached
     const cachedResponse = getCachedResponse(prompt);
     if (cachedResponse) {
       console.log('Response retrieved from cache:', cachedResponse);
       return res.status(200).send({ bot: cachedResponse });
     }
 
+    // Handle greetings
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       cacheResponse(prompt, randomResponse);
       return res.status(200).send({ bot: randomResponse });
     }
 
+    // Handle date requests
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
       cacheResponse(prompt, `The current date is: ${currentDate}`);
       return res.status(200).send({ bot: `The current date is: ${currentDate}` });
     }
 
+    // Process prompt for word count and subtopics
     const promptLowerCase = prompt.toLowerCase();
     let maxWords = null;
     let subtopics = null;
@@ -139,9 +157,10 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       const pointsRequested = parseInt(pointsMatch[1], 10);
       const adjustedPoints = pointsRequested + 3;
-      maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
+      maxWords = adjustedPoints * 10; // Assume roughly 10 words per point/step
     }
 
+    // Append subtopics or word count to prompt
     if (subtopics) {
       prompt += ` Please cover the following subtopics: ${subtopics}.`;
     } else if (maxWords) {
@@ -150,18 +169,20 @@ app.post('/', async (req, res) => {
       prompt += " Provide an accurate response.";
     }
 
+    // Append request for diagram if mentioned
     if (mentionsDiagram(prompt)) {
       prompt += " Include a title name with the diagram name in text.";
     }
 
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
 
+    // Call Hugging Face API
     axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
-        temperature: 0.7, // increased temperature for more creative responses
-        max_new_tokens: maxNewTokens, // ensure this is an integer
-        top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
+        temperature: 0.7, // Increased temperature for more creative responses
+        max_new_tokens: maxNewTokens, // Ensure this is an integer
+        top_p: 0.9 // Nucleus sampling
       }
     }, {
       headers: {
@@ -173,18 +194,19 @@ app.post('/', async (req, res) => {
 
       let botResponse = 'No response generated';
 
+      // Extract response text from API data
       if (response.data && response.data.length > 0) {
         botResponse = response.data[0].generated_text || 'No response generated';
       } else if (response.data && response.data.generated_text) {
         botResponse = response.data.generated_text;
       }
 
-      // Ensure the response does not repeat the prompt and handle truncation more robustly
+      // Remove prompt text if it repeats in response
       if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
         botResponse = botResponse.slice(prompt.length).trim();
       }
 
-      // Remove the subtopics prompt from the response if present
+      // Remove subtopics prompt from response if present
       if (subtopics && botResponse.includes(subtopics)) {
         botResponse = botResponse.replace(subtopics, '').trim();
       }
@@ -197,7 +219,7 @@ app.post('/', async (req, res) => {
         botResponse = botResponse.trim();
       }
 
-      // If maxWords is specified, limit the response to the specified number of words
+      // Limit the response to the specified number of words
       if (maxWords) {
         const words = botResponse.split(' ');
         if (words.length > maxWords) {
@@ -208,32 +230,21 @@ app.post('/', async (req, res) => {
       // Remove any leading punctuation
       botResponse = botResponse.replace(/^[!?.]*\s*/, '');
 
-      // Remove unwanted symbols
+      // Sanitize the response text
       botResponse = sanitizeResponse(botResponse);
 
       // Add a space at the beginning of the response
       botResponse = ' ' + botResponse;
 
-      // Cache the response for future requests with the same prompt
+      // Cache the response for future requests
       cacheResponse(prompt, botResponse);
 
+      // Send the response back to the client
       res.status(200).send({ bot: botResponse });
 
     }).catch(error => {
       console.error('Error fetching response from Hugging Face API:', error);
-
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-        console.error('Error response headers:', error.response.headers);
-        res.status(error.response.status).send({ error: error.response.data });
-      } else if (error.request) {
-        console.error('Error request:', error.request);
-        res.status(500).send({ error: 'No response received from Hugging Face API' });
-      } else {
-        console.error('Error message:', error.message);
-        res.status(500).send({ error: error.message });
-      }
+      res.status(500).send({ error: 'Error occurred while fetching response' });
     });
 
   } catch (error) {
@@ -242,8 +253,8 @@ app.post('/', async (req, res) => {
   }
 });
 
+// Start the server on the specified port
 const PORT = process.env.PORT || 5000;
-
 const server = app.listen(PORT, () => {
   console.log(`AI server started on http://localhost:${PORT}`);
 });
@@ -253,7 +264,7 @@ app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-// Graceful shutdown
+// Function to handle graceful shutdown
 const gracefulShutdown = () => {
   console.log('Received shutdown signal, closing HTTP server');
   server.close(() => {
@@ -285,7 +296,6 @@ const checkHealthAndRestart = async () => {
   }
 };
 
-// Set interval for health checks
-const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
+// Set interval for health checks every 2 minutes
+const healthCheckInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 setInterval(checkHealthAndRestart, healthCheckInterval);
-          
