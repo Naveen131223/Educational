@@ -24,14 +24,10 @@ const clearCache = () => {
 const cacheClearInterval = 7 * 60 * 1000; // 7 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
- const sanitizeResponse = (response) => {
-  // Remove unwanted phrases
-  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
+const sanitizeResponse = (response) => {
   let sanitized = response.replace("Here is the response:", "");
-
-  // Remove unwanted symbols and trim the result
   return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
- };
+};
 
 const responses = [
   "How can I assist you?",
@@ -246,55 +242,58 @@ app.post('/', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Unexpected error occurred:', error);
+    console.error('Unexpected error:', error);
     res.status(500).send({ error: 'Unexpected error occurred' });
   }
 });
 
-const PORT = process.env.PORT || 5000;
-
-const server = app.listen(PORT, () => {
-  console.log(`AI server started on http://localhost:${PORT}`);
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
-
-// Graceful shutdown
+// Graceful shutdown logic
 const gracefulShutdown = () => {
-  console.log('Received shutdown signal, closing HTTP server');
+  console.log('Shutting down gracefully...');
   server.close(() => {
-    console.log('HTTP server closed');
+    console.log('Server closed.');
     process.exit(0);
   });
+
+  // Force shutdown after 10 seconds if the server is still running
+  setTimeout(() => {
+    console.error('Forcing shutdown...');
+    process.exit(1);
+  }, 10000);
 };
 
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+// Health check and server restart logic
+let failedHealthChecks = 0;
+const MAX_FAILED_CHECKS = 9; // Set to 9 as per your requirement
 
-// Function to check health and restart server if necessary
 const checkHealthAndRestart = async () => {
   try {
     const response = await axios.get('http://localhost:5000/health');
     if (response.status !== 200) {
-      console.log('Health check failed, restarting server...');
-      gracefulShutdown();
-      server.listen(PORT, () => {
-        console.log(`AI server restarted on http://localhost:${PORT}`);
-      });
+      failedHealthChecks++;
+      if (failedHealthChecks >= MAX_FAILED_CHECKS) {
+        console.log('Health check failed multiple times, restarting server...');
+        gracefulShutdown();
+      }
+    } else {
+      failedHealthChecks = 0; // Reset counter on successful health check
     }
   } catch (error) {
-    console.log('Health check failed, restarting server...');
-    gracefulShutdown();
-    server.listen(PORT, () => {
-      console.log(`AI server restarted on http://localhost:${PORT}`);
-    });
+    failedHealthChecks++;
+    if (failedHealthChecks >= MAX_FAILED_CHECKS) {
+      console.log('Health check failed multiple times, restarting server...');
+      gracefulShutdown();
+    }
   }
 };
 
-// Set interval for health checks
-const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
+// Set health check interval
+const healthCheckInterval = 60 * 1000; // 1 minute
 setInterval(checkHealthAndRestart, healthCheckInterval);
-    
+
+const PORT = process.env.PORT || 5000;
+
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+      
