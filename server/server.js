@@ -3,19 +3,15 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
 
-// Load environment variables from .env file
 dotenv.config();
 
-// Hugging Face API URL and API Key from environment variables
 const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
 
-// Initialize Express application
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// In-memory cache for storing responses
 let cache = {};
 
 // Function to clear the cache
@@ -24,33 +20,19 @@ const clearCache = () => {
   console.log('Cache cleared successfully');
 };
 
-// Function to clear the module cache using dynamic import
-const clearModuleCache = async () => {
-  console.log('Clearing module cache...');
-  const moduleCache = await import('module');
-  Object.keys(moduleCache.default._cache).forEach((key) => {
-    delete moduleCache.default._cache[key];
-  });
-  console.log('Module cache cleared successfully');
-};
-
-// Set intervals for clearing caches
+// Set intervals
 const cacheClearInterval = 7 * 60 * 1000; // 7 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
-const moduleCacheClearInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
-setInterval(clearModuleCache, moduleCacheClearInterval);
-
-// Function to sanitize the response by removing unwanted characters and phrases
-const sanitizeResponse = (response) => {
-  // Remove unwanted phrases like "Here is the response:"
+ const sanitizeResponse = (response) => {
+  // Remove unwanted phrases
+  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
   let sanitized = response.replace("Here is the response:", "");
 
   // Remove unwanted symbols and trim the result
   return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
-};
+ };
 
-// Predefined responses for greetings
 const responses = [
   "How can I assist you?",
   "How can I help you?",
@@ -59,7 +41,6 @@ const responses = [
   "I'm here to help. What can I do for you?",
 ];
 
-// Function to check if the prompt is a greeting
 const isGreeting = (prompt) => {
   const greetings = [
     'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
@@ -68,7 +49,29 @@ const isGreeting = (prompt) => {
   return greetings.includes(normalizedPrompt);
 };
 
-// Function to get the current date in a readable format
+const markCategories = {
+  1: { words: 20 },
+  2: { words: 50 },
+  3: { words: 70 },
+  4: { words: 90 },
+  5: { words: 150 },
+  6: { words: 190 },
+  7: { words: 240, subtopics: 'detailed explanation, multiple examples, and analysis' },
+  8: { words: 290, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
+  10: { words: 530, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
+  12: { words: 630, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
+  15: { words: 680, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
+  20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
+};
+
+const isAskingForDate = (prompt) => {
+  const dateKeywords = [
+    'date', 'current date', 'what date', 'today\'s date', 'current day'
+  ];
+  const normalizedPrompt = prompt.trim().toLowerCase();
+  return dateKeywords.some(keyword => normalizedPrompt.includes(keyword));
+};
+
 const getCurrentDate = () => {
   const now = new Date();
   const options = {
@@ -80,7 +83,6 @@ const getCurrentDate = () => {
   return now.toLocaleString('en-US', options);
 };
 
-// Function to check if the prompt mentions a diagram
 const mentionsDiagram = (prompt) => {
   return prompt.toLowerCase().includes('diagram');
 };
@@ -95,14 +97,12 @@ const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
 };
 
-// Default route
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   res.status(200).send({
     message: 'Hi Sister'
   });
 });
 
-// Main endpoint for processing user prompts
 app.post('/', async (req, res) => {
   try {
     let { prompt } = req.body;
@@ -111,28 +111,24 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
-    // Check for cached response
     const cachedResponse = getCachedResponse(prompt);
     if (cachedResponse) {
       console.log('Response retrieved from cache:', cachedResponse);
-      return res.status(200).send({ bot: ` ${cachedResponse}` });
+      return res.status(200).send({ bot: cachedResponse });
     }
 
-    // Handle greeting prompts
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       cacheResponse(prompt, randomResponse);
-      return res.status(200).send({ bot: ` ${randomResponse}` });
+      return res.status(200).send({ bot: randomResponse });
     }
 
-    // Handle date-related prompts
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
-      cacheResponse(prompt, ` The current date is: ${currentDate}`);
-      return res.status(200).send({ bot: ` The current date is: ${currentDate}` });
+      cacheResponse(prompt, `The current date is: ${currentDate}`);
+      return res.status(200).send({ bot: `The current date is: ${currentDate}` });
     }
 
-    // Define prompt adjustments based on categories
     const promptLowerCase = prompt.toLowerCase();
     let maxWords = null;
     let subtopics = null;
@@ -221,7 +217,7 @@ app.post('/', async (req, res) => {
       // Remove any leading punctuation
       botResponse = botResponse.replace(/^[!?.]*\s*/, '');
 
-      // Sanitize the response
+      // Remove unwanted symbols
       botResponse = sanitizeResponse(botResponse);
 
       // Add a space at the beginning of the response
@@ -233,38 +229,40 @@ app.post('/', async (req, res) => {
       res.status(200).send({ bot: botResponse });
 
     }).catch(error => {
-      console.error('Error with Hugging Face API:', error.message);
-      res.status(500).send({
-        error: 'Error fetching response from Hugging Face API',
-      });
+      console.error('Error fetching response from Hugging Face API:', error);
+
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+        res.status(error.response.status).send({ error: error.response.data });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        res.status(500).send({ error: 'No response received from Hugging Face API' });
+      } else {
+        console.error('Error message:', error.message);
+        res.status(500).send({ error: error.message });
+      }
     });
+
   } catch (error) {
-    console.error('Error processing request:', error.message);
-    res.status(500).send({ error: 'Error processing request' });
+    console.error('Unexpected error occurred:', error);
+    res.status(500).send({ error: 'Unexpected error occurred' });
   }
 });
 
-// Start the server
-const startServer = () => {
-  try {
-    const port = process.env.PORT || 5000;
-    app.listen(port, () => {
-      console.log(`Server is running on port http://localhost:${port}`);
-    });
-  } catch (error) {
-    console.error('Error starting the server:', error.message);
-  }
-};
+const PORT = process.env.PORT || 5000;
 
-// Initialize server
-startServer();
+const server = app.listen(PORT, () => {
+  console.log(`AI server started on http://localhost:${PORT}`);
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-// Graceful shutdown function
+// Graceful shutdown
 const gracefulShutdown = () => {
   console.log('Received shutdown signal, closing HTTP server');
   server.close(() => {
@@ -273,26 +271,30 @@ const gracefulShutdown = () => {
   });
 };
 
-// Handle termination signals for graceful shutdown
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
 
-// Function to check server health and restart if necessary
+// Function to check health and restart server if necessary
 const checkHealthAndRestart = async () => {
   try {
     const response = await axios.get('http://localhost:5000/health');
     if (response.status !== 200) {
       console.log('Health check failed, restarting server...');
       gracefulShutdown();
-      startServer();
+      server.listen(PORT, () => {
+        console.log(`AI server restarted on http://localhost:${PORT}`);
+      });
     }
   } catch (error) {
     console.log('Health check failed, restarting server...');
     gracefulShutdown();
-    startServer();
+    server.listen(PORT, () => {
+      console.log(`AI server restarted on http://localhost:${PORT}`);
+    });
   }
 };
 
 // Set interval for health checks
 const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
-setInterval(checkHealthAndRestart, healthCheckInterval); 
+setInterval(checkHealthAndRestart, healthCheckInterval);
+    
