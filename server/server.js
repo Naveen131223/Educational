@@ -24,14 +24,11 @@ const clearCache = () => {
 const cacheClearInterval = 7 * 60 * 1000; // 7 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
- const sanitizeResponse = (response) => {
-  // Remove unwanted phrases
-  return response.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
-  let sanitized = response.replace("Here is the response:", "");
-
-  // Remove unwanted symbols and trim the result
-  return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
- };
+const sanitizeResponse = (response) => {
+  // Remove unwanted phrases and symbols
+  let sanitized = response.replace("Here is the response:", "").replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
+  return sanitized;
+};
 
 const responses = [
   "How can I assist you?",
@@ -42,9 +39,7 @@ const responses = [
 ];
 
 const isGreeting = (prompt) => {
-  const greetings = [
-    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
-  ];
+  const greetings = ['hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'];
   const normalizedPrompt = prompt.trim().toLowerCase();
   return greetings.includes(normalizedPrompt);
 };
@@ -65,9 +60,7 @@ const markCategories = {
 };
 
 const isAskingForDate = (prompt) => {
-  const dateKeywords = [
-    'date', 'current date', 'what date', 'today\'s date', 'current day'
-  ];
+  const dateKeywords = ['date', 'current date', 'what date', 'today\'s date', 'current day'];
   const normalizedPrompt = prompt.trim().toLowerCase();
   return dateKeywords.some(keyword => normalizedPrompt.includes(keyword));
 };
@@ -98,9 +91,7 @@ const cacheResponse = (prompt, response) => {
 };
 
 app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: 'Hi Sister'
-  });
+  res.status(200).send({ message: 'Hi Sister' });
 });
 
 app.post('/', async (req, res) => {
@@ -297,4 +288,4 @@ const checkHealthAndRestart = async () => {
 // Set interval for health checks
 const healthCheckInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
 setInterval(checkHealthAndRestart, healthCheckInterval);
-    
+          
