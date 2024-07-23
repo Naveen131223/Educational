@@ -1,13 +1,9 @@
-import express from 'express'; 
+import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
-import { createRequire } from 'module';
 
 dotenv.config();
-
-const require = createRequire(import.meta.url);
-const { clearBuiltInCache } = require('./clearCache');
 
 const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
@@ -24,11 +20,9 @@ const clearCache = () => {
   console.log('Cache cleared successfully');
 };
 
-// Set intervals to clear caches
+// Set intervals to clear cache
 const cacheClearInterval = 7 * 60 * 1000; // 7 minutes in milliseconds
-const builtInCacheClearInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
-setInterval(clearBuiltInCache, builtInCacheClearInterval);
 
 const sanitizeResponse = (response) => {
   let sanitized = response.replace("Here is the response:", "");
@@ -252,4 +246,4 @@ process.on('SIGINT', gracefulShutdown);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-      
+  
