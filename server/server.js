@@ -22,11 +22,15 @@ const clearCache = () => {
 
 // Function to clear the built-in module cache
 const clearBuiltInCache = async () => {
-  const moduleKeys = Object.keys(require.cache);
-  moduleKeys.forEach((key) => {
-    delete require.cache[key];
-  });
-  console.log('Built-in module cache cleared successfully');
+  try {
+    const moduleKeys = Object.keys(require.cache);
+    moduleKeys.forEach((key) => {
+      delete require.cache[key];
+    });
+    console.log('Built-in module cache cleared successfully');
+  } catch (error) {
+    console.error('Error clearing built-in module cache:', error);
+  }
 };
 
 // Set intervals to clear caches
@@ -249,4 +253,3 @@ process.on('SIGINT', gracefulShutdown);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-        
