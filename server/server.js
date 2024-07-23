@@ -20,9 +20,19 @@ const clearCache = () => {
   console.log('Cache cleared successfully');
 };
 
-// Set intervals
+// Function to clear the built-in module cache
+const clearBuiltInCache = () => {
+  Object.keys(require.cache).forEach((key) => {
+    delete require.cache[key];
+  });
+  console.log('Built-in module cache cleared successfully');
+};
+
+// Set intervals to clear caches
 const cacheClearInterval = 7 * 60 * 1000; // 7 minutes in milliseconds
+const builtInCacheClearInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
+setInterval(clearBuiltInCache, builtInCacheClearInterval);
 
 const sanitizeResponse = (response) => {
   let sanitized = response.replace("Here is the response:", "");
@@ -110,19 +120,19 @@ app.post('/', async (req, res) => {
     const cachedResponse = getCachedResponse(prompt);
     if (cachedResponse) {
       console.log('Response retrieved from cache:', cachedResponse);
-      return res.status(200).send({ bot: cachedResponse });
+      return res.status(200).send({ bot: ` ${cachedResponse}` }); // Add a space at the beginning
     }
 
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       cacheResponse(prompt, randomResponse);
-      return res.status(200).send({ bot: randomResponse });
+      return res.status(200).send({ bot: ` ${randomResponse}` }); // Add a space at the beginning
     }
 
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
       cacheResponse(prompt, `The current date is: ${currentDate}`);
-      return res.status(200).send({ bot: `The current date is: ${currentDate}` });
+      return res.status(200).send({ bot: ` The current date is: ${currentDate}` }); // Add a space at the beginning
     }
 
     const promptLowerCase = prompt.toLowerCase();
@@ -194,53 +204,24 @@ app.post('/', async (req, res) => {
         botResponse = botResponse.replace(subtopics, '').trim();
       }
 
-      // Trim based on sentence boundaries or specific criteria
-      const sentences = botResponse.split('.'); // Split into sentences
-      if (sentences.length > 1) {
-        botResponse = sentences.slice(0, -1).join('.').trim() + '.';
-      } else {
-        botResponse = botResponse.trim();
-      }
-
-      // If maxWords is specified, limit the response to the specified number of words
-      if (maxWords) {
-        const words = botResponse.split(' ');
-        if (words.length > maxWords) {
-          botResponse = words.slice(0, maxWords).join(' ') + '.';
+      // Trim based on sentence boundaries, ensuring the text is concise and complete
+      const maxLength = maxWords ? maxWords * 6 : 2000;
+      if (botResponse.length > maxLength) {
+        botResponse = botResponse.substring(0, maxLength);
+        const lastSentenceEnd = botResponse.lastIndexOf('. ');
+        if (lastSentenceEnd > 0) {
+          botResponse = botResponse.substring(0, lastSentenceEnd + 1);
         }
       }
 
-      // Remove any leading punctuation
-      botResponse = botResponse.replace(/^[!?.]*\s*/, '');
+      const sanitizedResponse = ` ${sanitizeResponse(botResponse)}`; // Add a space at the beginning
 
-      // Remove unwanted symbols
-      botResponse = sanitizeResponse(botResponse);
-
-      // Add a space at the beginning of the response
-      botResponse = ' ' + botResponse;
-
-      // Cache the response for future requests with the same prompt
-      cacheResponse(prompt, botResponse);
-
-      res.status(200).send({ bot: botResponse });
-
-    }).catch(error => {
-      console.error('Error fetching response from Hugging Face API:', error);
-
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-        console.error('Error response headers:', error.response.headers);
-        res.status(error.response.status).send({ error: error.response.data });
-      } else if (error.request) {
-        console.error('Error request:', error.request);
-        res.status(500).send({ error: 'No response received from Hugging Face API' });
-      } else {
-        console.error('Error message:', error.message);
-        res.status(500).send({ error: error.message });
-      }
+      cacheResponse(prompt, sanitizedResponse);
+      return res.status(200).send({ bot: sanitizedResponse });
+    }).catch(err => {
+      console.error('Error from Hugging Face API:', err.response ? err.response.data : err.message);
+      res.status(500).send({ error: 'Error generating response' });
     });
-
   } catch (error) {
     console.error('Unexpected error:', error);
     res.status(500).send({ error: 'Unexpected error occurred' });
@@ -255,45 +236,16 @@ const gracefulShutdown = () => {
     process.exit(0);
   });
 
-  // Force shutdown after 10 seconds if the server is still running
+  // Force shutdown after 10 seconds
   setTimeout(() => {
     console.error('Forcing shutdown...');
     process.exit(1);
   }, 10000);
 };
 
-// Health check and server restart logic
-let failedHealthChecks = 0;
-const MAX_FAILED_CHECKS = 999999999; // Set to 99 as per your requirement
-
-const checkHealthAndRestart = async () => {
-  try {
-    const response = await axios.get('http://localhost:5000/health');
-    if (response.status !== 200) {
-      failedHealthChecks++;
-      if (failedHealthChecks >= MAX_FAILED_CHECKS) {
-        console.log('Health check failed multiple times, restarting server...');
-        gracefulShutdown();
-      }
-    } else {
-      failedHealthChecks = 0; // Reset counter on successful health check
-    }
-  } catch (error) {
-    failedHealthChecks++;
-    if (failedHealthChecks >= MAX_FAILED_CHECKS) {
-      console.log('Health check failed multiple times, restarting server...');
-      gracefulShutdown();
-    }
-  }
-};
-
-// Set health check interval
-const healthCheckInterval = 60 * 1000; // 1 minute
-setInterval(checkHealthAndRestart, healthCheckInterval);
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 const PORT = process.env.PORT || 5000;
-
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-      
+const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+                                        
