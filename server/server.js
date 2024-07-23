@@ -2,8 +2,12 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
+import { createRequire } from 'module';
 
 dotenv.config();
+
+const require = createRequire(import.meta.url);
+const { clearBuiltInCache } = require('./clearCache');
 
 const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
@@ -18,19 +22,6 @@ let cache = {};
 const clearCache = () => {
   cache = {};
   console.log('Cache cleared successfully');
-};
-
-// Function to clear the built-in module cache
-const clearBuiltInCache = async () => {
-  try {
-    const moduleKeys = Object.keys(require.cache);
-    moduleKeys.forEach((key) => {
-      delete require.cache[key];
-    });
-    console.log('Built-in module cache cleared successfully');
-  } catch (error) {
-    console.error('Error clearing built-in module cache:', error);
-  }
 };
 
 // Set intervals to clear caches
@@ -212,24 +203,32 @@ app.post('/', async (req, res) => {
       // Trim based on sentence boundaries, ensuring the text is concise and complete
       const maxLength = maxWords ? maxWords * 6 : 2000;
       if (botResponse.length > maxLength) {
-        botResponse = botResponse.substring(0, maxLength);
-        const lastSentenceEnd = botResponse.lastIndexOf('. ');
-        if (lastSentenceEnd > 0) {
-          botResponse = botResponse.substring(0, lastSentenceEnd + 1);
+        const truncated = botResponse.slice(0, maxLength);
+        const lastSentenceEnd = truncated.lastIndexOf('.');
+        if (lastSentenceEnd > -1) {
+          botResponse = truncated.slice(0, lastSentenceEnd + 1);
+        } else {
+          botResponse = truncated;
         }
       }
 
-      const sanitizedResponse = ` ${sanitizeResponse(botResponse)}`; // Add a space at the beginning
+      // Remove incomplete or truncated sentences at the end
+      const lastSentenceEnd = botResponse.lastIndexOf('.');
+      if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
+        botResponse = botResponse.slice(0, lastSentenceEnd + 1);
+      }
 
-      cacheResponse(prompt, sanitizedResponse);
-      return res.status(200).send({ bot: sanitizedResponse });
-    }).catch(err => {
-      console.error('Error from Hugging Face API:', err.response ? err.response.data : err.message);
-      res.status(500).send({ error: 'Error generating response' });
+      botResponse = sanitizeResponse(botResponse);
+
+      cacheResponse(prompt, botResponse);
+      return res.status(200).send({ bot: ` ${botResponse}` }); // Add a space at the beginning
+    }).catch(error => {
+      console.error('Error processing request:', error);
+      return res.status(500).send({ error: 'Error processing request' });
     });
   } catch (error) {
     console.error('Unexpected error:', error);
-    res.status(500).send({ error: 'Unexpected error occurred' });
+    return res.status(500).send({ error: 'Unexpected error occurred' });
   }
 });
 
@@ -253,3 +252,4 @@ process.on('SIGINT', gracefulShutdown);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+      
