@@ -109,8 +109,8 @@ app.post('/', async (req, res) => {
 
         // Handle warm-up prompt
         if (prompt === 'Initialise model') {
-            console.log('Warm-up message received: Hi Sister');
-            return res.status(200).send({ bot: 'Hi Sister' });
+            console.log('Warm-up message received: Initialise model');
+            return res.status(200).send({ bot: 'Initialise model' });
         }
 
         const cachedResponse = getCachedResponse(prompt);
