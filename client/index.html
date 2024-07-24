@@ -88,8 +88,19 @@ const module = await import("./script.js?v=v7");
 
 <script>
     // Function to activate the server
-    const _0x3d8426=_0x2c19;function _0x2c19(_0x435261,_0x4a5e7c){const _0x9d74a0=_0x9d74();return _0x2c19=function(_0x2c1968,_0x3f7701){_0x2c1968=_0x2c1968-0xa7;let _0x156c79=_0x9d74a0[_0x2c1968];return _0x156c79;},_0x2c19(_0x435261,_0x4a5e7c);}(function(_0x46c775,_0x444fb0){const _0x472966=_0x2c19,_0x35be19=_0x46c775();while(!![]){try{const _0x28a6a2=parseInt(_0x472966(0xb3))/0x1+parseInt(_0x472966(0xb4))/0x2*(-parseInt(_0x472966(0xb7))/0x3)+-parseInt(_0x472966(0xa7))/0x4+-parseInt(_0x472966(0xa8))/0x5+-parseInt(_0x472966(0xb1))/0x6+parseInt(_0x472966(0xad))/0x7*(-parseInt(_0x472966(0xab))/0x8)+parseInt(_0x472966(0xac))/0x9;if(_0x28a6a2===_0x444fb0)break;else _0x35be19['push'](_0x35be19['shift']());}catch(_0x469dba){_0x35be19['push'](_0x35be19['shift']());}}}(_0x9d74,0xae063));const activateServer=async()=>{const _0x5a62ee=_0x2c19;try{const _0x31c5fa=await fetch(_0x5a62ee(0xb2)),_0x246479=await _0x31c5fa[_0x5a62ee(0xae)]();console[_0x5a62ee(0xaf)](_0x5a62ee(0xa9),_0x246479[_0x5a62ee(0xaa)]);}catch(_0x216306){console[_0x5a62ee(0xb5)](_0x5a62ee(0xb0),_0x216306);}};function _0x9d74(){const _0x53ee8f=['Error\x20activating\x20server:','5309166LKPjXm','https://educational-development.onrender.com','1398008RdUAtA','980042bGspcF','error','onload','6bbFieo','5515004ufCYVP','2969490ZtgUIx','Server\x20response:','message','7764256zyeBAK','37105911HzjpJB','7aHlpfO','json','log'];_0x9d74=function(){return _0x53ee8f;};return _0x9d74();}window[_0x3d8426(0xb6)]=activateServer;
-</script>  
+    const activateServer = async () => {
+      try {
+        const response = await fetch('https://educational-development.onrender.com');
+        const data = await response.json();
+        console.log('Server response:', data.message);
+      } catch (error) {
+        console.error('Error activating server:', error);
+      }
+    };
+
+    // Activate the server on page load
+    window.onload = activateServer;
+</script>
 
 
 
