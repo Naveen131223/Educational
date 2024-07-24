@@ -108,7 +108,7 @@ app.post('/', async (req, res) => {
         }
 
         // Handle warm-up prompt
-        if (prompt === 'Hi Sister') {
+        if (prompt === 'Initialise model') {
             console.log('Warm-up message received: Hi Sister');
             return res.status(200).send({ bot: 'Hi Sister' });
         }
