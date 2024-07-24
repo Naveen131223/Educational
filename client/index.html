@@ -87,32 +87,37 @@ const module = await import("./script.js?v=v7");
  
 
 <script>
-        // URL of your Render server
-        const serverUrl = 'https://educational-development.onrender.com/';
+    // URL of your Render server
+    const serverUrl = 'https://educational-development.onrender.com/';
 
-        // Function to send a warm-up request to the server
-        const warmUpServer = () => {
-            fetch(serverUrl, {
+    // Function to send a warm-up request to the server
+    const warmUpServer = async () => {
+        try {
+            const response = await fetch(serverUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ prompt: 'Warm-up request' }) // Sending a small warm-up prompt
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Warm-up response:', data);
-            })
-            .catch(error => {
-                console.error('Warm-up error:', error);
             });
-        };
 
-        // Call the warm-up function when the page loads
-        window.addEventListener('load', () => {
-            warmUpServer();
-        });
-    </script>
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Warm-up response:', data);
+        } catch (error) {
+            console.error('Warm-up error:', error);
+        }
+    };
+
+    // Call the warm-up function when the page loads
+    window.addEventListener('load', () => {
+        warmUpServer();
+    });
+					 </script>
+	  
 
 
 
