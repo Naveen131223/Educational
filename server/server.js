@@ -190,7 +190,7 @@ app.post('/', async (req, res) => {
         botResponse = response.data.generated_text;
       }
 
-      // Ensure the response does not repeat the prompt
+      // Ensure the response does not repeat the prompt and handle truncation more robustly
       if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
         botResponse = botResponse.slice(prompt.length).trim();
       }
@@ -198,6 +198,24 @@ app.post('/', async (req, res) => {
       // Remove the subtopics prompt from the response if present
       if (subtopics && botResponse.includes(subtopics)) {
         botResponse = botResponse.replace(subtopics, '').trim();
+      }
+
+      // Trim based on sentence boundaries, ensuring the text is concise and complete
+      const maxLength = maxWords ? maxWords * 6 : 2000;
+      if (botResponse.length > maxLength) {
+        const truncated = botResponse.slice(0, maxLength);
+        const lastSentenceEnd = truncated.lastIndexOf('.');
+        if (lastSentenceEnd > -1) {
+          botResponse = truncated.slice(0, lastSentenceEnd + 1);
+        } else {
+          botResponse = truncated;
+        }
+      }
+
+      // Remove incomplete or truncated sentences at the end
+      const lastSentenceEnd = botResponse.lastIndexOf('.');
+      if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
+        botResponse = botResponse.slice(0, lastSentenceEnd + 1);
       }
 
       botResponse = sanitizeResponse(botResponse);
@@ -234,4 +252,4 @@ process.on('SIGINT', gracefulShutdown);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-            
+        
