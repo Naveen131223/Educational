@@ -98,7 +98,7 @@ const module = await import("./script.js?v=v7");
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ prompt: 'Warm-up request' }) // Sending a small warm-up prompt
+                body: JSON.stringify({ prompt: 'Hi Sister' }) // Sending a simple warm-up message
             });
 
             if (!response.ok) {
@@ -116,7 +116,10 @@ const module = await import("./script.js?v=v7");
     window.addEventListener('load', () => {
         warmUpServer();
     });
-					 </script>
+</script>
+	  
+                
+
 	  
 
 
