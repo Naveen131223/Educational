@@ -90,6 +90,7 @@ const module = await import("./script.js?v=v7");
     // Function to activate the server
     const activateServer = async () => {
       try {
+        console.log('Attempting to activate the server...');
         const response = await fetch('https://educational-development.onrender.com');
         const data = await response.json();
         console.log('Server response:', data.message);
