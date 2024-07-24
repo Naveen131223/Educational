@@ -87,21 +87,32 @@ const module = await import("./script.js?v=v7");
  
 
 <script>
-    // Function to activate the server
-    const activateServer = async () => {
-      try {
-        console.log('Attempting to activate the server...');
-        const response = await fetch('https://educational-development.onrender.com');
-        const data = await response.json();
-        console.log('Server response:', data.message);
-      } catch (error) {
-        console.error('Error activating server:', error);
-      }
-    };
+        // URL of your Render server
+        const serverUrl = 'https://educational-development.onrender.com/';
 
-    // Activate the server on page load
-    window.onload = activateServer;
-</script>
+        // Function to send a warm-up request to the server
+        const warmUpServer = () => {
+            fetch(serverUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: 'Warm-up request' }) // Sending a small warm-up prompt
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Warm-up response:', data);
+            })
+            .catch(error => {
+                console.error('Warm-up error:', error);
+            });
+        };
+
+        // Call the warm-up function when the page loads
+        window.addEventListener('load', () => {
+            warmUpServer();
+        });
+    </script>
 
 
 
