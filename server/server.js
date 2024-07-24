@@ -93,12 +93,14 @@ const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
 };
 
-app.get('/', async (req, res) => {
+// Endpoint to handle activation
+app.get('/', (req, res) => {
   res.status(200).send({
     message: 'Hi Sister'
   });
 });
 
+// Main endpoint to handle chat requests
 app.post('/', async (req, res) => {
   try {
     let { prompt } = req.body;
@@ -246,4 +248,4 @@ process.on('SIGINT', gracefulShutdown);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-  
+    
