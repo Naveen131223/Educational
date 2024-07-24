@@ -170,9 +170,9 @@ app.post('/', async (req, res) => {
         axios.post(HF_API_URL, {
             inputs: prompt,
             parameters: {
-                temperature: 0.7, // increased temperature for more creative responses
-                max_new_tokens: maxNewTokens, // ensure this is an integer
-                top_p: 0.9 // nucleus sampling, adjusted to be within the valid range
+                temperature: 0.7,
+                max_new_tokens: maxNewTokens,
+                top_p: 0.9
             }
         }, {
             headers: {
@@ -205,17 +205,7 @@ app.post('/', async (req, res) => {
             if (botResponse.length > maxLength) {
                 const truncated = botResponse.slice(0, maxLength);
                 const lastSentenceEnd = truncated.lastIndexOf('.');
-                if (lastSentenceEnd > -1) {
-                    botResponse = truncated.slice(0, lastSentenceEnd + 1);
-                } else {
-                    botResponse = truncated;
-                }
-            }
-
-            // Remove incomplete or truncated sentences at the end
-            const lastSentenceEnd = botResponse.lastIndexOf('.');
-            if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
-                botResponse = botResponse.slice(0, lastSentenceEnd + 1);
+                botResponse = lastSentenceEnd > -1 ? truncated.slice(0, lastSentenceEnd + 1) : truncated;
             }
 
             botResponse = sanitizeResponse(botResponse);
