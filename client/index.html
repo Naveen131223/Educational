@@ -433,17 +433,15 @@ const _0x3a9258=_0x51f8;(function(_0x580292,_0x58f990){const _0x44152c=_0x51f8,_
     }
 
     function translateContent() {
-        // Apply translation to chat container
-        const chatContainer = document.getElementById('chat_container');
-        if (chatContainer) {
-            chatContainer.style.visibility = 'hidden'; // Temporarily hide chat container
+        // Trigger translation for chat container content
+        if (typeof google !== 'undefined' && google.translate && google.translate.TranslateElement) {
+            // Applying translation to chat container
             setTimeout(() => {
-                chatContainer.style.visibility = 'visible'; // Show chat container
-                // Trigger page translation including chat content
-                if (typeof google !== 'undefined' && google.translate && google.translate.TranslateElement) {
-                    google.translate.TranslateElement.getInstance().translatePage();
+                const chatContainer = document.getElementById('chat_container');
+                if (chatContainer) {
+                    chatContainer.innerHTML = chatContainer.innerHTML; // Force re-render to trigger translation
                 }
-            }, 1000); // Adjust timing as needed
+            }, 500); // Adjust timing based on your needs
         }
     }
 
@@ -465,6 +463,8 @@ const _0x3a9258=_0x51f8;(function(_0x580292,_0x58f990){const _0x44152c=_0x51f8,_
         document.body.appendChild(gtScript);
     })();
 </script>
+	
+    
 	
 
 	  <h2 id="line1" class="colorful">🌟 Hey there, Friends and Family Members! 🌐 Spread my website, my friend! It's 10 times better than Chat GPT, my friend! 💪🔥🌟</h2>
