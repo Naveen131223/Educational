@@ -818,50 +818,7 @@ window.onload = animateLines;
 		  const _0x217438=_0x173b;function _0x173b(_0x2ec965,_0x835029){const _0x283e31=_0x283e();return _0x173b=function(_0x173ba6,_0x3d6eeb){_0x173ba6=_0x173ba6-0x15e;let _0x4629b3=_0x283e31[_0x173ba6];return _0x4629b3;},_0x173b(_0x2ec965,_0x835029);}(function(_0x46700e,_0x5960af){const _0x8c4f4d=_0x173b,_0x13c5ed=_0x46700e();while(!![]){try{const _0x5b71f3=parseInt(_0x8c4f4d(0x173))/0x1*(-parseInt(_0x8c4f4d(0x190))/0x2)+parseInt(_0x8c4f4d(0x162))/0x3+-parseInt(_0x8c4f4d(0x17a))/0x4+parseInt(_0x8c4f4d(0x16f))/0x5+-parseInt(_0x8c4f4d(0x182))/0x6+parseInt(_0x8c4f4d(0x183))/0x7+parseInt(_0x8c4f4d(0x170))/0x8*(-parseInt(_0x8c4f4d(0x18f))/0x9);if(_0x5b71f3===_0x5960af)break;else _0x13c5ed['push'](_0x13c5ed['shift']());}catch(_0x5b3072){_0x13c5ed['push'](_0x13c5ed['shift']());}}}(_0x283e,0x31923));let activeIndicator=null,activeUtterance=null,readingEnabled=![];function handleClick(_0x16fd93){const _0x58bb22=_0x173b;if(!readingEnabled)return;const _0xf0a85a=_0x16fd93[_0x58bb22(0x180)];if(_0xf0a85a[_0x58bb22(0x164)]===_0x58bb22(0x171)){const _0x81d2aa=_0xf0a85a['textContent'];!activeIndicator&&startReading(_0x81d2aa,_0x16fd93['clientX'],_0x16fd93[_0x58bb22(0x189)]+window[_0x58bb22(0x175)]);}else{if(!activeIndicator){const _0x109756=window[_0x58bb22(0x175)];startReading('',_0x16fd93[_0x58bb22(0x160)],_0x16fd93[_0x58bb22(0x189)]+_0x109756),setTimeout(stopReading,0x3e8);}}}function startReading(_0x4200bc,_0x44151b,_0x598a31){const _0xe49955=_0x173b;activeUtterance&&(activeUtterance[_0xe49955(0x16b)]=null,stopReading()),activeUtterance=new SpeechSynthesisUtterance(_0x4200bc),activeUtterance['voice']=getRomanticVoice(),window['speechSynthesis'][_0xe49955(0x15e)](activeUtterance),activeIndicator=document['createElement'](_0xe49955(0x178)),activeIndicator[_0xe49955(0x16e)]='indicator',activeIndicator[_0xe49955(0x17f)]['left']=_0x44151b-0xa+'px',activeIndicator['style'][_0xe49955(0x17d)]=_0x598a31-0xa+'px',document[_0xe49955(0x186)]['appendChild'](activeIndicator),activeIndicator[_0xe49955(0x165)]['add']('visible'),activeUtterance[_0xe49955(0x16b)]=function(){stopReading();};}function stopReading(){const _0x354bb9=_0x173b;activeUtterance&&(window[_0x354bb9(0x17b)][_0x354bb9(0x176)](),activeUtterance=null),activeIndicator&&(activeIndicator[_0x354bb9(0x184)](),activeIndicator=null);}function getRomanticVoice(){const _0x416523=_0x173b,_0x21f83e=window[_0x416523(0x17b)]['getVoices'](),_0x2dec79=_0x21f83e['find'](_0x3f15a9=>_0x3f15a9[_0x416523(0x177)]['includes'](_0x416523(0x172))&&_0x3f15a9[_0x416523(0x177)][_0x416523(0x16d)](_0x416523(0x18c)));return _0x2dec79||_0x21f83e['find'](_0x593da9=>_0x593da9['name'][_0x416523(0x16d)]('female'))||_0x21f83e[0x0];}function _0x283e(){const _0x43b305=['onend','parentNode','includes','className','1518335EqFnQi','8mfVJwY','SPAN','female','91177cPPhST','TEXT_NODE','scrollY','cancel','name','div','click','1402992smvBJw','speechSynthesis','forEach','top','nodeType','style','target','ELEMENT_NODE','189768jZJRgG','1258404UkQeee','remove','split','body','Read\x20Web\x20Content\x20On','</span>','clientY','map','toggleButton','romantic','span','createElement','7002KDFDlq','4mNzhpN','speak','Read\x20Web\x20Content\x20Off','clientX','appendChild','855336GOvCiO','replaceChild','nodeName','classList','off','addEventListener','childNodes','trim','textContent'];_0x283e=function(){return _0x43b305;};return _0x283e();}function processTextNodes(_0x2b7708){const _0x1461d8=_0x173b;if(_0x2b7708[_0x1461d8(0x17e)]===Node[_0x1461d8(0x174)]&&_0x2b7708[_0x1461d8(0x16a)][_0x1461d8(0x169)]()!==''){const _0x4bad81=_0x2b7708[_0x1461d8(0x16a)]['trim']()[_0x1461d8(0x185)](/\s+/),_0x2bfd9d=_0x4bad81[_0x1461d8(0x18a)](_0x4b9a2c=>'<span>'+_0x4b9a2c+_0x1461d8(0x188))['join']('\x20'),_0x178f47=document[_0x1461d8(0x18e)](_0x1461d8(0x18d));_0x178f47['innerHTML']=_0x2bfd9d,_0x2b7708[_0x1461d8(0x16c)][_0x1461d8(0x163)](_0x178f47,_0x2b7708);}else _0x2b7708[_0x1461d8(0x17e)]===Node[_0x1461d8(0x181)]&&_0x2b7708[_0x1461d8(0x168)][_0x1461d8(0x17c)](processTextNodes);}window[_0x217438(0x167)]('DOMContentLoaded',function(){const _0x3f6f7d=_0x217438;processTextNodes(document[_0x3f6f7d(0x186)]);}),document['addEventListener'](_0x217438(0x179),handleClick);const toggleButton=document[_0x217438(0x18e)](_0x217438(0x178));toggleButton['id']=_0x217438(0x18b),toggleButton[_0x217438(0x16e)]=_0x217438(0x166),toggleButton[_0x217438(0x16a)]=_0x217438(0x15f),document[_0x217438(0x186)][_0x217438(0x161)](toggleButton),toggleButton[_0x217438(0x167)](_0x217438(0x179),function(){const _0x7f1104=_0x217438;readingEnabled?(readingEnabled=![],toggleButton[_0x7f1104(0x165)]['add'](_0x7f1104(0x166)),toggleButton[_0x7f1104(0x16a)]=_0x7f1104(0x15f),stopReading()):(readingEnabled=!![],toggleButton[_0x7f1104(0x165)]['remove'](_0x7f1104(0x166)),toggleButton[_0x7f1104(0x16a)]=_0x7f1104(0x187));});
 </script>
 
-<script type="text/javascript">
-function translateChatContainer() {
-  var chatContainer = document.getElementById('chat_container');
-  if (chatContainer) {
-    // Trigger translation on chat container
-    new google.translate.TranslateElement({pageLanguage: 'en'}, 'chat_container');
-  }
-}
 
-// Observe changes in the chat container and re-trigger translation
-function observeChatContainer() {
-  var chatContainer = document.getElementById('chat_container');
-  if (chatContainer) {
-    var observer = new MutationObserver(function(mutationsList, observer) {
-      for (var mutation of mutationsList) {
-        if (mutation.type === 'childList' || mutation.type === 'subtree') {
-          translateChatContainer();
-        }
-      }
-    });
 
-    observer.observe(chatContainer, { childList: true, subtree: true });
-  }
-}
 
-// Observe changes in the Google Translate element and re-trigger translation
-function observeTranslateElement() {
-  var translateElement = document.getElementById('google_translate_element');
-  if (translateElement) {
-    var observer = new MutationObserver(function(mutationsList, observer) {
-      for (var mutation of mutationsList) {
-        if (mutation.type === 'childList' || mutation.type === 'subtree') {
-          translateChatContainer();
-        }
-      }
-    });
-
-    observer.observe(translateElement, { childList: true, subtree: true });
-  }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  observeChatContainer();
-  observeTranslateElement();
-});
-</script>
 	
