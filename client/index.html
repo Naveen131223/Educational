@@ -421,41 +421,48 @@ const _0x3a9258=_0x51f8;(function(_0x580292,_0x58f990){const _0x44152c=_0x51f8,_
 	  
 
 
-	  
 <script type="text/javascript">
-function googleTranslateElementInit() {
-new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-// Hide feedback banner after translation widget is loaded
-var banner = document.querySelector('.goog-te-banner-frame');
-if (banner) {
-banner.style.display = 'none';
-}
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+        // Hide feedback banner after translation widget is loaded
+        var banner = document.querySelector('.goog-te-banner-frame');
+        if (banner) {
+            banner.style.display = 'none';
+        }
+        // Hide loading icon after translation widget is loaded
+        var spinner = document.querySelector('.goog-te-spinner-pos');
+        if (spinner) {
+            spinner.style.display = 'none';
+        }
+    }
 
-// Hide loading icon after translation widget is loaded
-var spinner = document.querySelector('.goog-te-spinner-pos');
-if (spinner) {
-spinner.style.display = 'none';
-}
-}
-</script>
+    // Function to trigger translation
+    function triggerTranslation() {
+        if (typeof google !== 'undefined' && google.translate && google.translate.TranslateElement) {
+            google.translate.TranslateElement.getInstance().translatePage();
+        }
+    }
 
-	  <script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-  }
-
-  // Execute this function after the translation widget is loaded
-  function afterTranslateLoaded() {
-    // Prevent the default click behavior for the translated text
-    document.getElementById("translatedTextContainer").addEventListener("click", function (event) {
-      event.preventDefault();
+    // Observe changes in the chat container
+    const chatContainer = document.getElementById('chat_container');
+    const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            if (mutation.addedNodes.length > 0) {
+                triggerTranslation(); // Trigger translation when new content is added
+            }
+        });
     });
-  }
+
+    observer.observe(chatContainer, { childList: true, subtree: true });
+
+    // Load the Google Translate script
+    (function() {
+        var gtScript = document.createElement('script');
+        gtScript.type = 'text/javascript';
+        gtScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.body.appendChild(gtScript);
+    })();
 </script>
-
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  
 
 	  <h2 id="line1" class="colorful">🌟 Hey there, Friends and Family Members! 🌐 Spread my website, my friend! It's 10 times better than Chat GPT, my friend! 💪🔥🌟</h2>
 
