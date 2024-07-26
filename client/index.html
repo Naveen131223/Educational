@@ -260,7 +260,7 @@ const module = await import("./script.js?v=v7");
 	  
 
 	  
-<div id="google_translate_element">Translate</div>
+<div id="google_translate_element"></div>
 
 	<script>
 //print and export
@@ -476,12 +476,20 @@ function loadAllContentBeforeTranslation() {
 
 // Initialize the translation widget only when the #google_translate_element is clicked
 document.getElementById('google_translate_element').addEventListener('click', function() {
-  googleTranslateElementInit();
+  loadAllContentBeforeTranslation();
 });
-</script>
 
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js"></script>
+// Load the Google Translate script but do not initialize the widget yet
+(function() {
+  var gtScript = document.createElement('script');
+  gtScript.type = 'text/javascript';
+  gtScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  document.getElementsByTagName('head')[0].appendChild(gtScript);
+})();
+</script>
 	
+
+
 
 
 
