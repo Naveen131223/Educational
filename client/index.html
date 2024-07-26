@@ -224,7 +224,9 @@ const module = await import("./script.js?v=v7");
 <div class="star star12" style="top: 20%; left: 60%;"></div>
 
       <div id="app">
-      <div id="chat_container"></div>
+      <div id="chat_container" class="scrollable-container">
+  <!-- Your chat content goes here -->
+      </div>
 
 	      
 
@@ -420,42 +422,62 @@ const _0x3a9258=_0x51f8;(function(_0x580292,_0x58f990){const _0x44152c=_0x51f8,_
 </script>
 	  
 
-
-	  
 <script type="text/javascript">
 function googleTranslateElementInit() {
-new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-// Hide feedback banner after translation widget is loaded
-var banner = document.querySelector('.goog-te-banner-frame');
-if (banner) {
-banner.style.display = 'none';
-}
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
 
-// Hide loading icon after translation widget is loaded
-var spinner = document.querySelector('.goog-te-spinner-pos');
-if (spinner) {
-spinner.style.display = 'none';
-}
-}
-</script>
-
-	  <script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+  // Hide feedback banner after translation widget is loaded
+  var banner = document.querySelector('.goog-te-banner-frame');
+  if (banner) {
+    banner.style.display = 'none';
   }
 
-  // Execute this function after the translation widget is loaded
-  function afterTranslateLoaded() {
-    // Prevent the default click behavior for the translated text
-    document.getElementById("translatedTextContainer").addEventListener("click", function (event) {
-      event.preventDefault();
-    });
+  // Hide loading icon after translation widget is loaded
+  var spinner = document.querySelector('.goog-te-spinner-pos');
+  if (spinner) {
+    spinner.style.display = 'none';
   }
-</script>
 
+  // Execute after translation widget is loaded
+  afterTranslateLoaded();
+}
+
+function afterTranslateLoaded() {
+  // Prevent the default click behavior for the translated text
+  document.getElementById("chat_container").addEventListener("click", function (event) {
+    event.preventDefault();
+  });
+
+  // Scroll to load all hidden content before translation
+  loadAllContentBeforeTranslation();
+}
+
+function loadAllContentBeforeTranslation() {
+  var scrollableContainer = document.getElementById('chat_container');
+
+  // Scroll to the bottom to load all hidden content
+  scrollableContainer.scrollTop = scrollableContainer.scrollHeight;
+
+  // Wait a bit to ensure content is loaded
+  setTimeout(function() {
+    // Scroll back to the top
+    scrollableContainer.scrollTop = 0;
+    
+    // Now trigger the translation process
+    var translateElement = document.querySelector('.goog-te-combo');
+    if (translateElement) {
+      translateElement.dispatchEvent(new Event('change'));
+    }
+  }, 1000);
+}
+</script>
 
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  
+	
+	  
+
+
+
 
 	  <h2 id="line1" class="colorful">🌟 Hey there, Friends and Family Members! 🌐 Spread my website, my friend! It's 10 times better than Chat GPT, my friend! 💪🔥🌟</h2>
 
