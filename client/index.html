@@ -420,7 +420,6 @@ const _0x3a9258=_0x51f8;(function(_0x580292,_0x58f990){const _0x44152c=_0x51f8,_
 </script>
 	  
 
-
 <script type="text/javascript">
 function googleTranslateElementInit() {
     new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element', {
@@ -444,13 +443,17 @@ function afterTranslateLoaded() {
     var chatContainer = document.querySelector('.chat-container'); // Update this selector based on your actual chat container
     if (chatContainer) {
         var totalHeight = chatContainer.scrollHeight;
-        var scrollStep = totalHeight / 100; // Adjust this value to control scrolling speed
+        var scrollStep = totalHeight / 10; // Adjust this value for smoother scrolling
         var scrollInterval = setInterval(function() {
             chatContainer.scrollTop += scrollStep;
             if (chatContainer.scrollTop + chatContainer.clientHeight >= totalHeight) {
                 clearInterval(scrollInterval);
+                // Ensure the container is fully scrolled and visible content is translated
+                setTimeout(function() {
+                    chatContainer.scrollTop = 0; // Reset scroll position if needed
+                }, 1000);
             }
-        }, 50); // Adjust this value to control scrolling speed
+        }, 100); // Adjust this value for scrolling speed
     }
 }
 
@@ -467,10 +470,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }, 100);
 });
-
 </script>
 
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 
 
 	  <h2 id="line1" class="colorful">🌟 Hey there, Friends and Family Members! 🌐 Spread my website, my friend! It's 10 times better than Chat GPT, my friend! 💪🔥🌟</h2>
