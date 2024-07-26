@@ -260,7 +260,7 @@ const module = await import("./script.js?v=v7");
 	  
 
 	  
-<div id="google_translate_element"></div>
+<div id="google_translate_element">Translate</div>
 
 	<script>
 //print and export
@@ -422,6 +422,9 @@ const _0x3a9258=_0x51f8;(function(_0x580292,_0x58f990){const _0x44152c=_0x51f8,_
 </script>
 	  
 
+	
+	  
+
 <script type="text/javascript">
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
@@ -470,12 +473,15 @@ function loadAllContentBeforeTranslation() {
     }
   }, 1000);
 }
+
+// Initialize the translation widget only when the #google_translate_element is clicked
+document.getElementById('google_translate_element').addEventListener('click', function() {
+  googleTranslateElementInit();
+});
 </script>
 
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js"></script>
 	
-	  
-
 
 
 
