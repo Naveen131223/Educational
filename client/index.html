@@ -57,6 +57,15 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									    
 </script>
 
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 	  
 <script type="module">
 	(async () => {
@@ -420,59 +429,8 @@ const _0x3a9258=_0x51f8;(function(_0x580292,_0x58f990){const _0x44152c=_0x51f8,_
 </script>
 	  
 
-<script type="text/javascript">
-function googleTranslateElementInit() {
-    new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element', {
-        includedLanguages: 'en,es,fr,de,zh-CN' // Add the languages you need
-    });
-}
 
-function afterTranslateLoaded() {
-    // Prevent the default click behavior for the translated text
-    document.getElementById("translatedTextContainer").addEventListener("click", function (event) {
-        event.preventDefault();
-    });
 
-    // Unhide hidden text elements after translation
-    var hiddenElements = document.querySelectorAll('.hidden-text');
-    hiddenElements.forEach(function(element) {
-        element.style.display = 'block';
-    });
-
-    // Scroll through chat container to make all chat contents visible for translation
-    var chatContainer = document.querySelector('.chat-container'); // Update this selector based on your actual chat container
-    if (chatContainer) {
-        var totalHeight = chatContainer.scrollHeight;
-        var scrollStep = totalHeight / 10; // Adjust this value for smoother scrolling
-        var scrollInterval = setInterval(function() {
-            chatContainer.scrollTop += scrollStep;
-            if (chatContainer.scrollTop + chatContainer.clientHeight >= totalHeight) {
-                clearInterval(scrollInterval);
-                // Ensure the container is fully scrolled and visible content is translated
-                setTimeout(function() {
-                    chatContainer.scrollTop = 0; // Reset scroll position if needed
-                }, 1000);
-            }
-        }, 100); // Adjust this value for scrolling speed
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Wait for the Google Translate script to load
-    var interval = setInterval(function() {
-        if (document.querySelector('.goog-te-banner-frame') || document.querySelector('.goog-te-spinner-pos')) {
-            var banner = document.querySelector('.goog-te-banner-frame');
-            if (banner) banner.style.display = 'none';
-            var spinner = document.querySelector('.goog-te-spinner-pos');
-            if (spinner) spinner.style.display = 'none';
-            clearInterval(interval);
-            afterTranslateLoaded();
-        }
-    }, 100);
-});
-</script>
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 
 
