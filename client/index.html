@@ -277,7 +277,7 @@ const module = await import("./script.js?v=v7");
 var _0x3d1a15=_0x20b1;function _0x20b1(_0x4e6943,_0x2d64e7){var _0x3d7998=_0x3d79();return _0x20b1=function(_0x20b15a,_0x512fad){_0x20b15a=_0x20b15a-0x16a;var _0x4fee0a=_0x3d7998[_0x20b15a];return _0x4fee0a;},_0x20b1(_0x4e6943,_0x2d64e7);}function _0x3d79(){var _0x57f555=['write','close','\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20.question\x20{\x20color:\x20blue;\x20}\x0a\x20\x20\x20\x20\x20\x20.answer\x20{\x20color:\x20red;\x20}\x0a\x20\x20\x20\x20\x20\x20.line-break\x20{\x20display:\x20block;\x20margin-bottom:\x201em;\x20}\x20/*\x20Add\x20space\x20between\x20lines\x20*/\x0a\x20\x20\x20\x20</style>','add-course-button-1','createElement','12xnVSLV','chat_container','2161770TTcBNS','click','</head><body>','401173CHPoeD','replace','317454KlVjFd','print','<html><head>','innerHTML','1130184sTbccX','appendChild','91lyhLVm','body','<span\x20class=\x22line-break\x22></span>','</body></html>','Print\x20Chat','_blank','2117402vcNDyY','27gYumeK','open','document','341340OdkcCD','getElementById','1057750ntYeqV'];_0x3d79=function(){return _0x57f555;};return _0x3d79();}(function(_0x1e5706,_0x1d5cb0){var _0x539058=_0x20b1,_0x425d2b=_0x1e5706();while(!![]){try{var _0x441bc6=parseInt(_0x539058(0x179))/0x1+-parseInt(_0x539058(0x187))/0x2+-parseInt(_0x539058(0x16c))/0x3+parseInt(_0x539058(0x174))/0x4*(parseInt(_0x539058(0x16e))/0x5)+parseInt(_0x539058(0x17b))/0x6*(parseInt(_0x539058(0x181))/0x7)+parseInt(_0x539058(0x17f))/0x8*(parseInt(_0x539058(0x188))/0x9)+-parseInt(_0x539058(0x176))/0xa;if(_0x441bc6===_0x1d5cb0)break;else _0x425d2b['push'](_0x425d2b['shift']());}catch(_0x34429f){_0x425d2b['push'](_0x425d2b['shift']());}}}(_0x3d79,0xb9411));var printButton=document[_0x3d1a15(0x173)]('button');printButton['textContent']=_0x3d1a15(0x185),printButton['className']=_0x3d1a15(0x172),printButton['addEventListener'](_0x3d1a15(0x177),function(){var _0x1ad841=_0x3d1a15,_0x5d859e=document[_0x1ad841(0x16d)](_0x1ad841(0x175)),_0x275a8b=_0x5d859e[_0x1ad841(0x17e)],_0x22398c=_0x1ad841(0x171);_0x275a8b=_0x275a8b[_0x1ad841(0x17a)](/\n/g,_0x1ad841(0x183)),_0x275a8b=_0x275a8b[_0x1ad841(0x17a)](/<span class="user-input">.+?<\/span>/g,'');var _0x93c1ec=window[_0x1ad841(0x16a)]('',_0x1ad841(0x186));_0x93c1ec[_0x1ad841(0x16b)]['open'](),_0x93c1ec[_0x1ad841(0x16b)][_0x1ad841(0x16f)](_0x1ad841(0x17d)+_0x22398c+_0x1ad841(0x178)+_0x275a8b+_0x1ad841(0x184)),_0x93c1ec['document'][_0x1ad841(0x170)](),_0x93c1ec[_0x1ad841(0x17c)]();}),document[_0x3d1a15(0x182)][_0x3d1a15(0x180)](printButton);
 		
 // Export Chat buttun
-	var exportChatButton = document.createElement("button");
+var exportChatButton = document.createElement("button");
 exportChatButton.textContent = "Voice-Enabled Chat Export"; // Updated button text
 exportChatButton.className = "ExportChatButton";
 exportChatButton.addEventListener("click", function() {
@@ -345,6 +345,7 @@ exportChatButton.addEventListener("click", function() {
 
   // Voice toggle functionality
   let readingEnabled = true; // Initially set to true
+  let currentUtterance = null; // Store the current utterance
 
   function toggleVoice() {
     readingEnabled = !readingEnabled;
@@ -383,21 +384,27 @@ exportChatButton.addEventListener("click", function() {
     speech.rate = 0.8; // Adjust rate for slower speech
     speech.voice = getRomanticFemaleVoice();
 
+    currentUtterance = speech;
+
+    var wordIndex = 0;
     speech.onboundary = function(event) {
       if (event.name === 'word') {
-        var wordIndex = event.charIndex;
-        var endWordIndex = wordIndex + event.charLength;
-        var highlightedText = speech.text.slice(0, wordIndex) + 
-                              '<span class="highlighted">' + 
-                              speech.text.slice(wordIndex, endWordIndex) + 
-                              '</span>' + 
-                              speech.text.slice(endWordIndex);
+        removeHighlights();
+        var startIndex = event.charIndex;
+        var endIndex = startIndex + event.charLength;
+        var highlightedText = element.textContent.slice(0, startIndex) +
+                              '<span class="highlighted">' +
+                              element.textContent.slice(startIndex, endIndex) +
+                              '</span>' +
+                              element.textContent.slice(endIndex);
         element.innerHTML = highlightedText;
+        wordIndex++;
       }
     };
 
     speech.onend = function() {
-      element.innerHTML = speech.text;
+      removeHighlights();
+      currentUtterance = null;
     };
 
     window.speechSynthesis.speak(speech);
@@ -413,12 +420,16 @@ exportChatButton.addEventListener("click", function() {
   // Function to stop reading
   function stopReading() {
     window.speechSynthesis.cancel();
+    if (currentUtterance) {
+      currentUtterance.onend = null; // Remove onend event handler
+      currentUtterance = null;
+    }
   }
 
   // Function to remove highlights
   function removeHighlights() {
-    exportWindow.document.querySelectorAll('.highlighted').forEach(function(element) {
-      element.classList.remove('highlighted');
+    exportWindow.document.querySelectorAll('.message').forEach(function(message) {
+      message.innerHTML = message.textContent; // Remove highlights
     });
   }
 
@@ -430,6 +441,7 @@ exportChatButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(exportChatButton);
+	
 		
 	</script>
 
