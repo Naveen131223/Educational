@@ -61,10 +61,70 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
 }
+
+// Load the Google Translate script dynamically
+(function() {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  document.body.appendChild(script);
+})();
+
+let chatCache = [];
+
+// Function to cache chat content
+function cacheChatContent() {
+  const chatContainer = document.getElementById('chat_container');
+  chatCache = [...chatContainer.childNodes].map(node => node.textContent);
+}
+
+// Function to re-translate chat content
+function retranslateChat() {
+  if (window.google && window.google.translate && window.google.translate.TranslateElement) {
+    googleTranslateElementInit();
+    setTimeout(function() {
+      const iframe = document.querySelector('iframe.goog-te-banner-frame');
+      if (iframe) {
+        const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const select = innerDoc.querySelector('.goog-te-combo');
+        if (select) {
+          select.addEventListener('change', function() {
+            chatCache.forEach(text => {
+              document.querySelectorAll('#chat_container div').forEach(div => {
+                if (chatCache.includes(div.textContent)) {
+                  div.textContent = text;
+                }
+              });
+            });
+          });
+        }
+      }
+    }, 1000);
+  }
+}
+
+// Cache chat content on scroll
+document.getElementById('chat_container').addEventListener('scroll', function() {
+  cacheChatContent();
+});
+
+// Mutation observer to handle new messages dynamically
+const chatContainer = document.getElementById('chat_container');
+const observer = new MutationObserver(function() {
+  cacheChatContent();
+});
+
+observer.observe(chatContainer, { childList: true, subtree: true });
+
+// Monitor the language selection button and re-translate on selection
+const observerTranslateElement = new MutationObserver(function() {
+  retranslateChat();
+});
+
+observerTranslateElement.observe(document.getElementById('google_translate_element'), { childList: true, subtree: true });
+
 </script>
 
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-        
 
 
 	  
