@@ -377,9 +377,13 @@ exportChatButton.addEventListener("click", function() {
 
   // Function to read sentence aloud and highlight words
   function readSentence(element) {
-    var words = element.textContent.trim().split(/\s+/);
+    var text = element.textContent.trim();
+    var words = text.split(/\s+/);
+    var highlightedText = words.map((word, index) => `<span class="word" data-index="${index}">${word}</span>`).join(' ');
+    element.innerHTML = highlightedText;
+
     var speech = new SpeechSynthesisUtterance();
-    speech.text = element.textContent.trim();
+    speech.text = text;
     speech.lang = 'en-IN-ta'; // Set language to English (India) with Tamil accent
     speech.rate = 0.8; // Adjust rate for slower speech
     speech.voice = getRomanticFemaleVoice();
@@ -387,23 +391,10 @@ exportChatButton.addEventListener("click", function() {
     currentUtterance = speech;
 
     var wordIndex = 0;
-    var highlightedText = element.textContent.trim().split(/\s+/).map((word, index) => `<span class="word" data-index="${index}">${word}</span>`).join(' ');
-    element.innerHTML = highlightedText;
-
-    function highlightCurrentWord(currentIndex) {
-      exportWindow.document.querySelectorAll('.word').forEach((wordSpan, index) => {
-        if (index === currentIndex) {
-          wordSpan.classList.add('highlighted');
-        } else {
-          wordSpan.classList.remove('highlighted');
-        }
-      });
-    }
-
     speech.onboundary = function(event) {
       if (event.name === 'word') {
-        var wordIndex = Math.floor(event.charIndex / element.textContent.length * words.length);
-        highlightCurrentWord(wordIndex);
+        var index = Math.floor((event.charIndex / text.length) * words.length);
+        highlightWord(index);
       }
     };
 
@@ -431,9 +422,20 @@ exportChatButton.addEventListener("click", function() {
     }
   }
 
+  // Function to highlight a specific word
+  function highlightWord(index) {
+    exportWindow.document.querySelectorAll('.word').forEach((wordSpan, wordIndex) => {
+      if (wordIndex === index) {
+        wordSpan.classList.add('highlighted');
+      } else {
+        wordSpan.classList.remove('highlighted');
+      }
+    });
+  }
+
   // Function to remove highlights
   function removeHighlights() {
-    exportWindow.document.querySelectorAll('.highlighted').forEach(function(element) {
+    exportWindow.document.querySelectorAll('.word').forEach(function(element) {
       element.classList.remove('highlighted');
     });
   }
@@ -447,7 +449,6 @@ exportChatButton.addEventListener("click", function() {
 
 document.body.appendChild(exportChatButton);
 		
-      
 		
 	</script>
 
