@@ -58,51 +58,14 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 </script>
 
 <script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
-    }
-
-    function scrollChatContainer() {
-        const chatContainer = document.getElementById('chat_container');
-        
-        // Scroll to the initial hidden message
-        chatContainer.scrollTo({
-            top: 0,
-            behavior: 'auto',
-        });
-
-        // Scroll to the latest message after a brief delay
-        setTimeout(function() {
-            chatContainer.scrollTo({
-                top: chatContainer.scrollHeight,
-                behavior: 'auto',
-            });
-        }, 500); // Adjust the timeout as needed
-    }
-
-    // Function to handle the translation and scrolling
-    function handleTranslateButtonClick() {
-        scrollChatContainer();
-    }
-
-    // Automatically initialize Google Translate on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        googleTranslateElementInit();
-    });
-
-    // Attach event listener to the Google Translate widget button
-    document.addEventListener('click', function(event) {
-        if (event.target.closest('#google_translate_element select')) {
-            setTimeout(handleTranslateButtonClick, 1000); // Adjust the timeout as needed
-        }
-    });
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
 </script>
 
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-	  
+        
+
 
 	  
 <script type="module">
