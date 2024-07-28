@@ -282,20 +282,34 @@ var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
+  const chatContainer = document.getElementById('chat_container');
+  const content = chatContainer.innerText;
+  if (content.trim() === "") {
+    alert("Chat container is empty.");
+    return;
+  }
+
+  // Create a temporary container for styled content
+  const tempContainer = document.createElement('div');
 
   // Apply styling to the printed content
-  var style = `
-    <style>
-      .question { color: blue; }
-      .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    </style>`;
+  const style = document.createElement('style');
+  style.innerHTML = `
+    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    .question { color: blue; }
+    .answer { color: red; }
+    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+  `;
 
-  // Create a container for the styled content
-  var printContainer = document.createElement("div");
-  printContainer.innerHTML = style + chatContent;
+  tempContainer.appendChild(style);
+
+  // Create the styled content
+  content.split('\n').forEach(line => {
+    const p = document.createElement('p');
+    p.style.margin = "0 0 1em 0";
+    p.innerText = line;
+    tempContainer.appendChild(p);
+  });
 
   // Convert the container to PDF
   html2pdf()
@@ -305,22 +319,15 @@ printButton.addEventListener("click", function() {
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     })
-    .from(printContainer)
-    .toPdf()
-    .get('pdf')
-    .then(function (pdf) {
-      var totalPages = pdf.internal.getNumberOfPages();
-      for (var i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(10);
-        pdf.setTextColor(150);
-        pdf.text('Page ' + i + ' of ' + totalPages, pdf.internal.pageSize.getWidth() - 50, pdf.internal.pageSize.getHeight() - 10);
-      }
-    })
+    .from(tempContainer)
     .save();
+
+  printButton.style.backgroundColor = "#555555";
 });
 
 document.body.appendChild(printButton);
+		
+
 		
     
 		
