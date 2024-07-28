@@ -283,22 +283,27 @@ printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   var chatContainer = document.getElementById("chat_container");
-
-  // Clone the chat container to apply styling without affecting the original
-  var clonedChatContainer = chatContainer.cloneNode(true);
-  clonedChatContainer.innerHTML = clonedChatContainer.innerHTML.replace(/\n/g, '<span class="line-break"></span>');
-  clonedChatContainer.innerHTML = clonedChatContainer.innerHTML.replace(/<span class="user-input">.+?<\/span>/g, '');
+  var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the printed content
-  var style = document.createElement('style');
-  style.innerHTML = `
-    .question { color: blue; }
-    .answer { color: red; }
-    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-  `;
-  clonedChatContainer.prepend(style);
+  var style = `
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>`;
 
-  // Convert the cloned chat container to PDF
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  // Create a container for the styled content
+  var printContainer = document.createElement("div");
+  printContainer.innerHTML = style + chatContent;
+
+  // Convert the container to PDF
   html2pdf()
     .set({
       margin: 1,
@@ -306,11 +311,13 @@ printButton.addEventListener("click", function() {
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     })
-    .from(clonedChatContainer)
+    .from(printContainer)
     .save();
 });
 
 document.body.appendChild(printButton);
+		
+    
 		
 		
 // Export Chat buttun
