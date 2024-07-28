@@ -278,7 +278,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-var printButton = document.createElement("button");
+  var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -295,7 +295,7 @@ printButton.addEventListener("click", function() {
   // Apply styling to the printed content
   const style = `
     <style>
-      body { font-family: 'Times New Roman'; font-size: 14pt; margin-left: 1em; }
+      body { font-family: 'Times New Roman'; font-size: 16pt; margin-left: 1em; }
       .question { color: blue; }
       .answer { color: red; }
       .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
@@ -321,23 +321,12 @@ printButton.addEventListener("click", function() {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     })
     .from(tempContainer)
-    .toPdf()
-    .outputPdf('blob')
-    .then(function(pdfBlob) {
-      // Trigger the download of the PDF
-      const url = URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'chat.pdf';
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+    .save();
 });
 
 document.body.appendChild(printButton);
 		
+    
       
 		
 // Export 
