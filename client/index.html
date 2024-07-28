@@ -289,7 +289,7 @@ printButton.addEventListener("click", function() {
     return;
   }
 
-  // Create a temporary container for styled content
+  // Create a temporary container for styled content in memory
   const tempContainer = document.createElement('div');
 
   // Apply styling to the printed content
@@ -311,7 +311,7 @@ printButton.addEventListener("click", function() {
     tempContainer.appendChild(p);
   });
 
-  // Convert the container to PDF
+  // Convert the container to PDF without attaching to the DOM
   html2pdf()
     .set({
       margin: 1,
@@ -321,13 +321,9 @@ printButton.addEventListener("click", function() {
     })
     .from(tempContainer)
     .save();
-
-  printButton.style.backgroundColor = "#555555";
 });
 
 document.body.appendChild(printButton);
-		
-
 		
     
 		
