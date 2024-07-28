@@ -293,12 +293,6 @@ printButton.addEventListener("click", function() {
       .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
     </style>`;
 
-  // Replace line breaks with a styled span to add vertical space
-  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
   // Create a container for the styled content
   var printContainer = document.createElement("div");
   printContainer.innerHTML = style + chatContent;
@@ -312,6 +306,17 @@ printButton.addEventListener("click", function() {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     })
     .from(printContainer)
+    .toPdf()
+    .get('pdf')
+    .then(function (pdf) {
+      var totalPages = pdf.internal.getNumberOfPages();
+      for (var i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(150);
+        pdf.text('Page ' + i + ' of ' + totalPages, pdf.internal.pageSize.getWidth() - 50, pdf.internal.pageSize.getHeight() - 10);
+      }
+    })
     .save();
 });
 
