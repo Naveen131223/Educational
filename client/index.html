@@ -278,65 +278,9 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-var printButton = document.createElement("button");
-printButton.textContent = "Print Chat"; // Updating the button text to "Print"
-printButton.className = "add-course-button-1";
-printButton.addEventListener("click", function() {
-  const chatContainer = document.getElementById('chat_container');
-  const content = chatContainer.innerText;
-  if (content.trim() === "") {
-    alert("Chat container is empty.");
-    return;
-  }
-
-  // Create a container for styled content
-  const tempContainer = document.createElement('div');
+function _0x273c(){const _0x190dbb=['12ecIBiW','split','toPdf','15268vTpHCx','className','6aYlDNR','body','set','createElement','forEach','letter','addEventListener','6088929vqxNVj','from','textContent','173023gESKod','div','202668EiCFpy','3606824jfcxzy','margin','download','blob','button','style','597zhxAGn','20635923gXZpJV','115irLzZW','chat.pdf','Chat\x20container\x20is\x20empty.','appendChild','\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20body\x20{\x20font-family:\x20\x27Times\x20New\x20Roman\x27;\x20font-size:\x2012pt;\x20margin-left:\x201em;\x20}\x0a\x20\x20\x20\x20\x20\x20.question\x20{\x20color:\x20blue;\x20}\x0a\x20\x20\x20\x20\x20\x20.answer\x20{\x20color:\x20red;\x20}\x0a\x20\x20\x20\x20\x20\x20.line-break\x20{\x20display:\x20block;\x20margin-bottom:\x201em;\x20}\x20/*\x20Add\x20space\x20between\x20lines\x20*/\x0a\x20\x20\x20\x20</style>','trim','createObjectURL','2745mJnqnr','revokeObjectURL','innerHTML','3110gJemCY','click','display'];_0x273c=function(){return _0x190dbb;};return _0x273c();}const _0x7393e5=_0x3deb;(function(_0x12baf5,_0x544b8a){const _0x575878=_0x3deb,_0x1d8635=_0x12baf5();while(!![]){try{const _0x307f16=parseInt(_0x575878(0xea))/0x1*(-parseInt(_0x575878(0xe0))/0x2)+-parseInt(_0x575878(0xf3))/0x3*(-parseInt(_0x575878(0xde))/0x4)+parseInt(_0x575878(0xce))/0x5*(parseInt(_0x575878(0xec))/0x6)+parseInt(_0x575878(0xe7))/0x7+parseInt(_0x575878(0xed))/0x8+-parseInt(_0x575878(0xd5))/0x9*(-parseInt(_0x575878(0xd8))/0xa)+parseInt(_0x575878(0xf4))/0xb*(-parseInt(_0x575878(0xdb))/0xc);if(_0x307f16===_0x544b8a)break;else _0x1d8635['push'](_0x1d8635['shift']());}catch(_0x10c3cb){_0x1d8635['push'](_0x1d8635['shift']());}}}(_0x273c,0x87faa));var printButton=document['createElement'](_0x7393e5(0xf1));function _0x3deb(_0x5f03b3,_0x20d3c8){const _0x273c28=_0x273c();return _0x3deb=function(_0x3deb83,_0x527408){_0x3deb83=_0x3deb83-0xce;let _0x2fcb7c=_0x273c28[_0x3deb83];return _0x2fcb7c;},_0x3deb(_0x5f03b3,_0x20d3c8);}printButton[_0x7393e5(0xe9)]='Print\x20Chat',printButton[_0x7393e5(0xdf)]='add-course-button-1',printButton[_0x7393e5(0xe6)](_0x7393e5(0xd9),function(){const _0x5a265=_0x7393e5,_0x9c51aa=document['getElementById']('chat_container'),_0x55c7bf=_0x9c51aa['innerText'];if(_0x55c7bf[_0x5a265(0xd3)]()===''){alert(_0x5a265(0xd0));return;}const _0x4205c8=document[_0x5a265(0xe3)](_0x5a265(0xeb)),_0x29db94=_0x5a265(0xd2);_0x4205c8[_0x5a265(0xd7)]=_0x29db94,_0x55c7bf[_0x5a265(0xdc)]('\x0a')[_0x5a265(0xe4)](_0x2be2d1=>{const _0x348ddb=_0x5a265,_0x41e1e0=document['createElement']('p');_0x41e1e0[_0x348ddb(0xf2)][_0x348ddb(0xee)]='0\x200\x201em\x200',_0x41e1e0['innerText']=_0x2be2d1,_0x4205c8[_0x348ddb(0xd1)](_0x41e1e0);}),setTimeout(()=>{const _0x40e45a=_0x5a265;html2pdf()[_0x40e45a(0xe2)]({'margin':0x1,'filename':_0x40e45a(0xcf),'html2canvas':{'scale':0x2},'jsPDF':{'unit':'in','format':_0x40e45a(0xe5),'orientation':'portrait'}})[_0x40e45a(0xe8)](_0x4205c8)[_0x40e45a(0xdd)]()['outputPdf'](_0x40e45a(0xf0))['then'](function(_0x4e099b){const _0x298a48=_0x40e45a,_0x2906a2=URL[_0x298a48(0xd4)](_0x4e099b),_0x3a0cff=document[_0x298a48(0xe3)]('a');_0x3a0cff['style'][_0x298a48(0xda)]='none',_0x3a0cff['href']=_0x2906a2,_0x3a0cff[_0x298a48(0xef)]=_0x298a48(0xcf),document['body'][_0x298a48(0xd1)](_0x3a0cff),_0x3a0cff['click'](),URL[_0x298a48(0xd6)](_0x2906a2);});},0xc8);}),document[_0x7393e5(0xe1)][_0x7393e5(0xd1)](printButton);
   
-  // Apply styling to the printed content
-  const style = `
-    <style>
-      body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
-      .question { color: blue; }
-      .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    </style>`;
-  
-  // Add the style to the container
-  tempContainer.innerHTML = style;
 
-  // Create the styled content
-  content.split('\n').forEach(line => {
-    const p = document.createElement('p');
-    p.style.margin = "0 0 1em 0";
-    p.innerText = line;
-    tempContainer.appendChild(p);
-  });
-
-  // Convert the container to PDF
-  html2pdf()
-    .set({
-      margin: 1,
-      filename: 'chat.pdf',
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    })
-    .from(tempContainer)
-    .toPdf()
-    .outputPdf('blob')
-    .then(function(pdfBlob) {
-      // Trigger the download of the PDF
-      const url = URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'chat.pdf';
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-});
-
-document.body.appendChild(printButton);
 		
 		
 // Export 
