@@ -278,7 +278,52 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-function _0x1e84(_0x34a7d5,_0x19bc9){const _0x48cbc5=_0x48cb();return _0x1e84=function(_0x1e843b,_0x115cd0){_0x1e843b=_0x1e843b-0x18c;let _0x418e8d=_0x48cbc5[_0x1e843b];return _0x418e8d;},_0x1e84(_0x34a7d5,_0x19bc9);}const _0x11b51f=_0x1e84;(function(_0x2ede9d,_0x2991ef){const _0x1a5beb=_0x1e84,_0x4d7df6=_0x2ede9d();while(!![]){try{const _0x22afe2=parseInt(_0x1a5beb(0x1a8))/0x1+parseInt(_0x1a5beb(0x191))/0x2*(-parseInt(_0x1a5beb(0x1ac))/0x3)+-parseInt(_0x1a5beb(0x1a6))/0x4+parseInt(_0x1a5beb(0x1a3))/0x5*(parseInt(_0x1a5beb(0x1a1))/0x6)+-parseInt(_0x1a5beb(0x1a2))/0x7+-parseInt(_0x1a5beb(0x194))/0x8+parseInt(_0x1a5beb(0x1a7))/0x9;if(_0x22afe2===_0x2991ef)break;else _0x4d7df6['push'](_0x4d7df6['shift']());}catch(_0x4fc71c){_0x4d7df6['push'](_0x4d7df6['shift']());}}}(_0x48cb,0xed554));function _0x48cb(){const _0x337b02=['click','className','innerText','198IKlVan','6659506UENlNv','265855ynPwOw','div','chat.pdf','365160EoEkDt','2570274ZIFXOi','1911968xjSmGF','style','split','getElementById','94467rLgSWT','portrait','Print\x20Chat','save','Chat\x20container\x20is\x20empty.','textContent','add-course-button-1','22VFlCba','set','\x0a\x0a\x20\x20\x20\x20body\x20{\x20font-family:\x20\x27Times\x20New\x20Roman\x27;\x20font-size:\x2012pt;\x20margin-left:\x201em;\x20}\x0a\x0a\x20\x20\x20\x20.question\x20{\x20color:\x20blue;\x20}\x0a\x0a\x20\x20\x20\x20.answer\x20{\x20color:\x20red;\x20}\x0a\x0a\x20\x20\x20\x20.line-break\x20{\x20display:\x20block;\x20margin-bottom:\x201em;\x20}\x20/*\x20Add\x20space\x20between\x20lines\x20*/\x0a\x0a\x20\x20','12728432MdcWTs','chat_container','forEach','margin','innerHTML','addEventListener','body','appendChild','createElement','letter'];_0x48cb=function(){return _0x337b02;};return _0x48cb();}var printButton=document[_0x11b51f(0x19c)]('button');printButton[_0x11b51f(0x18f)]=_0x11b51f(0x18c),printButton[_0x11b51f(0x19f)]=_0x11b51f(0x190),printButton[_0x11b51f(0x199)](_0x11b51f(0x19e),function(){const _0x3f71ac=_0x11b51f,_0x120ff3=document[_0x3f71ac(0x1ab)](_0x3f71ac(0x195)),_0x2f239d=_0x120ff3[_0x3f71ac(0x1a0)];if(_0x2f239d['trim']()===''){alert(_0x3f71ac(0x18e));return;}const _0x5ef827=document['createElement'](_0x3f71ac(0x1a4)),_0x2cd58a=document[_0x3f71ac(0x19c)](_0x3f71ac(0x1a9));_0x2cd58a[_0x3f71ac(0x198)]=_0x3f71ac(0x193),_0x5ef827[_0x3f71ac(0x19b)](_0x2cd58a),_0x2f239d[_0x3f71ac(0x1aa)]('\x0a')[_0x3f71ac(0x196)](_0x1484ce=>{const _0x4f8e66=_0x3f71ac,_0x3a18e3=document[_0x4f8e66(0x19c)]('p');_0x3a18e3[_0x4f8e66(0x1a9)][_0x4f8e66(0x197)]='0\x200\x201em\x200',_0x3a18e3['innerText']=_0x1484ce,_0x5ef827['appendChild'](_0x3a18e3);}),html2pdf()[_0x3f71ac(0x192)]({'margin':0x1,'filename':_0x3f71ac(0x1a5),'html2canvas':{'scale':0x2},'jsPDF':{'unit':'in','format':_0x3f71ac(0x19d),'orientation':_0x3f71ac(0x1ad)}})['from'](_0x5ef827)[_0x3f71ac(0x18d)]();}),document[_0x11b51f(0x19a)][_0x11b51f(0x19b)](printButton);
+var printButton = document.createElement("button");
+printButton.textContent = "Print Chat"; // Updating the button text to "Print"
+printButton.className = "add-course-button-1";
+printButton.addEventListener("click", function() {
+  const chatContainer = document.getElementById('chat_container');
+  const content = chatContainer.innerText;
+  if (content.trim() === "") {
+    alert("Chat container is empty.");
+    return;
+  }
+
+  // Create a temporary container for styled content in memory
+  const tempContainer = document.createElement('div');
+
+  // Apply styling to the printed content
+  const style = document.createElement('style');
+  style.innerHTML = `
+    body { font-family: 'Times New Roman'; font-size: 16pt; margin-left: 1em; }
+    .question { color: blue; }
+    .answer { color: red; }
+    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+  `;
+
+  tempContainer.appendChild(style);
+
+  // Create the styled content
+  content.split('\n').forEach(line => {
+    const p = document.createElement('p');
+    p.style.margin = "0 0 1em 0";
+    p.innerText = line;
+    tempContainer.appendChild(p);
+  });
+
+  // Convert the container to PDF without attaching to the DOM
+  html2pdf()
+    .set({
+      margin: 1,
+      filename: 'chat.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    })
+    .from(tempContainer)
+    .save();
+});
+
+document.body.appendChild(printButton);
 		
 		
 // Export 
