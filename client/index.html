@@ -409,8 +409,42 @@ loadHtml2pdfScript(createPrintButton);
 
 <script>
        //word and text
-	function _0xc68b(_0x56a4fc,_0x139c9b){const _0x151934=_0x1519();return _0xc68b=function(_0xc68b9,_0x3d64ba){_0xc68b9=_0xc68b9-0xf1;let _0x48f634=_0x151934[_0xc68b9];return _0x48f634;},_0xc68b(_0x56a4fc,_0x139c9b);}(function(_0x423cb2,_0x1cfb29){const _0x32ec59=_0xc68b,_0x4424d5=_0x423cb2();while(!![]){try{const _0x2dab26=parseInt(_0x32ec59(0x10b))/0x1*(-parseInt(_0x32ec59(0xfd))/0x2)+parseInt(_0x32ec59(0x100))/0x3+-parseInt(_0x32ec59(0xf6))/0x4+-parseInt(_0x32ec59(0xf7))/0x5*(-parseInt(_0x32ec59(0x101))/0x6)+-parseInt(_0x32ec59(0x105))/0x7*(-parseInt(_0x32ec59(0x108))/0x8)+-parseInt(_0x32ec59(0xfc))/0x9+parseInt(_0x32ec59(0xf9))/0xa;if(_0x2dab26===_0x1cfb29)break;else _0x4424d5['push'](_0x4424d5['shift']());}catch(_0x2edb75){_0x4424d5['push'](_0x4424d5['shift']());}}}(_0x1519,0xa411b));function _0x1519(){const _0x3c891d=['trim','text/plain','textFileBtn_8','21dGAvrC','split','#555555','922776lSYPaw','Chat\x20container\x20is\x20empty.','map','187181rWOghP','chat_container','chat.txt','createElement','href','download','style','3089524gcDhMi','388715KqffAE','innerText','4898150kwUYUE','getElementById','createObjectURL','1386531VZaLwD','4MGyxXg','backgroundColor','click','3177690thBUJf','6NoCVGg'];_0x1519=function(){return _0x3c891d;};return _0x1519();}function downloadTxtFile_8(){const _0x553ce9=_0xc68b,_0x3fadad=document[_0x553ce9(0xfa)](_0x553ce9(0x10c))[_0x553ce9(0xf8)];if(_0x3fadad[_0x553ce9(0x102)]()===''){alert(_0x553ce9(0x109));return;}const _0x29e53c=_0x3fadad[_0x553ce9(0x106)]('\x0a')[_0x553ce9(0x10a)](_0xe0fc2b=>'\x20'+_0xe0fc2b['trimStart']()),_0x2be95d=_0x29e53c['join']('\x0a'),_0x3ab4b4=new Blob([_0x2be95d],{'type':_0x553ce9(0x103)}),_0x1579ab=document[_0x553ce9(0xf2)]('a');_0x1579ab[_0x553ce9(0xf3)]=URL[_0x553ce9(0xfb)](_0x3ab4b4),_0x1579ab[_0x553ce9(0xf4)]=_0x553ce9(0xf1),_0x1579ab[_0x553ce9(0xff)](),document[_0x553ce9(0xfa)](_0x553ce9(0x104))[_0x553ce9(0xf5)][_0x553ce9(0xfe)]=_0x553ce9(0x107);}
-//word
+function downloadTxtFile_8() {
+    const content_8 = document.getElementById('chat_container').innerText;
+    if (content_8.trim() === "") {
+        alert("The content is empty.");
+        return;
+    }
+
+    // Wrap text to prevent horizontal scrolling by limiting line length
+    const wrapText = (text, maxLineLength) => {
+        const words = text.split(' ');
+        let line = '';
+        let wrappedText = '';
+
+        words.forEach(word => {
+            if (line.length + word.length + 1 > maxLineLength) {
+                wrappedText += line.trim() + '\n';
+                line = '';
+            }
+            line += word + ' ';
+        });
+
+        return wrappedText + line.trim();
+    };
+
+    const formattedContent_8 = wrapText(content_8, 80); // Wrap lines to 80 characters
+    const txtBlob_8 = new Blob([formattedContent_8], { type: 'text/plain' });
+    const txtLink_8 = document.createElement('a');
+    txtLink_8.href = URL.createObjectURL(txtBlob_8);
+    txtLink_8.download = 'chat.txt';
+    txtLink_8.click();
+    document.getElementById('textFileBtn_8').style.backgroundColor = "#555555";
+}
+	
+
+	
+	//word
 function downloadDocFile_8() {
     const content_8 = document.getElementById('chat_container').innerText;
     if (content_8.trim() === "") {
