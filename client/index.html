@@ -299,7 +299,7 @@ printButton.addEventListener("click", async function() {
   const lineHeight = 14;
   const margin = 20;
 
-  // Set the font
+  // Load and embed the font
   const fontBytes = await fetch('https://unpkg.com/pdf-lib/dist/fonts/Helvetica.ttf').then(res => res.arrayBuffer());
   const font = await pdfDoc.embedFont(fontBytes);
 
@@ -311,7 +311,7 @@ printButton.addEventListener("click", async function() {
       page.addPage(); // Add a new page if needed
       yPosition = height - margin; // Reset position for the new page
     }
-    const wrappedLines = page.drawText(line, {
+    page.drawText(line, {
       x: margin,
       y: yPosition,
       size: fontSize,
@@ -332,6 +332,7 @@ printButton.addEventListener("click", async function() {
 
 document.body.appendChild(printButton);
 		
+
 
 
 		
