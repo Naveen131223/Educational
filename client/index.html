@@ -298,13 +298,13 @@ printButton.addEventListener("click", function() {
     const tempContainer = document.createElement('div');
     tempContainer.style.fontFamily = 'Arial, sans-serif';
     tempContainer.style.fontSize = '12pt';
-    tempContainer.style.marginLeft = '1em';
+    tempContainer.style.margin = '20px';
 
     // Create the styled content
     const lines = content.split('\n');
     lines.forEach((line, index) => {
         const p = document.createElement('p');
-        p.style.margin = '0 0 0.5em 1em';
+        p.style.margin = '0 0 0.5em 0';
         p.style.lineHeight = '1.5';
         if (index === 0) {
             p.style.marginTop = "0.5em"; // Add top margin for the first line
@@ -315,7 +315,7 @@ printButton.addEventListener("click", function() {
 
     // Convert the container to PDF using html2pdf.js
     html2pdf().from(tempContainer).set({
-        margin: 1,
+        margin: [0.5, 0.5, 0.5, 0.5], // Top, right, bottom, left margin
         filename: 'chat.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
