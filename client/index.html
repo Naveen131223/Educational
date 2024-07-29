@@ -285,10 +285,12 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-
+// Create the print button
 var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Button text
 printButton.className = "add-course-button-1";
+
+// Add click event to the button
 printButton.addEventListener("click", function() {
     var chatContainer = document.getElementById("chat_container");
     var chatContent = chatContainer.innerHTML;
@@ -298,57 +300,21 @@ printButton.addEventListener("click", function() {
         return;
     }
 
-    // Apply basic styles for printing
-    var style = `
-        <style>
-            body { 
-                font-family: 'Times New Roman', serif; 
-                font-size: 12pt; 
-                line-height: 1.5;
-                margin: 1in;
-            }
-            .page-number {
-                text-align: center;
-                margin-top: 1em;
-            }
-        </style>`;
-
     // Create a new jsPDF document
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
+    const doc = new jsPDF();
 
     // Add content to the PDF
-    html2canvas(chatContainer, { scale: 2 }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        doc.addImage(imgData, 'PNG', 10, 10, 190, 0, '', 'FAST');
+    // You can add styling manually or use libraries like html2canvas for complex HTML to PDF conversions
+    doc.setFontSize(12);
+    doc.text(chatContent, 10, 10);
 
-        // Add page number in the footer
-        let pageNumber = 1;
-        let totalPages = 1;
-        const addPageNumber = () => {
-            doc.text(`Page ${pageNumber} of ${totalPages}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
-        };
-
-        // Calculate total pages
-        totalPages = Math.ceil(canvas.height / (doc.internal.pageSize.height - 20));
-
-        // Add the page number to all pages
-        for (let i = 1; i <= totalPages; i++) {
-            if (i > 1) doc.addPage();
-            pageNumber = i;
-            addPageNumber();
-            if (i === totalPages) {
-                doc.addImage(imgData, 'PNG', 10, 10, 190, 0, '', 'FAST');
-            }
-        }
-
-        // Save the PDF
-        doc.save('chat.pdf');
-    });
+    // Save the PDF
+    doc.save('chat.pdf');
 });
 
-document.body.appendChild(printButton);		
-
+// Append the button to the body
+document.body.appendChild(printButton);
 
 
 
