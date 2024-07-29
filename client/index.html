@@ -280,7 +280,7 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download Pdf File"; // Updating the button text to "Print"
+printButton.textContent = "Download Pdf File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   const chatContainer = document.getElementById('chat_container');
@@ -296,10 +296,9 @@ printButton.addEventListener("click", function() {
   // Apply styling to the printed content
   const style = document.createElement('style');
   style.innerHTML = `
-    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
-    p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
+    body { font-family: 'Noto Sans'; font-size: 12pt; margin-left: 1em; }
+    p { margin: 0 0 0.5em 1em; line-height: 1.5; }
   `;
-
   tempContainer.appendChild(style);
 
   // Create the styled content
@@ -307,7 +306,7 @@ printButton.addEventListener("click", function() {
   lines.forEach((line, index) => {
     const p = document.createElement('p');
     if (index === 0) {
-      p.style.marginTop = "0.5em"; // Add top margin for the first line
+      p.style.marginTop = "0.5em";
     }
     p.innerText = line.trim();
     tempContainer.appendChild(p);
@@ -317,11 +316,16 @@ printButton.addEventListener("click", function() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
+  // Add custom font
+  pdf.addFileToVFS("NotoSans.ttf", yourBase64EncodedFontString);
+  pdf.addFont("NotoSans.ttf", "Noto Sans", "normal");
+  pdf.setFont("Noto Sans");
+
   // Add content to the PDF with text wrapping
-  const margin = 10; // Margin from the left
-  const lineHeight = 10; // Increased line height for better readability
+  const margin = 10;
+  const lineHeight = 10;
   const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-  let yPosition = 20; // Start position on the page with a gap at the top
+  let yPosition = 20;
 
   tempContainer.childNodes.forEach((node) => {
     if (node.tagName === 'P') {
@@ -330,7 +334,7 @@ printButton.addEventListener("click", function() {
       lines.forEach((line) => {
         if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
           pdf.addPage();
-          yPosition = 20; // Reset position for the new page
+          yPosition = 20;
         }
         pdf.text(line, margin, yPosition);
         yPosition += lineHeight;
@@ -344,13 +348,9 @@ printButton.addEventListener("click", function() {
 
 document.body.appendChild(printButton);
 		
-
-    
-
-
-
-
 		
+
+    		
 		
 
 
