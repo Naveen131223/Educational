@@ -281,6 +281,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
+
 var printButton = document.createElement("button");
 printButton.textContent = "Download Chat as PDF";
 printButton.className = "add-course-button-1";
@@ -301,8 +302,8 @@ printButton.addEventListener("click", function() {
     const pageHeight = doc.internal.pageSize.height;
     const pageWidth = doc.internal.pageSize.width;
     const margin = 20; // Margin for better formatting
-    const fontSize = 18; // Increased font size for better readability
-    const lineHeight = fontSize * 0.5; // Line height adjusted to font size
+    const fontSize = 14; // Increased font size for better readability
+    const lineHeight = fontSize * 1.2; // Line height adjusted to font size
     const maxLinesPerPage = Math.floor((pageHeight - 2 * margin) / lineHeight);
 
     doc.setFont("Times", "Roman");
@@ -354,6 +355,7 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+		
 	    
 
        		
