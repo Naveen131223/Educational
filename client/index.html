@@ -45,6 +45,7 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 	  
   </head>
   <body>
@@ -281,64 +282,51 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download Pdf File";
+printButton.textContent = "Download Chat as PDF"; // Updating the button text to indicate PDF download
 printButton.className = "add-course-button-1";
-
 printButton.addEventListener("click", function() {
-    const chatContainer = document.getElementById('chat_container');
-    const content = chatContainer.innerText;
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerText;
 
-    if (content.trim() === "") {
+    if (chatContent.trim() === "") {
         alert("Chat container is empty.");
         return;
     }
 
-    // Create a temporary container for styled content
-    const tempContainer = document.createElement('div');
+    const { jsPDF } = window.jspdf;
 
-    // Apply styles to the container
-    tempContainer.style.fontFamily = "'Times New Roman', serif";
-    tempContainer.style.fontSize = "12pt";
-    tempContainer.style.margin = "1em";
-    tempContainer.style.padding = "1em"; // Ensure padding for the content
+    // Initialize jsPDF
+    const doc = new jsPDF();
 
-    // Create the styled content
-    const lines = content.split('\n');
-    lines.forEach((line, index) => {
-        const p = document.createElement('p');
-        p.style.margin = "0 0 0.5em 0"; // Bottom margin for spacing
-        p.style.lineHeight = "1.5"; // Line height for readability
-        if (index === 0) {
-            p.style.marginTop = "0.5em"; // Top margin for the first line
-        }
-        p.innerText = line.trim();
-        tempContainer.appendChild(p);
+    // Apply styling
+    var style = `
+      <style>
+        .question { color: blue; }
+        .answer { color: red; }
+        .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+      </style>`;
+
+    // Add content to PDF
+    const lines = chatContent.split('\n');
+    let y = 10; // y-coordinate for the text placement
+    const lineHeight = 10;
+
+    doc.setFont("Times", "Roman");
+    doc.setFontSize(12);
+
+    lines.forEach(line => {
+        doc.text(line, 10, y);
+        y += lineHeight;
     });
 
-    // Convert the container to PDF using html2pdf.js
-    html2pdf().from(tempContainer).set({
-        margin: [1, 0.5, 1, 0.5], // Increased margins for better spacing
-        filename: 'chat.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    }).toPdf().get('pdf').then(function(pdf) {
-        const totalPages = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i);
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const text = `Page ${i} of ${totalPages}`;
-            const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.scaleFactor;
-            const x = (pageWidth - textWidth) / 2;
-            const y = pageHeight - 0.5; // Position page number in the middle bottom with sufficient gap
-            pdf.text(text, x, y);
-        }
-        pdf.save('chat.pdf');
-    });
+    // Save the PDF
+    doc.save('chat.pdf');
+
+    document.getElementById('pdfFileBtn_8').style.backgroundColor = "#555555";
 });
 
 document.body.appendChild(printButton);
+		
 		
 
 
