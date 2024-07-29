@@ -282,47 +282,15 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 
-// Create and style the print button
 var printButton = document.createElement("button");
-printButton.textContent = "Print Chat"; // Updating the button text to "Print"
+printButton.textContent = "Save Chat as PDF"; // Updating the button text
 printButton.className = "add-course-button-1";
-printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
-
-  // Apply styling to the printed content
-  var style = `
-    <style>
-      .question { color: blue; }
-      .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    </style>`;
-
-  // Replace line breaks with a styled span to add vertical space
-  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
-
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
-  printWindow.document.close();
-
-  // Execute the print function
-  printWindow.print();
-});
-
-// Create and style the PDF download button
-var pdfButton = document.createElement("button");
-pdfButton.textContent = "Download PDF"; // Button text for PDF download
-pdfButton.className = "add-course-button-1";
-pdfButton.addEventListener("click", async function() {
+printButton.addEventListener("click", async function() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  const chatContainer = document.getElementById("chat_container");
-  const chatContent = chatContainer.innerText;
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerText;
 
   if (chatContent.trim() === "") {
     alert("Chat container is empty.");
@@ -343,9 +311,8 @@ pdfButton.addEventListener("click", async function() {
   doc.save('chat.pdf');
 });
 
-// Append buttons to the body
 document.body.appendChild(printButton);
-document.body.appendChild(pdfButton);
+		
 		
 
     
