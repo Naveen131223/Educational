@@ -280,7 +280,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
- var printButton = document.createElement("button");
+var printButton = document.createElement("button");
 printButton.textContent = "Download Pdf File";
 printButton.className = "add-course-button-1";
 
@@ -300,7 +300,7 @@ printButton.addEventListener("click", function() {
     const style = document.createElement('style');
     style.innerHTML = `
         body { font-family: 'Times New Roman', serif; font-size: 12pt; margin-left: 1em; }
-        p { margin: 0 0 0.5em 1em; line-height: 1.5; }
+        p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Set line-height to 1.5 */
     `;
     tempContainer.appendChild(style);
 
@@ -325,7 +325,7 @@ printButton.addEventListener("click", function() {
     }).save();
 });
 
-document.body.appendChild(printButton);		
+document.body.appendChild(printButton);	
 
 		
 
