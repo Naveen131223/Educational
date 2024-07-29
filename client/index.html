@@ -43,7 +43,7 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   gtag('config', 'G-LR7BYEJTS7');
 </script>
 
- <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>   
 	  
   </head>
   <body>
@@ -280,9 +280,9 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Print Chat"; // Updating the button text to "Print"
+printButton.textContent = "Download Pdf File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
-printButton.addEventListener("click", async function() {
+printButton.addEventListener("click", function() {
   const chatContainer = document.getElementById('chat_container');
   const content = chatContainer.innerText;
   if (content.trim() === "") {
@@ -290,47 +290,66 @@ printButton.addEventListener("click", async function() {
     return;
   }
 
-  // Create a new PDF document
-  const { PDFDocument, rgb } = PDFLib;
-  const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([600, 800]); // Page size
-  const { width, height } = page.getSize();
-  const fontSize = 12;
-  const lineHeight = 14;
-  const margin = 20;
+  // Create a temporary container for styled content
+  const tempContainer = document.createElement('div');
 
-  // Load and embed a Unicode-compliant font
-  const fontBytes = await fetch('https://unpkg.com/pdf-lib/dist/fonts/Helvetica-Bold.ttf').then(res => res.arrayBuffer());
-  const font = await pdfDoc.embedFont(fontBytes);
+  // Apply styling to the printed content
+  const style = document.createElement('style');
+  style.innerHTML = `
+    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
+  `;
 
-  // Add text to the PDF with line wrapping
-  let yPosition = height - margin;
+  tempContainer.appendChild(style);
+
+  // Create the styled content
   const lines = content.split('\n');
-  lines.forEach(line => {
-    if (yPosition - lineHeight < margin) {
-      page.addPage(); // Add a new page if needed
-      yPosition = height - margin; // Reset position for the new page
+  lines.forEach((line, index) => {
+    const p = document.createElement('p');
+    if (index === 0) {
+      p.style.marginTop = "0.5em"; // Add top margin for the first line
     }
-    page.drawText(line, {
-      x: margin,
-      y: yPosition,
-      size: fontSize,
-      font: font,
-      color: rgb(0, 0, 0)
-    });
-    yPosition -= lineHeight; // Move down for the next line
+    p.innerText = line.trim();
+    tempContainer.appendChild(p);
+  });
+
+  // Convert the container to PDF using jsPDF
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  // Add content to the PDF with text wrapping
+  const margin = 10; // Margin from the left
+  const lineHeight = 10; // Increased line height for better readability
+  const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
+  let yPosition = 20; // Start position on the page with a gap at the top
+
+  tempContainer.childNodes.forEach((node) => {
+    if (node.tagName === 'P') {
+      const text = node.innerText;
+      const lines = pdf.splitTextToSize(text, pageWidth);
+      lines.forEach((line) => {
+        if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
+          pdf.addPage();
+          yPosition = 20; // Reset position for the new page
+        }
+        pdf.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
+    }
   });
 
   // Save the PDF
-  const pdfBytes = await pdfDoc.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'chat.pdf';
-  link.click();
+  pdf.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
+		
+
+    
+
+
+
+
 		
 		
 
