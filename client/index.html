@@ -300,12 +300,13 @@ printButton.addEventListener("click", function() {
 
     const pageHeight = doc.internal.pageSize.height;
     const pageWidth = doc.internal.pageSize.width;
-    const margin = 20; // Increased margin for better formatting
-    const lineHeight = 10; // Line height
+    const margin = 20; // Margin for better formatting
+    const fontSize = 14; // Increased font size for better readability
+    const lineHeight = fontSize * 1.2; // Line height adjusted to font size
     const maxLinesPerPage = Math.floor((pageHeight - 2 * margin) / lineHeight);
 
     doc.setFont("Times", "Roman");
-    doc.setFontSize(12);
+    doc.setFontSize(fontSize);
 
     const lines = chatContent.split('\n');
     let y = margin;
@@ -314,7 +315,7 @@ printButton.addEventListener("click", function() {
     function addPageNumber() {
         doc.setFontSize(10);
         doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-        doc.setFontSize(12);
+        doc.setFontSize(fontSize);
     }
 
     function addTextWithWrapping(text, x, y, lineHeight, maxWidth) {
@@ -353,6 +354,9 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+		
+
+        
 		
 		
 
