@@ -282,38 +282,40 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 
-
 var printButton = document.createElement("button");
 printButton.textContent = "Download PDF for English and Related Languages";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
     const chatContainer = document.getElementById('chat_container');
-    const content = chatContainer.innerText;
+    const chatContent = chatContainer.innerText;
 
-    if (content.trim() === "") {
+    // Check if chat container is empty
+    if (chatContent.trim() === "") {
         alert("Chat container is empty.");
         return;
     }
 
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
+
+    // Initialize jsPDF
+    const doc = new jsPDF();
 
     const margin = 20; // Margin from the edges
     const fontSize = 18; // Font size for better readability
     const lineHeight = fontSize * 0.5; // Reduced line height to reduce vertical gaps
-    const pageWidth = pdf.internal.pageSize.width - 2 * margin;
+    const pageWidth = doc.internal.pageSize.width - 2 * margin;
 
-    pdf.setFont("Times", "Roman");
-    pdf.setFontSize(fontSize);
+    doc.setFont("Times", "Roman");
+    doc.setFontSize(fontSize);
 
-    const lines = content.split('\n');
+    const lines = chatContent.split('\n');
     let yPosition = margin;
     let pageNumber = 1;
 
     function addPageNumber() {
-        pdf.setFontSize(10);
-        pdf.text(`Page ${pageNumber}`, pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 10, { align: 'center' });
-        pdf.setFontSize(fontSize);
+        doc.setFontSize(10);
+        doc.text(`Page ${pageNumber}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        doc.setFontSize(fontSize);
     }
 
     function addTextWithWrapping(text, x, y, lineHeight, maxWidth) {
@@ -323,10 +325,10 @@ printButton.addEventListener("click", function() {
 
         for (let i = 0; i < words.length; i++) {
             const testLine = line + words[i] + ' ';
-            const testWidth = pdf.getTextWidth(testLine);
+            const testWidth = doc.getTextWidth(testLine);
 
             if (testWidth > maxWidth && i > 0) {
-                pdf.text(line, x, currentY);
+                doc.text(line, x, currentY);
                 line = words[i] + ' ';
                 currentY += lineHeight;
             } else {
@@ -334,14 +336,14 @@ printButton.addEventListener("click", function() {
             }
         }
 
-        pdf.text(line, x, currentY);
+        doc.text(line, x, currentY);
         return currentY;
     }
 
     lines.forEach((line) => {
-        if (yPosition + lineHeight > pdf.internal.pageSize.height - margin) {
+        if (yPosition + lineHeight > doc.internal.pageSize.height - margin) {
             addPageNumber();
-            pdf.addPage();
+            doc.addPage();
             yPosition = margin;
             pageNumber++;
         }
@@ -352,11 +354,16 @@ printButton.addEventListener("click", function() {
     addPageNumber();
 
     // Save the PDF
-    pdf.save('chat.pdf');
+    doc.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
 		
+
+    
+
+    
+        
 		
 
     
