@@ -298,7 +298,7 @@ printButton.addEventListener("click", function() {
 
     const margin = 20; // Margin from the edges
     const fontSize = 16; // Font size for better readability
-    const lineHeight = fontSize * 1.2; // Line height for readability
+    const lineHeight = fontSize * 1.15; // Reduced line height to reduce vertical gaps
     const pageWidth = pdf.internal.pageSize.width - 2 * margin;
 
     pdf.setFont("Times", "Roman");
@@ -336,15 +336,15 @@ printButton.addEventListener("click", function() {
         return currentY;
     }
 
-    lines.forEach((line, index) => {
+    lines.forEach((line) => {
         if (yPosition + lineHeight > pdf.internal.pageSize.height - margin) {
             addPageNumber();
             pdf.addPage();
             yPosition = margin;
             pageNumber++;
         }
-        yPosition = addTextWithWrapping(line, margin, yPosition, pageWidth, pageWidth);
-        yPosition += lineHeight;
+        yPosition = addTextWithWrapping(line, margin, yPosition, lineHeight, pageWidth);
+        yPosition += lineHeight * 0.85; // Slightly reduced gap after each line
     });
 
     addPageNumber();
@@ -356,6 +356,11 @@ printButton.addEventListener("click", function() {
 document.body.appendChild(printButton);
 		
 
+
+        
+
+    
+		
 
 		
 // Export 
