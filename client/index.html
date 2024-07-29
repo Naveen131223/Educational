@@ -296,7 +296,7 @@ printButton.addEventListener("click", function() {
   const style = document.createElement('style');
   style.innerHTML = `
     body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
-    p { margin: 0 0 0.2em 1em; line-height: 1.2; } /* Reduce the margin and set line-height, add left margin */
+    p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
   `;
 
   tempContainer.appendChild(style);
@@ -318,7 +318,7 @@ printButton.addEventListener("click", function() {
 
   // Add content to the PDF with text wrapping
   const margin = 10; // Margin from the left
-  const lineHeight = 7; // Line height
+  const lineHeight = 10; // Increased line height for better readability
   const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
   let yPosition = 20; // Start position on the page with a gap at the top
 
@@ -343,10 +343,8 @@ printButton.addEventListener("click", function() {
 
 document.body.appendChild(printButton);
 		
+	
 
-
-
-  
    	         
 		
 // Export 
