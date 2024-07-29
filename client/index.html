@@ -441,15 +441,16 @@ function downloadDocFile_8() {
             }
             div.Section1 div.Footer {
                 text-align: center;
+                margin-top: 1em;
             }
         </style>`;
     const body_8 = `
         <body>
             <div class="Section1">
-                ${content_8.split('\n').map(line => `<p> ${line}</p>`).join('')}
-                <div class="Footer">
-                    <span style="mso-field-code:PAGE"></span>
-                </div>
+                ${content_8.split('\n').map(line => `<p>${line}</p>`).join('')}
+            </div>
+            <div class="Footer">
+                <span style="mso-field-code:'PAGE \\* MERGEFORMAT'"></span>
             </div>
         </body>
     </html>`;
@@ -461,7 +462,7 @@ function downloadDocFile_8() {
     docLink_8.download = 'chat.doc';
     docLink_8.click();
     document.getElementById('wordFileBtn_8').style.backgroundColor = "#555555";
-	    }
+}
 	
 </script>
 
