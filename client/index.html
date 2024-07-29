@@ -278,7 +278,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-  var printButton = document.createElement("button");
+ var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -316,12 +316,24 @@ printButton.addEventListener("click", function() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
-  // Add content to the PDF
+  // Add content to the PDF with text wrapping
+  const margin = 10; // Margin from the left
+  const lineHeight = 7; // Line height
+  const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
   let yPosition = 20; // Start position on the page with a gap at the top
+
   tempContainer.childNodes.forEach((node) => {
     if (node.tagName === 'P') {
-      pdf.text(node.innerText, 10, yPosition);
-      yPosition += 7; // Adjust line height
+      const text = node.innerText;
+      const lines = pdf.splitTextToSize(text, pageWidth);
+      lines.forEach((line) => {
+        if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
+          pdf.addPage();
+          yPosition = 20; // Reset position for the new page
+        }
+        pdf.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
     }
   });
 
@@ -331,6 +343,10 @@ printButton.addEventListener("click", function() {
 
 document.body.appendChild(printButton);
 		
+
+
+
+  
    	         
 		
 // Export 
