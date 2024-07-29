@@ -299,8 +299,8 @@ printButton.addEventListener("click", function() {
     // Apply styles to the container
     const style = document.createElement('style');
     style.innerHTML = `
-        body { font-family: 'Times New Roman', serif; font-size: 12pt; margin-left: 1em; }
-        p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Set line-height to 1.5 */
+        body { font-family: 'Times New Roman', serif; font-size: 12pt; margin: 1em; }
+        p { margin: 0 0 0.5em 0; line-height: 1.5; } /* Adjust line-height and bottom margin */
     `;
     tempContainer.appendChild(style);
 
@@ -325,7 +325,8 @@ printButton.addEventListener("click", function() {
     }).save();
 });
 
-document.body.appendChild(printButton);	
+document.body.appendChild(printButton);
+		
 
 		
 
