@@ -278,7 +278,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-var printButton = document.createElement("button");
+ var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -289,35 +289,36 @@ printButton.addEventListener("click", function() {
     return;
   }
 
-  // Create a temporary container for styled content in memory
+  // Create a temporary invisible container for styled content
   const tempContainer = document.createElement('div');
+  tempContainer.style.position = 'absolute';
+  tempContainer.style.left = '-9999px';
 
   // Apply styling to the printed content
-  const style = document.createElement('style');
-  style.innerHTML = `
-    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; margin-top: 1em; }
-    .question { color: blue; }
-    .answer { color: red; }
-    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+  const style = `
+    <style>
+      body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>
   `;
 
-  tempContainer.appendChild(style);
+  // Add the style to the temp container
+  tempContainer.innerHTML = style;
 
-  // Add a space at the top of the content
-  const topSpace = document.createElement('p');
-  topSpace.style.margin = "1em 0";
-  topSpace.innerText = "";
-  tempContainer.appendChild(topSpace);
+  // Add a top margin for the content
+  tempContainer.innerHTML += `<p style="margin: 1em 0;"></p>`;
 
   // Create the styled content
   content.split('\n').forEach(line => {
-    const p = document.createElement('p');
-    p.style.margin = "0 0 1em 0";
-    p.innerText = line;
-    tempContainer.appendChild(p);
+    tempContainer.innerHTML += `<p style="margin: 0 0 1em 0;">${line}</p>`;
   });
 
-  // Delay the PDF generation slightly to stabilize layout
+  // Append the temporary container to the body
+  document.body.appendChild(tempContainer);
+
+  // Generate the PDF from the temp container
   setTimeout(() => {
     html2pdf()
       .set({
@@ -327,13 +328,17 @@ printButton.addEventListener("click", function() {
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
       })
       .from(tempContainer)
-      .save();
+      .save()
+      .then(() => {
+        // Remove the temporary container after generating the PDF
+        document.body.removeChild(tempContainer);
+      });
   }, 100);
 });
 
 document.body.appendChild(printButton);
 		
-  	
+
          
 		
 // Export 
