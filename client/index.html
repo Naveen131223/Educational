@@ -296,9 +296,7 @@ printButton.addEventListener("click", function() {
   const style = document.createElement('style');
   style.innerHTML = `
     body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
-    .question { color: blue; }
-    .answer { color: red; }
-    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    p { margin: 0 0 0.5em 0; } /* Reduce the margin to decrease vertical gaps */
   `;
 
   tempContainer.appendChild(style);
@@ -306,7 +304,7 @@ printButton.addEventListener("click", function() {
   // Create the styled content
   content.split('\n').forEach(line => {
     const p = document.createElement('p');
-    p.style.margin = "0 0 1em 0";
+    p.style.margin = "0 0 0.5em 0"; // Adjust margin for each paragraph
     p.innerText = line;
     tempContainer.appendChild(p);
   });
@@ -314,11 +312,13 @@ printButton.addEventListener("click", function() {
   // Convert the container to PDF using jsPDF
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
-  
+
   // Add content to the PDF
-  tempContainer.childNodes.forEach((node, index) => {
+  let yPosition = 10; // Start position on the page
+  tempContainer.childNodes.forEach((node) => {
     if (node.tagName === 'P') {
-      pdf.text(node.innerText, 10, 10 + index * 10);
+      pdf.text(node.innerText, 10, yPosition);
+      yPosition += 6; // Adjust line height
     }
   });
 
@@ -328,6 +328,9 @@ printButton.addEventListener("click", function() {
 
 document.body.appendChild(printButton);
 		
+  
+
+  	
          
 		
 // Export 
