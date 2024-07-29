@@ -282,10 +282,11 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 
+
 var printButton = document.createElement("button");
 printButton.textContent = "Download PDF for English and Related Languages";
 printButton.className = "add-course-button-1";
-printButton.addEventListener("click", async function() {
+printButton.addEventListener("click", function() {
     const chatContainer = document.getElementById('chat_container');
     const chatContent = chatContainer.innerHTML;
 
@@ -301,25 +302,16 @@ printButton.addEventListener("click", async function() {
         filename: 'chat.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 }, // Increase scale for better quality
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Create a `jsPDF` instance
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Convert HTML to PDF using `html2pdf.js`
-    const pdf = html2pdf().from(chatContainer).set(options);
-
-    // Wait for the PDF to be generated
-    pdf.toPdf().get('pdf').then(function (pdf) {
-        // Add page numbers using `jsPDF`
+    // Initialize and configure `html2pdf`
+    html2pdf().from(chatContainer).set(options).toPdf().get('pdf').then(function(pdf) {
         const totalPages = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i);
-            pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 10, { align: 'center' });
-        }
+        pdf.internal.pages.forEach(function(page, index) {
+            pdf.setPage(index + 1);
+            pdf.text(`Page ${index + 1} of ${totalPages}`, pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 10, { align: 'center' });
+        });
         // Save the PDF
         pdf.save('chat.pdf');
     });
@@ -328,7 +320,6 @@ printButton.addEventListener("click", async function() {
 document.body.appendChild(printButton);
 		
     
-        
 
         
 
