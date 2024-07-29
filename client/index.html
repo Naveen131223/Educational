@@ -296,16 +296,21 @@ printButton.addEventListener("click", function() {
   const style = document.createElement('style');
   style.innerHTML = `
     body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
-    p { margin: 0 0 0.5em 0; } /* Reduce the margin to decrease vertical gaps */
+    p { margin: 0 0 0.5em 0; line-height: 1.5; } /* Reduce the margin and set line-height */
   `;
 
   tempContainer.appendChild(style);
 
   // Create the styled content
-  content.split('\n').forEach(line => {
+  const lines = content.split('\n');
+  lines.forEach((line, index) => {
     const p = document.createElement('p');
-    p.style.margin = "0 0 0.5em 0"; // Adjust margin for each paragraph
-    p.innerText = line;
+    if (index === 0) {
+      p.style.marginTop = "1em"; // Add top margin for the first line
+    } else {
+      p.style.margin = "0 0 0.5em 0"; // Adjust margin for other lines
+    }
+    p.innerText = line.trim();
     tempContainer.appendChild(p);
   });
 
@@ -314,11 +319,11 @@ printButton.addEventListener("click", function() {
   const pdf = new jsPDF();
 
   // Add content to the PDF
-  let yPosition = 10; // Start position on the page
+  let yPosition = 20; // Start position on the page with a gap at the top
   tempContainer.childNodes.forEach((node) => {
     if (node.tagName === 'P') {
       pdf.text(node.innerText, 10, yPosition);
-      yPosition += 6; // Adjust line height
+      yPosition += 10; // Adjust line height
     }
   });
 
@@ -328,7 +333,7 @@ printButton.addEventListener("click", function() {
 
 document.body.appendChild(printButton);
 	
-     
+
 	         
 		
 // Export 
