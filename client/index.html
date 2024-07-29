@@ -43,9 +43,9 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   gtag('config', 'G-LR7BYEJTS7');
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>	
-	  
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.plugin.autotable.min.js"></script>
+
   </head>
   <body>
 	  <script type="text/javascript">
@@ -280,9 +280,6 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-// Ensure you have jsPDF included in your project
-const { jsPDF } = window.jspdf;
-
 var printButton = document.createElement("button");
 printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
@@ -317,11 +314,11 @@ printButton.addEventListener("click", function() {
   });
 
   // Convert the container to PDF using jsPDF
+  const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
-  // Add the custom font
-  // Replace 'YOUR_BASE64_ENCODED_FONT' with the actual base64-encoded font data
-  pdf.addFileToVFS("NotoSans-Regular.ttf", "YOUR_BASE64_ENCODED_FONT");
+  // Include the custom font
+  pdf.addFileToVFS("NotoSans-Regular.ttf", "YOUR_BASE64_ENCODED_FONT_HERE");
   pdf.addFont("NotoSans-Regular.ttf", "NotoSans", "normal");
   pdf.setFont("NotoSans");
 
@@ -351,6 +348,7 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+
 
 		
 // Export 
