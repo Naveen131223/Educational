@@ -299,8 +299,8 @@ printButton.addEventListener("click", async function() {
   const lineHeight = 14;
   const margin = 20;
 
-  // Load and embed the font
-  const fontBytes = await fetch('https://unpkg.com/pdf-lib/dist/fonts/Helvetica.ttf').then(res => res.arrayBuffer());
+  // Load and embed a Unicode-compliant font
+  const fontBytes = await fetch('https://unpkg.com/pdf-lib/dist/fonts/Helvetica-Bold.ttf').then(res => res.arrayBuffer());
   const font = await pdfDoc.embedFont(fontBytes);
 
   // Add text to the PDF with line wrapping
@@ -331,6 +331,7 @@ printButton.addEventListener("click", async function() {
 });
 
 document.body.appendChild(printButton);
+		
 		
 
 
