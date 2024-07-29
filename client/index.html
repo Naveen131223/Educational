@@ -43,10 +43,10 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   gtag('config', 'G-LR7BYEJTS7');
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/js/all.min.js"></script>  
- 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+
+	  
   </head>
   <body>
 	  <script type="text/javascript">
@@ -294,37 +294,38 @@ printButton.addEventListener("click", function() {
         return;
     }
 
-    // Base64 string of the Noto Sans Regular font (example)
-    const notoSansBase64 = 'data:font/truetype;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMg8SBpYAAADsAAAAYGNtYXAPACgAAABwAAAAGmN2dCA...';
+    // Create a temporary container for styled content
+    const tempContainer = document.createElement('div');
+    tempContainer.style.fontFamily = 'Arial, sans-serif';
+    tempContainer.style.fontSize = '12pt';
+    tempContainer.style.marginLeft = '1em';
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-
-    pdf.addFileToVFS("NotoSans-Regular.ttf", notoSansBase64);
-    pdf.addFont("NotoSans-Regular.ttf", "NotoSans", "normal");
-    pdf.setFont("NotoSans");
-
-    // Add content to the PDF with text wrapping
-    const margin = 10; // Margin from the left
-    const lineHeight = 10; // Increased line height for better readability
-    const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-    let yPosition = 20; // Start position on the page with a gap at the top
-
-    const lines = pdf.splitTextToSize(content, pageWidth);
-    lines.forEach((line) => {
-        if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
-            pdf.addPage();
-            yPosition = 20; // Reset position for the new page
+    // Create the styled content
+    const lines = content.split('\n');
+    lines.forEach((line, index) => {
+        const p = document.createElement('p');
+        p.style.margin = '0 0 0.5em 1em';
+        p.style.lineHeight = '1.5';
+        if (index === 0) {
+            p.style.marginTop = "0.5em"; // Add top margin for the first line
         }
-        pdf.text(line, margin, yPosition);
-        yPosition += lineHeight;
+        p.innerText = line.trim();
+        tempContainer.appendChild(p);
     });
 
-    // Save the PDF
-    pdf.save('chat.pdf');
+    // Convert the container to PDF using html2pdf.js
+    html2pdf().from(tempContainer).set({
+        margin: 1,
+        filename: 'chat.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }).save();
 });
 
 document.body.appendChild(printButton);
+		
+
 		
 
 		
