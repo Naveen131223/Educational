@@ -285,72 +285,72 @@ var printButton = document.createElement("button");
 printButton.textContent = "Download Chat as PDF";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerText;
+    const chatContainer = document.getElementById('chat_container');
+    const content = chatContainer.innerText;
 
-    if (chatContent.trim() === "") {
+    if (content.trim() === "") {
         alert("Chat container is empty.");
         return;
     }
 
     const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
 
-    // Initialize jsPDF
-    const doc = new jsPDF();
+    const margin = 20; // Margin from the edges
+    const fontSize = 16; // Font size for better readability
+    const lineHeight = fontSize * 1.2; // Line height for readability
+    const pageWidth = pdf.internal.pageSize.width - 2 * margin;
 
-    const pageHeight = doc.internal.pageSize.height;
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20; // Margin for better formatting
-    const fontSize = 16; // Increased font size for better readability
-    const lineHeight = fontSize * 1.1; // Line height adjusted to font size
-    const maxLinesPerPage = Math.floor((pageHeight - 2 * margin) / lineHeight);
+    pdf.setFont("Times", "Roman");
+    pdf.setFontSize(fontSize);
 
-    doc.setFont("Times", "Roman");
-    doc.setFontSize(fontSize);
-
-    const lines = chatContent.split('\n');
-    let y = margin;
+    const lines = content.split('\n');
+    let yPosition = margin;
     let pageNumber = 1;
 
     function addPageNumber() {
-        doc.setFontSize(10);
-        doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-        doc.setFontSize(fontSize);
+        pdf.setFontSize(10);
+        pdf.text(`Page ${pageNumber}`, pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 10, { align: 'center' });
+        pdf.setFontSize(fontSize);
     }
 
     function addTextWithWrapping(text, x, y, lineHeight, maxWidth) {
         const words = text.split(' ');
         let line = '';
+        let currentY = y;
+
         for (let i = 0; i < words.length; i++) {
             const testLine = line + words[i] + ' ';
-            const testWidth = doc.getTextWidth(testLine);
+            const testWidth = pdf.getTextWidth(testLine);
+
             if (testWidth > maxWidth && i > 0) {
-                doc.text(line, x, y);
+                pdf.text(line, x, currentY);
                 line = words[i] + ' ';
-                y += lineHeight;
+                currentY += lineHeight;
             } else {
                 line = testLine;
             }
         }
-        doc.text(line, x, y);
-        return y;
+
+        pdf.text(line, x, currentY);
+        return currentY;
     }
 
     lines.forEach((line, index) => {
-        if (y > pageHeight - margin - lineHeight) {
+        if (yPosition + lineHeight > pdf.internal.pageSize.height - margin) {
             addPageNumber();
-            doc.addPage();
-            y = margin;
+            pdf.addPage();
+            yPosition = margin;
             pageNumber++;
         }
-        y = addTextWithWrapping(line, margin, y, lineHeight, pageWidth - 2 * margin);
-        y += lineHeight;
+        yPosition = addTextWithWrapping(line, margin, yPosition, pageWidth, pageWidth);
+        yPosition += lineHeight;
     });
 
     addPageNumber();
 
     // Save the PDF
-    doc.save('chat.pdf');
+    pdf.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
