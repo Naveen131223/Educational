@@ -282,42 +282,55 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 
-
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF for English and Related Languages";
+printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    const chatContainer = document.getElementById('chat_container');
-    const chatContent = chatContainer.innerHTML;
+  const chatContainer = document.getElementById('chat_container');
+  const content = chatContainer.innerText;
+  if (content.trim() === "") {
+    alert("Chat container is empty.");
+    return;
+  }
 
-    // Check if chat container is empty
-    if (chatContent.trim() === "") {
-        alert("Chat container is empty.");
-        return;
-    }
+  // Create a temporary container for styled content
+  const tempContainer = document.createElement('div');
 
-    // Define PDF options
-    const options = {
-        margin: [20, 20, 20, 20], // Margins: top, left, bottom, right
-        filename: 'chat.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 }, // Increase scale for better quality
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+  // Apply styling to the printed content
+  const style = document.createElement('style');
+  style.innerHTML = `
+    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    .question { color: blue; }
+    .answer { color: red; }
+    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+  `;
 
-    // Initialize and configure `html2pdf`
-    html2pdf().from(chatContainer).set(options).toPdf().get('pdf').then(function(pdf) {
-        const totalPages = pdf.internal.getNumberOfPages();
-        pdf.internal.pages.forEach(function(page, index) {
-            pdf.setPage(index + 1);
-            pdf.text(`Page ${index + 1} of ${totalPages}`, pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 10, { align: 'center' });
-        });
-        // Save the PDF
-        pdf.save('chat.pdf');
-    });
+  tempContainer.appendChild(style);
+
+  // Create the styled content
+  content.split('\n').forEach(line => {
+    const p = document.createElement('p');
+    p.style.margin = "0 0 1em 0";
+    p.innerText = line;
+    tempContainer.appendChild(p);
+  });
+
+  // Convert the container to PDF
+  html2pdf()
+    .set({
+      margin: 1,
+      filename: 'chat.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    })
+    .from(tempContainer)
+    .save();
 });
 
 document.body.appendChild(printButton);
+
+
+
 		
     
 
