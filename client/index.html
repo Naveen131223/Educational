@@ -299,8 +299,8 @@ printButton.addEventListener("click", function() {
     const pdf = new jsPDF();
 
     const margin = 20; // Margin from the edges
-    const fontSize = 16; // Font size for better readability
-    const lineHeight = fontSize * 1.15; // Reduced line height to reduce vertical gaps
+    const fontSize = 18; // Font size for better readability
+    const lineHeight = fontSize * 0.5; // Reduced line height to reduce vertical gaps
     const pageWidth = pdf.internal.pageSize.width - 2 * margin;
 
     pdf.setFont("Times", "Roman");
