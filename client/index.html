@@ -317,7 +317,7 @@ printButton.addEventListener("click", function() {
   const pdf = new jsPDF();
 
   // Add content to the PDF
-  let yPosition = 30; // Start position on the page with a gap at the top
+  let yPosition = 20; // Start position on the page with a gap at the top
   tempContainer.childNodes.forEach((node) => {
     if (node.tagName === 'P') {
       pdf.text(node.innerText, 10, yPosition);
