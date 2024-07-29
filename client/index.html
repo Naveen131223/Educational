@@ -280,7 +280,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-var printButton = document.createElement("button");
+ var printButton = document.createElement("button");
 printButton.textContent = "Download Pdf File";
 printButton.className = "add-course-button-1";
 
@@ -295,12 +295,12 @@ printButton.addEventListener("click", function() {
 
     // Create a temporary container for styled content
     const tempContainer = document.createElement('div');
-    
+
     // Apply styles to the container
     const style = document.createElement('style');
     style.innerHTML = `
         body { font-family: 'Times New Roman', serif; font-size: 12pt; margin: 1em; }
-        p { margin: 0 0 0.5em 0; line-height: 1.5; } /* Adjusted line-height for readability */
+        p { margin: 0 0 0.5em 0; line-height: 1.5; } /* Set line-height to 1.5 */
     `;
     tempContainer.appendChild(style);
 
@@ -320,14 +320,16 @@ printButton.addEventListener("click", function() {
         margin: [0.5, 0.5, 0.5, 0.5], // Top, right, bottom, left margin
         filename: 'chat.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true }, // Ensure images and fonts are loaded correctly
+        html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    }).save();
+    }).toPdf().get('pdf').then(function(pdf) {
+        // Adjust line spacing manually if needed
+        pdf.internal.stream.bytes = pdf.internal.stream.bytes.replace(/(\d+)(\s)/g, "$1 $2");
+        pdf.save('chat.pdf');
+    });
 });
 
 document.body.appendChild(printButton);
-		
-
 		
 
 		
