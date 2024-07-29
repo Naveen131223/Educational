@@ -295,11 +295,11 @@ printButton.addEventListener("click", function() {
 
     // Create a temporary container for styled content
     const tempContainer = document.createElement('div');
-
+    
     // Apply styles to the container
     tempContainer.style.fontFamily = "'Times New Roman', serif";
     tempContainer.style.fontSize = "12pt";
-    tempContainer.style.margin = "1em";
+    tempContainer.style.margin = "0"; // Remove default margin
 
     // Create the styled content
     const lines = content.split('\n');
@@ -319,12 +319,26 @@ printButton.addEventListener("click", function() {
         margin: [0.5, 0.5, 0.5, 0.5], // Margins for the PDF
         filename: 'chat.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true }, // Ensure fonts and images are loaded correctly
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    }).save();
+    }).toPdf().get('pdf').then(function(pdf) {
+        // Adjust for content cut-off
+        const pageCount = pdf.internal.pages.length;
+        for (let i = 1; i < pageCount; i++) {
+            pdf.setPage(i);
+            pdf.setMargin([0.5, 0.5, 0.5, 0.5]); // Adjust margins if necessary
+        }
+
+        // Save the PDF
+        pdf.save('chat.pdf');
+    });
 });
 
 document.body.appendChild(printButton);
+		
+            
+
+
 		
 		
 
