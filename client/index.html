@@ -45,7 +45,6 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 
-
 	  
   </head>
   <body>
@@ -281,7 +280,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-var printButton = document.createElement("button");
+ var printButton = document.createElement("button");
 printButton.textContent = "Download Pdf File";
 printButton.className = "add-course-button-1";
 
@@ -296,16 +295,19 @@ printButton.addEventListener("click", function() {
 
     // Create a temporary container for styled content
     const tempContainer = document.createElement('div');
-    tempContainer.style.fontFamily = 'Arial, sans-serif';
-    tempContainer.style.fontSize = '12pt';
-    tempContainer.style.margin = '20px';
+    
+    // Apply styles to the container
+    const style = document.createElement('style');
+    style.innerHTML = `
+        body { font-family: 'Times New Roman', serif; font-size: 12pt; margin-left: 1em; }
+        p { margin: 0 0 0.5em 1em; line-height: 1.5; }
+    `;
+    tempContainer.appendChild(style);
 
     // Create the styled content
     const lines = content.split('\n');
     lines.forEach((line, index) => {
         const p = document.createElement('p');
-        p.style.margin = '0 0 0.5em 0';
-        p.style.lineHeight = '1.5';
         if (index === 0) {
             p.style.marginTop = "0.5em"; // Add top margin for the first line
         }
@@ -323,8 +325,7 @@ printButton.addEventListener("click", function() {
     }).save();
 });
 
-document.body.appendChild(printButton);
-		
+document.body.appendChild(printButton);		
 
 		
 
