@@ -280,7 +280,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
- var printButton = document.createElement("button");
+var printButton = document.createElement("button");
 printButton.textContent = "Download Pdf File";
 printButton.className = "add-course-button-1";
 
@@ -297,19 +297,18 @@ printButton.addEventListener("click", function() {
     const tempContainer = document.createElement('div');
 
     // Apply styles to the container
-    const style = document.createElement('style');
-    style.innerHTML = `
-        body { font-family: 'Times New Roman', serif; font-size: 12pt; margin: 1em; }
-        p { margin: 0 0 0.5em 0; line-height: 1.5; } /* Set line-height to 1.5 */
-    `;
-    tempContainer.appendChild(style);
+    tempContainer.style.fontFamily = "'Times New Roman', serif";
+    tempContainer.style.fontSize = "12pt";
+    tempContainer.style.margin = "1em";
 
     // Create the styled content
     const lines = content.split('\n');
     lines.forEach((line, index) => {
         const p = document.createElement('p');
+        p.style.margin = "0 0 0.5em 0"; // Bottom margin for spacing
+        p.style.lineHeight = "1.5"; // Line height for readability
         if (index === 0) {
-            p.style.marginTop = "0.5em"; // Add top margin for the first line
+            p.style.marginTop = "0.5em"; // Top margin for the first line
         }
         p.innerText = line.trim();
         tempContainer.appendChild(p);
@@ -317,19 +316,16 @@ printButton.addEventListener("click", function() {
 
     // Convert the container to PDF using html2pdf.js
     html2pdf().from(tempContainer).set({
-        margin: [0.5, 0.5, 0.5, 0.5], // Top, right, bottom, left margin
+        margin: [0.5, 0.5, 0.5, 0.5], // Margins for the PDF
         filename: 'chat.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    }).toPdf().get('pdf').then(function(pdf) {
-        // Adjust line spacing manually if needed
-        pdf.internal.stream.bytes = pdf.internal.stream.bytes.replace(/(\d+)(\s)/g, "$1 $2");
-        pdf.save('chat.pdf');
-    });
+    }).save();
 });
 
 document.body.appendChild(printButton);
+		
 		
 
 		
