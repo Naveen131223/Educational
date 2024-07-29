@@ -280,7 +280,6 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-
 var printButton = document.createElement("button");
 printButton.textContent = "Download Pdf File";
 printButton.className = "add-course-button-1";
@@ -334,12 +333,22 @@ printButton.addEventListener("click", function() {
             const x = (pageWidth - textWidth) / 2;
             const y = pageHeight - 0.75; // Ensure sufficient gap at the bottom
             pdf.text(text, x, y);
+
+            // Add a gap between the footer and the main content
+            if (i < totalPages) {
+                pdf.addPage();
+            }
         }
         pdf.save('chat.pdf');
     });
 });
 
 document.body.appendChild(printButton);
+		
+ 
+
+
+
 		
 		
 
