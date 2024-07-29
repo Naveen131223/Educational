@@ -289,47 +289,50 @@ printButton.addEventListener("click", function() {
     return;
   }
 
-  // Create a temporary container for styled content
+  // Create a temporary container for styled content in memory
   const tempContainer = document.createElement('div');
 
   // Apply styling to the printed content
   const style = document.createElement('style');
   style.innerHTML = `
-    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
-    p { margin: 0 0 0.5em 0; } /* Reduce the margin to decrease vertical gaps */
+    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; margin-top: 1em; }
+    .question { color: blue; }
+    .answer { color: red; }
+    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
   `;
 
   tempContainer.appendChild(style);
 
+  // Add a space at the top of the content
+  const topSpace = document.createElement('p');
+  topSpace.style.margin = "1em 0";
+  topSpace.innerText = "";
+  tempContainer.appendChild(topSpace);
+
   // Create the styled content
   content.split('\n').forEach(line => {
     const p = document.createElement('p');
-    p.style.margin = "0 0 0.5em 0"; // Adjust margin for each paragraph
+    p.style.margin = "0 0 1em 0";
     p.innerText = line;
     tempContainer.appendChild(p);
   });
 
-  // Convert the container to PDF using jsPDF
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-
-  // Add content to the PDF
-  let yPosition = 10; // Start position on the page
-  tempContainer.childNodes.forEach((node) => {
-    if (node.tagName === 'P') {
-      pdf.text(node.innerText, 10, yPosition);
-      yPosition += 6; // Adjust line height
-    }
-  });
-
-  // Save the PDF
-  pdf.save('chat.pdf');
+  // Delay the PDF generation slightly to stabilize layout
+  setTimeout(() => {
+    html2pdf()
+      .set({
+        margin: 1,
+        filename: 'chat.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      })
+      .from(tempContainer)
+      .save();
+  }, 100);
 });
 
 document.body.appendChild(printButton);
 		
-  
-
   	
          
 		
