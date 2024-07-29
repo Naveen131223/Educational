@@ -282,112 +282,74 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 
-// Function to load the html2pdf library script
-function loadHtml2pdfScript(callback) {
-  var script = document.createElement('script');
-  script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js";
-  script.onload = callback;
-  document.head.appendChild(script);
-}
+var printButton = document.createElement("button");
+printButton.textContent = "Print Chat"; // Button text
+printButton.className = "add-course-button-1";
+printButton.addEventListener("click", function() {
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerHTML;
 
-// Function to add page numbers
-function addPageNumbers(doc) {
-  const pageCount = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(10);
-    doc.text('Page ' + String(i) + ' of ' + String(pageCount), doc.internal.pageSize.getWidth() - 20, doc.internal.pageSize.getHeight() - 10);
-  }
-}
-
-// Main function to create and print the button
-function createPrintButton() {
-  var printButton = document.createElement("button");
-  printButton.textContent = "Print Chat"; // Updating the button text to "Print"
-  printButton.className = "add-course-button-1";
-  printButton.addEventListener("click", function() {
-    const chatContainer = document.getElementById('chat_container');
-    const content = chatContainer.innerText;
-    if (content.trim() === "") {
-      alert("Chat container is empty.");
-      return;
+    if (chatContent.trim() === "") {
+        alert("The content is empty.");
+        return;
     }
 
-    // Create a temporary container for styled content
-    const tempContainer = document.createElement('div');
+    // Apply basic styles for printing
+    var style = `
+        <style>
+            body { 
+                font-family: 'Times New Roman', serif; 
+                font-size: 12pt; 
+                line-height: 1.5;
+                margin: 1in;
+            }
+            .page-number {
+                text-align: center;
+                margin-top: 1em;
+            }
+        </style>`;
 
-    // Apply styling to the printed content
-    const style = document.createElement('style');
-    style.innerHTML = `
-      body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
-      .question { color: blue; }
-      .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    `;
+    // Create a new jsPDF document
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
 
-    tempContainer.appendChild(style);
+    // Add content to the PDF
+    html2canvas(chatContainer, { scale: 2 }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 10, 10, 190, 0, '', 'FAST');
 
-    // Create the styled content
-    content.split('\n').forEach(line => {
-      const p = document.createElement('p');
-      p.style.margin = "0 0 1em 0";
-      p.innerText = line;
-      tempContainer.appendChild(p);
+        // Add page number in the footer
+        let pageNumber = 1;
+        let totalPages = 1;
+        const addPageNumber = () => {
+            doc.text(`Page ${pageNumber} of ${totalPages}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        };
+
+        // Calculate total pages
+        totalPages = Math.ceil(canvas.height / (doc.internal.pageSize.height - 20));
+
+        // Add the page number to all pages
+        for (let i = 1; i <= totalPages; i++) {
+            if (i > 1) doc.addPage();
+            pageNumber = i;
+            addPageNumber();
+            if (i === totalPages) {
+                doc.addImage(imgData, 'PNG', 10, 10, 190, 0, '', 'FAST');
+            }
+        }
+
+        // Save the PDF
+        doc.save('chat.pdf');
     });
+});
 
-    // Convert the container to PDF with page numbers
-    html2pdf()
-      .set({
-        margin: 1,
-        filename: 'chat.pdf',
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      })
-      .from(tempContainer)
-      .toPdf()
-      .get('pdf')
-      .then(function (pdf) {
-        addPageNumbers(pdf);
-      })
-      .save();
-  });
-
-  document.body.appendChild(printButton);
-}
-
-// Initialize the script and create the print button
-loadHtml2pdfScript(createPrintButton);
-		
-
-  
-
-  
+document.body.appendChild(printButton);		
 
 
-		
-    
 
-        
-
-    
-
-    
-        
-		
-
-    
 
     
             
-    
-    
-        
-    
-    
-    
-        
-
-    
 		
 
 		
