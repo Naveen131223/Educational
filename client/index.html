@@ -283,7 +283,7 @@ const module = await import("./script.js?v=v7");
 //print and export
 
 var printButton = document.createElement("button");
-printButton.textContent = "Download Chat as PDF";
+printButton.textContent = "Download Chat as PDF"; // Updating the button text to indicate PDF download
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
     var chatContainer = document.getElementById("chat_container");
@@ -299,62 +299,38 @@ printButton.addEventListener("click", function() {
     // Initialize jsPDF
     const doc = new jsPDF();
 
-    const pageHeight = doc.internal.pageSize.height;
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20; // Increased margin for better formatting
-    const lineHeight = 10; // Line height
-    const maxLinesPerPage = Math.floor((pageHeight - 2 * margin) / lineHeight);
+    // Apply styling
+    var style = `
+      <style>
+        .question { color: blue; }
+        .answer { color: red; }
+        .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+      </style>`;
+
+    // Add content to PDF
+    const lines = chatContent.split('\n');
+    let y = 10; // y-coordinate for the text placement
+    const lineHeight = 10;
 
     doc.setFont("Times", "Roman");
     doc.setFontSize(12);
 
-    const lines = chatContent.split('\n');
-    let y = margin;
-    let pageNumber = 1;
-
-    function addPageNumber() {
-        doc.setFontSize(10);
-        doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-        doc.setFontSize(12);
-    }
-
-    function addTextWithWrapping(text, x, y, lineHeight, maxWidth) {
-        const words = text.split(' ');
-        let line = '';
-        for (let i = 0; i < words.length; i++) {
-            const testLine = line + words[i] + ' ';
-            const testWidth = doc.getTextWidth(testLine);
-            if (testWidth > maxWidth && i > 0) {
-                doc.text(line, x, y);
-                line = words[i] + ' ';
-                y += lineHeight;
-            } else {
-                line = testLine;
-            }
-        }
-        doc.text(line, x, y);
-        return y;
-    }
-
-    lines.forEach((line, index) => {
-        if (y > pageHeight - margin - lineHeight) {
-            addPageNumber();
-            doc.addPage();
-            y = margin;
-            pageNumber++;
-        }
-        y = addTextWithWrapping(line, margin, y, lineHeight, pageWidth - 2 * margin);
+    lines.forEach(line => {
+        doc.text(line, 10, y);
         y += lineHeight;
     });
 
-    addPageNumber();
-
     // Save the PDF
     doc.save('chat.pdf');
+
+    document.getElementById('pdfFileBtn_8').style.backgroundColor = "#555555";
 });
 
 document.body.appendChild(printButton);
 		
+    
+        
+    
     
     
         
