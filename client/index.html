@@ -280,6 +280,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
+
 var printButton = document.createElement("button");
 printButton.textContent = "Download Pdf File";
 printButton.className = "add-course-button-1";
@@ -300,6 +301,7 @@ printButton.addEventListener("click", function() {
     tempContainer.style.fontFamily = "'Times New Roman', serif";
     tempContainer.style.fontSize = "12pt";
     tempContainer.style.margin = "1em";
+    tempContainer.style.padding = "1em"; // Ensure padding for the content
 
     // Create the styled content
     const lines = content.split('\n');
@@ -316,7 +318,7 @@ printButton.addEventListener("click", function() {
 
     // Convert the container to PDF using html2pdf.js
     html2pdf().from(tempContainer).set({
-        margin: [0.5, 0.5, 0.5, 0.5], // Margins for the PDF
+        margin: [1, 0.5, 1, 0.5], // Increased margins for better spacing
         filename: 'chat.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
@@ -330,7 +332,7 @@ printButton.addEventListener("click", function() {
             const text = `Page ${i} of ${totalPages}`;
             const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.scaleFactor;
             const x = (pageWidth - textWidth) / 2;
-            const y = pageHeight - 0.75; // Position text near the bottom
+            const y = pageHeight - 0.75; // Ensure sufficient gap at the bottom
             pdf.text(text, x, y);
         }
         pdf.save('chat.pdf');
