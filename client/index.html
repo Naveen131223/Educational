@@ -43,12 +43,9 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
   gtag('config', 'G-LR7BYEJTS7');
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>   
-
-
-
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	  
+ 
   </head>
   <body>
 	  <script type="text/javascript">
@@ -283,32 +280,73 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
- var printButton = document.createElement("button");
-printButton.textContent = "Download Pdf File";
+var printButton = document.createElement("button");
+printButton.textContent = "Download Pdf File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
     const chatContainer = document.getElementById('chat_container');
-    if (chatContainer.innerText.trim() === "") {
+    const content = chatContainer.innerText;
+    if (content.trim() === "") {
         alert("Chat container is empty.");
         return;
     }
 
-    html2canvas(chatContainer).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    // Create a temporary container for styled content
+    const tempContainer = document.createElement('div');
 
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save('chat.pdf');
+    // Apply styling to the printed content
+    const style = document.createElement('style');
+    style.innerHTML = `
+        body { font-family: Arial, sans-serif; font-size: 12pt; margin-left: 1em; }
+        p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
+    `;
+
+    tempContainer.appendChild(style);
+
+    // Create the styled content
+    const lines = content.split('\n');
+    lines.forEach((line, index) => {
+        const p = document.createElement('p');
+        if (index === 0) {
+            p.style.marginTop = "0.5em"; // Add top margin for the first line
+        }
+        p.innerText = line.trim();
+        tempContainer.appendChild(p);
     });
+
+    // Convert the container to PDF using jsPDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    pdf.setFont("Arial");
+
+    // Add content to the PDF with text wrapping
+    const margin = 10; // Margin from the left
+    const lineHeight = 10; // Increased line height for better readability
+    const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
+    let yPosition = 20; // Start position on the page with a gap at the top
+
+    tempContainer.childNodes.forEach((node) => {
+        if (node.tagName === 'P') {
+            const text = node.innerText;
+            const lines = pdf.splitTextToSize(text, pageWidth);
+            lines.forEach((line) => {
+                if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
+                    pdf.addPage();
+                    yPosition = 20; // Reset position for the new page
+                }
+                pdf.text(line, margin, yPosition);
+                yPosition += lineHeight;
+            });
+        }
+    });
+
+    // Save the PDF
+    pdf.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
-				
-
+		
 
 		
 // Export 
