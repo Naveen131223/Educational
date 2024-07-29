@@ -322,17 +322,23 @@ printButton.addEventListener("click", function() {
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     }).toPdf().get('pdf').then(function(pdf) {
-        // Fix the issue of text being split across pages
         const totalPages = pdf.internal.getNumberOfPages();
         for (let i = 1; i <= totalPages; i++) {
             pdf.setPage(i);
-            pdf.text('Page ' + i + ' of ' + totalPages, pdf.internal.pageSize.getWidth() - 1, pdf.internal.pageSize.getHeight() - 0.5);
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const text = `Page ${i} of ${totalPages}`;
+            const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.scaleFactor;
+            const x = (pageWidth - textWidth) / 2;
+            const y = pageHeight - 0.75; // Position text near the bottom
+            pdf.text(text, x, y);
         }
         pdf.save('chat.pdf');
     });
 });
 
 document.body.appendChild(printButton);
+		
 		
 
 
