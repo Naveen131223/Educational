@@ -331,19 +331,17 @@ printButton.addEventListener("click", function() {
             const text = `Page ${i} of ${totalPages}`;
             const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.scaleFactor;
             const x = (pageWidth - textWidth) / 2;
-            const y = pageHeight - 0.75; // Ensure sufficient gap at the bottom
+            const y = pageHeight - 0.5; // Position page number in the middle bottom with sufficient gap
             pdf.text(text, x, y);
-
-            // Add a gap between the footer and the main content
-            if (i < totalPages) {
-                pdf.addPage();
-            }
         }
         pdf.save('chat.pdf');
     });
 });
 
 document.body.appendChild(printButton);
+		
+
+
 		
  
 
