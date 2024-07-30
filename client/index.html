@@ -388,28 +388,24 @@ document.body.appendChild(printButton);
 function downloadTxtFile_8() {
     const content_8 = document.getElementById('chat_container').innerText;
     if (content_8.trim() === "") {
-        alert("The content is empty.");
+        alert("Chat container is empty.");
         return;
     }
 
-    // Wrap text to prevent horizontal scrolling by limiting line length
-    const wrapText = (text, maxLineLength) => {
-        const words = text.split(' ');
-        let line = '';
-        let wrappedText = '';
+    // Define the maximum length of a line before wrapping
+    const maxLineLength = 80;
+    
+    // Split the content into lines and wrap long lines
+    const lines_8 = content_8.split('\n').map(line => {
+        let result = '';
+        while (line.length > maxLineLength) {
+            result += line.slice(0, maxLineLength) + '\n';
+            line = line.slice(maxLineLength);
+        }
+        return result + line;
+    });
 
-        words.forEach(word => {
-            if (line.length + word.length + 1 > maxLineLength) {
-                wrappedText += line.trim() + '\n';
-                line = '';
-            }
-            line += word + ' ';
-        });
-
-        return wrappedText + line.trim();
-    };
-
-    const formattedContent_8 = wrapText(content_8, 80); // Wrap lines to 80 characters
+    const formattedContent_8 = lines_8.join('\n'); // Join lines with a single newline
     const txtBlob_8 = new Blob([formattedContent_8], { type: 'text/plain' });
     const txtLink_8 = document.createElement('a');
     txtLink_8.href = URL.createObjectURL(txtBlob_8);
@@ -418,6 +414,9 @@ function downloadTxtFile_8() {
     document.getElementById('textFileBtn_8').style.backgroundColor = "#555555";
 }
 	
+    
+
+    
 
 	
 	//word
