@@ -285,6 +285,7 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
+
 var printButton = document.createElement("button");
 printButton.textContent = "Print Chat";
 printButton.className = "add-course-button-1";
@@ -302,7 +303,7 @@ printButton.addEventListener("click", function() {
   // Apply styling to the printed content
   const style = document.createElement('style');
   style.innerHTML = `
-    body { font-family: 'Noto Sans', sans-serif; font-size: 12pt; margin-left: 1em; }
+    body { font-family: 'Times New Roman', serif; font-size: 12pt; margin-left: 1em; }
     p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
   `;
   tempContainer.appendChild(style);
@@ -331,10 +332,11 @@ printButton.addEventListener("click", function() {
   html2pdf().set(opt).from(tempContainer).toPdf().get('pdf').then(function(pdf) {
     const totalPages = pdf.internal.getNumberOfPages();
     const pageHeight = pdf.internal.pageSize.getHeight();
+    const pageWidth = pdf.internal.pageSize.getWidth();
 
     for (let i = 1; i <= totalPages; i++) {
       pdf.setPage(i);
-      pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() / 2, pageHeight - 20, { align: 'center' });
+      pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
     }
   }).save();
 });
