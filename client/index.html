@@ -286,7 +286,7 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Print Chat"; // Updating the button text to "Print"
+printButton.textContent = "Print Chat";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   const chatContainer = document.getElementById('chat_container');
@@ -305,7 +305,6 @@ printButton.addEventListener("click", function() {
     body { font-family: 'Noto Sans', sans-serif; font-size: 12pt; margin-left: 1em; }
     p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
   `;
-
   tempContainer.appendChild(style);
 
   // Create the styled content
@@ -319,40 +318,29 @@ printButton.addEventListener("click", function() {
     tempContainer.appendChild(p);
   });
 
-  // Convert the container to PDF using jsPDF
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
+  // Configure `html2pdf` options
+  const opt = {
+    margin: 10,
+    filename: 'chat.pdf',
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: 'css', after: 'p' }
+  };
 
-  // Add the Noto Sans font
-  pdf.addFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/fonts/NotoSans/NotoSans-Regular.ttf', 'NotoSans', 'normal');
-  pdf.setFont('NotoSans');
+  // Use `html2pdf.js` to create the PDF
+  html2pdf().set(opt).from(tempContainer).toPdf().get('pdf').then(function(pdf) {
+    const totalPages = pdf.internal.getNumberOfPages();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-  // Add content to the PDF with text wrapping
-  const margin = 10; // Margin from the left
-  const lineHeight = 10; // Increased line height for better readability
-  const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-  let yPosition = 20; // Start position on the page with a gap at the top
-
-  tempContainer.childNodes.forEach((node) => {
-    if (node.tagName === 'P') {
-      const text = node.innerText;
-      const lines = pdf.splitTextToSize(text, pageWidth);
-      lines.forEach((line) => {
-        if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
-          pdf.addPage();
-          yPosition = 20; // Reset position for the new page
-        }
-        pdf.text(line, margin, yPosition);
-        yPosition += lineHeight;
-      });
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() / 2, pageHeight - 20, { align: 'center' });
     }
-  });
-
-  // Save the PDF
-  pdf.save('chat.pdf');
+  }).save();
 });
 
 document.body.appendChild(printButton);
+		
 		
 		
 	      
