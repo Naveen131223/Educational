@@ -285,52 +285,56 @@ const module = await import("./script.js?v=v7");
 	  
 	<script>
 //print and export
-
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File";
+printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerHTML;
+  const chatContainer = document.getElementById('chat_container');
+  const content = chatContainer.innerText;
+  if (content.trim() === "") {
+    alert("Chat container is empty.");
+    return;
+  }
 
-    // Apply styling to the content for the PDF
-    var style = `
-        <style>
-            body {
-                font-family: 'Times New Roman', serif;
-                font-size: 12pt;
-                margin: 1em;
-                line-height: 1.5;
-            }
-            .question {
-                color: blue;
-            }
-            .answer {
-                color: red;
-            }
-            p {
-                margin: 0 0 1em 0;
-            }
-            .content {
-                margin: 0;
-            }
-        </style>`;
+  // Create a temporary container for styled content
+  const tempContainer = document.createElement('div');
 
-    // Process chat content for PDF formatting
-    chatContent = chatContent
-        .replace(/<\/?span[^>]*>/g, '') // Remove all <span> tags
-        .replace(/\n/g, '<p></p>'); // Convert newlines to <p> tags for spacing
+  // Apply styling to the printed content
+  const style = document.createElement('style');
+  style.innerHTML = `
+    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    p { margin: 0 0 0.5em 0; } /* Reduce the margin to decrease vertical gaps */
+  `;
 
-    // Create a container for the PDF content with styles
-    var pdfContainer = document.createElement('div');
-    pdfContainer.innerHTML = style + '<div class="content">' + chatContent + '</div>';
+  tempContainer.appendChild(style);
 
-    // Use html2pdf.js to generate and download the PDF
-    html2pdf().from(pdfContainer).save('chat.pdf');
+  // Create the styled content
+  content.split('\n').forEach(line => {
+    const p = document.createElement('p');
+    p.style.margin = "0 0 0.5em 0"; // Adjust margin for each paragraph
+    p.innerText = line;
+    tempContainer.appendChild(p);
+  });
+
+  // Convert the container to PDF using jsPDF
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  // Add content to the PDF
+  let yPosition = 10; // Start position on the page
+  tempContainer.childNodes.forEach((node) => {
+    if (node.tagName === 'P') {
+      pdf.text(node.innerText, 10, yPosition);
+      yPosition += 6; // Adjust line height
+    }
+  });
+
+  // Save the PDF
+  pdf.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
-
+		
 		
     
 
