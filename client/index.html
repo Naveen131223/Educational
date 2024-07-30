@@ -296,21 +296,16 @@ printButton.addEventListener("click", function() {
 
     // Create a temporary container for styled content
     const tempContainer = document.createElement('div');
-
-    // Apply styling to the printed content
-    const style = document.createElement('style');
-    style.innerHTML = `
-        body { font-family: 'Times New Roman'; font-size: 12pt; }
-        p { margin: 0; line-height: 1.5; } /* Ensure sufficient line height */
-    `;
-    tempContainer.appendChild(style);
+    tempContainer.style.fontFamily = 'Times New Roman';
+    tempContainer.style.fontSize = '12pt';
+    tempContainer.style.lineHeight = '1.5';
 
     // Create the styled content from span tags
-    for (let span of spans) {
+    Array.from(spans).forEach(span => {
         const p = document.createElement('p');
-        p.innerText = span.innerText;
+        p.textContent = span.textContent;
         tempContainer.appendChild(p);
-    }
+    });
 
     // Convert the container to PDF
     html2pdf()
@@ -321,25 +316,11 @@ printButton.addEventListener("click", function() {
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         })
         .from(tempContainer)
-        .toPdf()
-        .get('pdf')
-        .then(function(pdf) {
-            // Ensure correct text rendering across pages
-            pdf.internal.stream.bytes = []; // Clear previous content
-
-            // Add new pages with correct text handling
-            pdf.internal.pages.forEach((page, index) => {
-                if (index > 0) {
-                    pdf.addPage();
-                }
-                pdf.text(page.text, 0.5, 0.5);
-            });
-
-            pdf.save('chat.pdf');
-        });
+        .save();
 });
 
 document.body.appendChild(printButton);
+		
 		
 
 
