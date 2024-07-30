@@ -303,7 +303,6 @@ printButton.addEventListener("click", function() {
         body { font-family: 'Times New Roman'; font-size: 12pt; }
         p { margin: 0; line-height: 1.5; } /* Ensure sufficient line height */
     `;
-
     tempContainer.appendChild(style);
 
     // Create the styled content from span tags
@@ -324,26 +323,16 @@ printButton.addEventListener("click", function() {
         .from(tempContainer)
         .toPdf()
         .get('pdf')
-        .then(function (pdf) {
-            // Handle text overflow and page breaks
-            let pageHeight = pdf.internal.pageSize.height;
-            let y = 0;
+        .then(function(pdf) {
+            // Ensure correct text rendering across pages
+            pdf.internal.stream.bytes = []; // Clear previous content
 
-            tempContainer.childNodes.forEach(node => {
-                if (node.tagName === 'P') {
-                    let text = node.innerText;
-                    let lines = pdf.splitTextToSize(text, pdf.internal.pageSize.width - 40); // Adjust margin
-                    lines.forEach(line => {
-                        if (y + 10 > pageHeight) {
-                            pdf.addPage();
-                            y = 0;
-                        }
-                        pdf.text(line, 20, y + 10); // Adjust margins
-                        y += 10;
-                    });
-                } else if (node.tagName === 'STYLE') {
-                    // Skip style nodes
+            // Add new pages with correct text handling
+            pdf.internal.pages.forEach((page, index) => {
+                if (index > 0) {
+                    pdf.addPage();
                 }
+                pdf.text(page.text, 0.5, 0.5);
             });
 
             pdf.save('chat.pdf');
