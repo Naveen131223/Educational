@@ -301,7 +301,7 @@ printButton.addEventListener("click", function() {
     const style = document.createElement('style');
     style.innerHTML = `
         body { font-family: 'Times New Roman'; font-size: 12pt; }
-        p { margin: 0 0 1em 0; line-height: 1.5; } /* Ensure sufficient line height */
+        p { margin: 0; line-height: 1.5; } /* Ensure sufficient line height */
     `;
 
     tempContainer.appendChild(style);
@@ -322,7 +322,32 @@ printButton.addEventListener("click", function() {
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         })
         .from(tempContainer)
-        .save();
+        .toPdf()
+        .get('pdf')
+        .then(function (pdf) {
+            // Handle text overflow and page breaks
+            let pageHeight = pdf.internal.pageSize.height;
+            let y = 0;
+
+            tempContainer.childNodes.forEach(node => {
+                if (node.tagName === 'P') {
+                    let text = node.innerText;
+                    let lines = pdf.splitTextToSize(text, pdf.internal.pageSize.width - 40); // Adjust margin
+                    lines.forEach(line => {
+                        if (y + 10 > pageHeight) {
+                            pdf.addPage();
+                            y = 0;
+                        }
+                        pdf.text(line, 20, y + 10); // Adjust margins
+                        y += 10;
+                    });
+                } else if (node.tagName === 'STYLE') {
+                    // Skip style nodes
+                }
+            });
+
+            pdf.save('chat.pdf');
+        });
 });
 
 document.body.appendChild(printButton);
