@@ -286,7 +286,7 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Print Chat";
+printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   const chatContainer = document.getElementById('chat_container');
@@ -308,9 +308,12 @@ printButton.addEventListener("click", function() {
   const pdf = new jsPDF();
 
   const margin = 10; // Margin from the left
-  const lineHeight = 10; // Line height for better readability
+  const lineHeight = 12; // Increased line height for better readability
+  const fontSize = 14; // Font size for better readability
   const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
   let yPosition = 20; // Start position on the page
+
+  pdf.setFontSize(fontSize); // Set the font size
 
   // Split the content into lines and handle text wrapping
   const lines = content.split('\n');
@@ -331,6 +334,7 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+		
 		
 	
 
