@@ -285,60 +285,76 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-
 var printButton = document.createElement("button");
-printButton.textContent = "Print Chat";
+printButton.textContent = "Download Chat as PDF";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-  const chatContainer = document.getElementById('chat_container');
-  const content = chatContainer.innerText;
-  if (content.trim() === "") {
-    alert("Chat container is empty.");
-    return;
-  }
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerText;
 
-  // Create a temporary container for styled content
-  const tempContainer = document.createElement('div');
-
-  // Apply styling to the printed content
-  const style = document.createElement('style');
-  style.innerHTML = `
-    body { font-family: 'Times New Roman', serif; font-size: 12pt; margin-left: 1em; }
-    p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
-  `;
-  tempContainer.appendChild(style);
-
-  // Create the styled content
-  const lines = content.split('\n');
-  lines.forEach((line, index) => {
-    const p = document.createElement('p');
-    if (index === 0) {
-      p.style.marginTop = "0.5em"; // Add top margin for the first line
+    if (chatContent.trim() === "") {
+        alert("Chat container is empty.");
+        return;
     }
-    p.innerText = line.trim();
-    tempContainer.appendChild(p);
-  });
 
-  // Configure `html2pdf` options
-  const opt = {
-    margin: 10,
-    filename: 'chat.pdf',
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: 'css', after: 'p' }
-  };
+    const { jsPDF } = window.jspdf;
 
-  // Use `html2pdf.js` to create the PDF
-  html2pdf().set(opt).from(tempContainer).toPdf().get('pdf').then(function(pdf) {
-    const totalPages = pdf.internal.getNumberOfPages();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const pageWidth = pdf.internal.pageSize.getWidth();
+    // Initialize jsPDF
+    const doc = new jsPDF();
 
-    for (let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
+    const pageHeight = doc.internal.pageSize.height;
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 20; // Margin for better formatting
+    const fontSize = 16; // Increased font size for better readability
+    const lineHeight = fontSize * 1.1; // Line height adjusted to font size
+    const maxLinesPerPage = Math.floor((pageHeight - 2 * margin) / lineHeight);
+
+    doc.setFont("Times", "Roman");
+    doc.setFontSize(fontSize);
+
+    const lines = chatContent.split('\n');
+    let y = margin;
+    let pageNumber = 1;
+
+    function addPageNumber() {
+        doc.setFontSize(10);
+        doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+        doc.setFontSize(fontSize);
     }
-  }).save();
+
+    function addTextWithWrapping(text, x, y, lineHeight, maxWidth) {
+        const words = text.split(' ');
+        let line = '';
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            const testWidth = doc.getTextWidth(testLine);
+            if (testWidth > maxWidth && i > 0) {
+                doc.text(line, x, y);
+                line = words[i] + ' ';
+                y += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        doc.text(line, x, y);
+        return y;
+    }
+
+    lines.forEach((line, index) => {
+        if (y > pageHeight - margin - lineHeight) {
+            addPageNumber();
+            doc.addPage();
+            y = margin;
+            pageNumber++;
+        }
+        y = addTextWithWrapping(line, margin, y, lineHeight, pageWidth - 2 * margin);
+        y += lineHeight;
+    });
+
+    addPageNumber();
+
+    // Save the PDF
+    doc.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
