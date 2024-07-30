@@ -50,7 +50,7 @@ Get ready for an all-in-one solution! 🌍🗣️ InnoSphere, developed by Navee
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 	  
-	  
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">	  
   </head>
   <body>
 	  <script type="text/javascript">
@@ -302,7 +302,7 @@ printButton.addEventListener("click", function() {
   // Apply styling to the printed content
   const style = document.createElement('style');
   style.innerHTML = `
-    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    body { font-family: 'Noto Sans', sans-serif; font-size: 12pt; margin-left: 1em; }
     p { margin: 0 0 0.5em 1em; line-height: 1.5; } /* Increased line-height and bottom margin */
   `;
 
@@ -323,8 +323,9 @@ printButton.addEventListener("click", function() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
-  // Set the font to support multiple languages
-  pdf.setFont('ArialUnicodeMS', 'normal');
+  // Add the Noto Sans font
+  pdf.addFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/fonts/NotoSans/NotoSans-Regular.ttf', 'NotoSans', 'normal');
+  pdf.setFont('NotoSans');
 
   // Add content to the PDF with text wrapping
   const margin = 10; // Margin from the left
@@ -347,11 +348,22 @@ printButton.addEventListener("click", function() {
     }
   });
 
+  // Add page numbers to the bottom center of each page
+  const pageCount = pdf.internal.getNumberOfPages();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const pageWidth = pdf.internal.pageSize.getWidth();
+
+  for (let i = 1; i <= pageCount; i++) {
+    pdf.setPage(i);
+    pdf.text(`Page ${i} of ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+  }
+
   // Save the PDF
   pdf.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
+		
 	      
    
             
