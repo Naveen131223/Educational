@@ -285,79 +285,38 @@ const module = await import("./script.js?v=v7");
 	  
 	<script>
 //print and export
-
- var printButton = document.createElement("button");
-printButton.textContent = "Download Chat as PDF";
+var printButton = document.createElement("button");
+printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerText;
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
-    if (chatContent.trim() === "") {
-        alert("The content is empty.");
-        return;
-    }
+  // Apply styling to the printed content
+  var style = `
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>`;
 
-    const { jsPDF } = window.jspdf;
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
 
-    // Initialize jsPDF
-    const doc = new jsPDF();
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-    const pageHeight = doc.internal.pageSize.height;
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20; // Margin for better formatting
-    const fontSize = 14; // Adjusted font size for better readability
-    const lineHeight = fontSize * 0.4; // Line height adjusted to font size
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
 
-    doc.setFont("Times", "Roman");
-    doc.setFontSize(fontSize);
-
-    const lines = chatContent.split('\n');
-    let y = margin;
-    let pageNumber = 1;
-
-    function addPageNumber() {
-        doc.setFontSize(12);
-        doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-        doc.setFontSize(fontSize);
-    }
-
-    function addTextWithWrapping(text, x, y, lineHeight, maxWidth) {
-        const words = text.split(' ');
-        let line = '';
-        for (let i = 0; i < words.length; i++) {
-            const testLine = line + words[i] + ' ';
-            const testWidth = doc.getTextWidth(testLine);
-            if (testWidth > maxWidth && line !== '') {
-                doc.text(line, x, y);
-                line = words[i] + ' ';
-                y += lineHeight;
-            } else {
-                line = testLine;
-            }
-        }
-        doc.text(line, x, y);
-        return y + lineHeight;
-    }
-
-    lines.forEach((line) => {
-        if (y > pageHeight - margin - lineHeight) {
-            addPageNumber();
-            doc.addPage();
-            y = margin;
-            pageNumber++;
-        }
-        y = addTextWithWrapping(line, margin, y, lineHeight, pageWidth - 2 * margin);
-    });
-
-    addPageNumber();
-
-    // Save the PDF
-    doc.save('chat.pdf');
+  // Execute the print function
+  printWindow.print();
 });
 
 document.body.appendChild(printButton);
-		
+   	
 
     
         
