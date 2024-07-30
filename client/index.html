@@ -291,24 +291,25 @@ printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
     var chatContainer = document.getElementById("chat_container");
 
-    if (!chatContainer || chatContainer.innerText.trim() === "") {
+    if (!chatContainer.innerText.trim()) {
         alert("The content is empty.");
         return;
     }
 
-    // Configuration for html2pdf
+    // Options for html2pdf
     var opt = {
-        margin:       [20, 20, 20, 20], // Margins: top, right, bottom, left
-        filename:     'chat.pdf',
-        html2canvas:  { scale: 2 },      // You can set the scale if needed, though html2pdf.js uses html2canvas internally.
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        margin: [20, 20, 30, 20], // Margins: top, left, bottom, right
+        filename: 'chat.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(chatContainer).save();
+    // Convert HTML to PDF
+    html2pdf().from(chatContainer).set(opt).save();
 });
 
 document.body.appendChild(printButton);
-		
 
 	
 		
