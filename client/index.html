@@ -285,80 +285,32 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
+
 var printButton = document.createElement("button");
-printButton.textContent = "Download Chat as PDF";
+printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
     var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerText;
 
-    if (chatContent.trim() === "") {
+    if (!chatContainer || chatContainer.innerText.trim() === "") {
         alert("The content is empty.");
         return;
     }
 
-    const { jsPDF } = window.jspdf;
+    // Configuration for html2pdf
+    var opt = {
+        margin:       [20, 20, 20, 20], // Margins: top, right, bottom, left
+        filename:     'chat.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-    // Initialize jsPDF
-    const doc = new jsPDF();
-
-    const pageHeight = doc.internal.pageSize.height;
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20; // Margin for better formatting
-    const fontSize = 18; // Increased font size for better readability
-    const lineHeight = fontSize * 0.4; // Line height adjusted to font size
-    const maxLinesPerPage = Math.floor((pageHeight - 2 * margin) / lineHeight);
-
-    doc.setFont("Times", "Roman");
-    doc.setFontSize(fontSize);
-
-    const lines = chatContent.split('\n');
-    let y = margin;
-    let pageNumber = 1;
-
-    function addPageNumber() {
-        doc.setFontSize(12);
-        doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-        doc.setFontSize(fontSize);
-    }
-
-    function addTextWithWrapping(text, x, y, lineHeight, maxWidth) {
-        const words = text.split(' ');
-        let line = '';
-        for (let i = 0; i < words.length; i++) {
-            const testLine = line + words[i] + ' ';
-            const testWidth = doc.getTextWidth(testLine);
-            if (testWidth > maxWidth && i > 0) {
-                doc.text(line, x, y);
-                line = words[i] + ' ';
-                y += lineHeight;
-            } else {
-                line = testLine;
-            }
-        }
-        doc.text(line, x, y);
-        return y;
-    }
-
-    lines.forEach((line, index) => {
-        if (y > pageHeight - margin - lineHeight) {
-            addPageNumber();
-            doc.addPage();
-            y = margin;
-            pageNumber++;
-        }
-        y = addTextWithWrapping(line, margin, y, lineHeight, pageWidth - 2 * margin);
-        y += lineHeight;
-    });
-
-    addPageNumber();
-
-    // Save the PDF
-    doc.save('chat.pdf');
+    html2pdf().set(opt).from(chatContainer).save();
 });
 
 document.body.appendChild(printButton);
-		
+	
 		
 		
 	      
