@@ -297,14 +297,15 @@ printButton.addEventListener("click", function() {
     // Create a temporary container for styled content
     const tempContainer = document.createElement('div');
     tempContainer.style.fontFamily = 'Times New Roman';
-    tempContainer.style.fontSize = '12pt';
-    tempContainer.style.lineHeight = '1.5';
-    tempContainer.style.padding = '1in'; // Adds padding to avoid text being cut off
+    tempContainer.style.fontSize = '12pt'; // Font size
+    tempContainer.style.lineHeight = '1.5'; // Line height
+    tempContainer.style.padding = '0'; // No padding
 
     // Create the styled content from span tags
     Array.from(spans).forEach(span => {
         const p = document.createElement('p');
         p.textContent = span.textContent;
+        p.style.margin = '0 0 1em 0'; // Margin between paragraphs
         tempContainer.appendChild(p);
     });
 
