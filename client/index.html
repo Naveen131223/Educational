@@ -290,19 +290,20 @@ printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
   // Apply styling to the content for the PDF
   var style = `
     <style>
       .question { color: blue; }
       .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; }
     </style>`;
 
-  // Replace line breaks with a styled span to add vertical space
-  var chatContent = chatContainer.innerHTML
-    .replace(/\n/g, '<span class="line-break"></span>')
-    .replace(/<span class="user-input">.+?<\/span>/g, '');
+  // Remove user input keyboard printout and unnecessary tags
+  chatContent = chatContent
+    .replace(/<span class="user-input">.+?<\/span>/g, '')
+    .replace(/<span[^>]*>/g, '') // Remove opening <span> tags
+    .replace(/<\/span>/g, ''); // Remove closing </span> tags
 
   // Create a container for the PDF content with styles
   var pdfContainer = document.createElement('div');
@@ -313,7 +314,6 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
-        
         
     
 
