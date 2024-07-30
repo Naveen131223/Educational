@@ -286,30 +286,54 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download Chat as PDF";
+printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
+  const chatContainer = document.getElementById('chat_container');
+  const content = chatContainer.innerText;
+  if (content.trim() === "") {
+    alert("Chat container is empty.");
+    return;
+  }
 
-    if (!chatContainer.innerText.trim()) {
-        alert("The content is empty.");
-        return;
-    }
+  // Create a temporary container for styled content
+  const tempContainer = document.createElement('div');
 
-    // Options for html2pdf
-    var opt = {
-        margin: [20, 20, 30, 20], // Margins: top, left, bottom, right
-        filename: 'chat.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+  // Apply styling to the printed content
+  const style = document.createElement('style');
+  style.innerHTML = `
+    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    .question { color: blue; }
+    .answer { color: red; }
+    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+  `;
 
-    // Convert HTML to PDF
-    html2pdf().from(chatContainer).set(opt).save();
+  tempContainer.appendChild(style);
+
+  // Create the styled content
+  content.split('\n').forEach(line => {
+    const p = document.createElement('p');
+    p.style.margin = "0 0 1em 0";
+    p.innerText = line;
+    tempContainer.appendChild(p);
+  });
+
+  // Convert the container to PDF
+  html2pdf()
+    .set({
+      margin: 1,
+      filename: 'chat.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    })
+    .from(tempContainer)
+    .save();
 });
 
 document.body.appendChild(printButton);
+		
+
+
 
 	
 		
