@@ -285,47 +285,51 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-// Create the print button
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF"; // Updated the button text to "Download PDF"
+printButton.textContent = "Print Chat";
 printButton.className = "add-course-button-1";
-
-// Add event listener to the button
 printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
+  const chatContainer = document.getElementById('chat_container');
+  const content = chatContainer.innerText;
 
-  // Apply styling to the content
-  var style = `
-    <style>
-      .question { color: blue; }
-      .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    </style>`;
+  if (content.trim() === "") {
+    alert("Chat container is empty.");
+    return;
+  }
 
-  // Replace line breaks with a styled span to add vertical space
-  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+  // Check if jsPDF is available
+  if (typeof window.jspdf === 'undefined') {
+    alert("jsPDF library is not loaded.");
+    return;
+  }
 
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+  // Convert the content to PDF using jsPDF
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
 
-  // Create a temporary container for styled content
-  var tempContainer = document.createElement('div');
-  tempContainer.innerHTML = `<html><head>${style}</head><body>${chatContent}</body></html>`;
+  const margin = 10; // Margin from the left
+  const lineHeight = 10; // Line height for better readability
+  const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
+  let yPosition = 20; // Start position on the page
 
-  // Convert the container to PDF using html2pdf
-  html2pdf()
-    .set({
-      margin: [1, 0.5, 1, 0.5], // Set margins (top, right, bottom, left)
-      filename: 'chat.pdf',
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    })
-    .from(tempContainer)
-    .save();
+  // Split the content into lines and handle text wrapping
+  const lines = content.split('\n');
+  lines.forEach((line) => {
+    const wrappedLines = pdf.splitTextToSize(line, pageWidth);
+    wrappedLines.forEach((wrappedLine) => {
+      if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
+        pdf.addPage();
+        yPosition = 20; // Reset position for the new page
+      }
+      pdf.text(wrappedLine, margin, yPosition);
+      yPosition += lineHeight;
+    });
+  });
+
+  // Save the PDF
+  pdf.save('chat.pdf');
 });
 
-// Append the button to the document body
 document.body.appendChild(printButton);
 		
 	
