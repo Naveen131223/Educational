@@ -285,66 +285,40 @@ const module = await import("./script.js?v=v7");
 	  
 	<script>
 //print and export
-// Ensure jsPDF and html2canvas libraries are included in your HTML file
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text
+printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById('chat_container');
-    if (chatContainer.innerText.trim() === "") {
-        alert("The content is empty.");
-        return;
-    }
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
-    // Apply styling to the printed content
-    var style = `
-        <style>
-            .question { color: blue; }
-            .answer { color: red; }
-            .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-        </style>`;
+  // Apply styling to the printed content
+  var style = `
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>`;
 
-    // Add styling to the chat container
-    var styledContent = `
-        <div>
-            ${style}
-            ${chatContainer.innerHTML}
-        </div>`;
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
 
-    // Create a new instance of jsPDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-    // Use html2canvas to capture styled content as an image
-    html2canvas(document.body.appendChild(document.createElement('div').innerHTML = styledContent)).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 295; // A4 height in mm
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
 
-        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            doc.addPage();
-            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-        }
-
-        // Save the PDF
-        doc.save('chat.pdf');
-    }).catch(error => {
-        console.error('Error generating PDF:', error);
-    });
+  // Execute the print function
+  printWindow.print();
 });
 
-document.body.appendChild(printButton);
-	  
+document.body.appendChild(printButton);	
+        
+        
+    
 
 				
 
