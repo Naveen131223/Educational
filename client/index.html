@@ -286,11 +286,11 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
+printButton.textContent = "Print Chat"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   const chatContainer = document.getElementById('chat_container');
-  const content = chatContainer.innerText;
+  const content = chatContainer.innerHTML; // Use innerHTML to retain HTML tags
   if (content.trim() === "") {
     alert("Chat container is empty.");
     return;
@@ -314,7 +314,7 @@ printButton.addEventListener("click", function() {
   content.split('\n').forEach(line => {
     const p = document.createElement('p');
     p.style.margin = "0 0 1em 0";
-    p.innerText = line;
+    p.innerHTML = line.replace(/(\*\*)(.*?)\1/g, '<strong>$2</strong>'); // Bold text between ** **
     tempContainer.appendChild(p);
   });
 
@@ -331,6 +331,8 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+		
+    
 		
 
 
