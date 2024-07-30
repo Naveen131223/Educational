@@ -286,7 +286,7 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 
-var printButton = document.createElement("button");
+ var printButton = document.createElement("button");
 printButton.textContent = "Download Chat as PDF";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
@@ -317,7 +317,7 @@ printButton.addEventListener("click", function() {
     let pageNumber = 1;
 
     function addPageNumber() {
-        doc.setFontSize(10);
+        doc.setFontSize(12);
         doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
         doc.setFontSize(fontSize);
     }
@@ -358,6 +358,11 @@ printButton.addEventListener("click", function() {
 
 document.body.appendChild(printButton);
 		
+
+    
+        
+
+    
 
 
     
