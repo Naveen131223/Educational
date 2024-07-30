@@ -285,11 +285,15 @@ const module = await import("./script.js?v=v7");
 	  
 	<script>
 //print and export
- var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text to "Download PDF File"
+// Ensure jsPDF and html2canvas libraries are included in your HTML file
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+var printButton = document.createElement("button");
+printButton.textContent = "Download PDF File"; // Updating the button text
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
+    var chatContainer = document.getElementById('chat_container');
     if (chatContainer.innerText.trim() === "") {
         alert("The content is empty.");
         return;
@@ -334,12 +338,13 @@ printButton.addEventListener("click", function() {
 
         // Save the PDF
         doc.save('chat.pdf');
+    }).catch(error => {
+        console.error('Error generating PDF:', error);
     });
 });
 
 document.body.appendChild(printButton);
-		
-		
+	  
 
 				
 
