@@ -392,20 +392,25 @@ function downloadTxtFile_8() {
         return;
     }
 
-    // Define the maximum length of a line before wrapping
-    const maxLineLength = 80;
-    
-    // Split the content into lines and wrap long lines
+    const maxLineLength = 100;
+
     const lines_8 = content_8.split('\n').map(line => {
         let result = '';
         while (line.length > maxLineLength) {
-            result += line.slice(0, maxLineLength) + '\n';
-            line = line.slice(maxLineLength);
+            let wrapAt = maxLineLength;
+            while (wrapAt > 0 && line[wrapAt] !== ' ') {
+                wrapAt--;
+            }
+            if (wrapAt === 0) {
+                wrapAt = maxLineLength; // No spaces found, force wrap at max length
+            }
+            result += line.slice(0, wrapAt).trimEnd() + '\n';
+            line = line.slice(wrapAt).trimStart();
         }
         return result + line;
     });
 
-    const formattedContent_8 = lines_8.join('\n'); // Join lines with a single newline
+    const formattedContent_8 = lines_8.join('\n');
     const txtBlob_8 = new Blob([formattedContent_8], { type: 'text/plain' });
     const txtLink_8 = document.createElement('a');
     txtLink_8.href = URL.createObjectURL(txtBlob_8);
@@ -413,6 +418,7 @@ function downloadTxtFile_8() {
     txtLink_8.click();
     document.getElementById('textFileBtn_8').style.backgroundColor = "#555555";
 }
+	
 	
     
 
