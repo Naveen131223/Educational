@@ -285,9 +285,8 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File";
+printButton.textContent = "Download Chat as PDF";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
     var chatContainer = document.getElementById("chat_container");
@@ -301,8 +300,7 @@ printButton.addEventListener("click", function() {
     var opt = {
         margin:       [20, 20, 20, 20], // Margins: top, right, bottom, left
         filename:     'chat.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
+        html2canvas:  { scale: 2 },      // You can set the scale if needed, though html2pdf.js uses html2canvas internally.
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
@@ -310,6 +308,8 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+		
+
 	
 		
 		
