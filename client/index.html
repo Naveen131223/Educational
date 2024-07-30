@@ -289,66 +289,43 @@ var printButton = document.createElement("button");
 printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
     const chatContainer = document.getElementById('chat_container');
     const spans = chatContainer.getElementsByTagName('span');
-    
-    const fontSize = 12;
-    const lineHeight = 1.5; // Line height factor
-    const margin = 10; // Margin in mm
-    const pageWidth = doc.internal.pageSize.width - 2 * margin;
-    const pageHeight = doc.internal.pageSize.height - 2 * margin;
-    let y = margin;
-    
+
     if (spans.length === 0) {
         alert("The content is empty.");
         return;
     }
 
-    // Helper function to handle text wrapping
-    function splitTextToFit(text, maxWidth) {
-        const lines = [];
-        let line = '';
-        const words = text.split(' ');
-        
-        for (const word of words) {
-            const testLine = line + (line ? ' ' : '') + word;
-            const width = doc.getTextWidth(testLine);
-            if (width > maxWidth) {
-                lines.push(line);
-                line = word;
-            } else {
-                line = testLine;
-            }
-        }
-        if (line) {
-            lines.push(line);
-        }
-        return lines;
-    }
-    
-    // Add content to the PDF
+    // Create a temporary container for styled content
+    const tempContainer = document.createElement('div');
+    tempContainer.style.fontFamily = 'Times New Roman';
+    tempContainer.style.fontSize = '12pt'; // Font size
+    tempContainer.style.lineHeight = '1.5'; // Line height
+    tempContainer.style.padding = '0'; // No padding
+
+    // Create the styled content from span tags
     Array.from(spans).forEach(span => {
-        const lines = splitTextToFit(span.textContent, pageWidth);
-        lines.forEach(line => {
-            if (y + (fontSize * lineHeight) > pageHeight) {
-                doc.addPage();
-                y = margin;
-            }
-            doc.setFontSize(fontSize);
-            doc.text(line, margin, y);
-            y += fontSize * lineHeight;
-        });
+        const p = document.createElement('p');
+        p.textContent = span.textContent;
+        p.style.margin = '0 0 1em 0'; // Margin between paragraphs
+        tempContainer.appendChild(p);
     });
 
-    doc.save('chat.pdf');
+    // Convert the container to PDF
+    html2pdf()
+        .set({
+            margin: [1, 0.5, 1, 0.5], // Set appropriate margins (top, right, bottom, left)
+            filename: 'chat.pdf',
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        })
+        .from(tempContainer)
+        .save();
 });
 
 document.body.appendChild(printButton);
-		
-
+	
 
 		
 		
