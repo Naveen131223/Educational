@@ -286,55 +286,36 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Print Chat";
+printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-  const chatContainer = document.getElementById('chat_container');
-  const content = chatContainer.innerText;
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
-  if (content.trim() === "") {
-    alert("Chat container is empty.");
-    return;
-  }
+  // Apply styling to the printed content
+  var style = `
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>`;
 
-  // Check if jsPDF is available
-  if (typeof window.jspdf === 'undefined') {
-    alert("jsPDF library is not loaded.");
-    return;
-  }
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
 
-  // Convert the content to PDF using jsPDF
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  const margin = 15; // Margin from the left and right
-  const lineHeight = 10; // Line height for better readability
-  const fontSize = 12; // Font size for readability
-  const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-  let yPosition = 20; // Start position on the page
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
 
-  pdf.setFontSize(fontSize); // Set the font size
-
-  // Split the content into lines and handle text wrapping
-  const lines = content.split('\n');
-  lines.forEach((line) => {
-    const wrappedLines = pdf.splitTextToSize(line, pageWidth);
-    wrappedLines.forEach((wrappedLine) => {
-      if (yPosition + lineHeight > pdf.internal.pageSize.getHeight()) {
-        pdf.addPage();
-        yPosition = 20; // Reset position for the new page
-      }
-      pdf.text(wrappedLine, margin, yPosition);
-      yPosition += lineHeight;
-    });
-  });
-
-  // Save the PDF
-  pdf.save('chat.pdf');
+  // Execute the print function
+  printWindow.print();
 });
 
-document.body.appendChild(printButton);
-		
+document.body.appendChild(printButton);	
 	
 
 		
