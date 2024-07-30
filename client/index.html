@@ -275,7 +275,7 @@ const module = await import("./script.js?v=v7");
 <p style="line-height: 1.6;">
   Effortlessly translate the entire page into your preferred language with our Google Translator feature.
   Initially activate the <strong style="margin: 0 0.2em;">Select Language</strong> button for better performance to choose your desired language.
-  Ensure that once all chats are translated, you can easily print the chat, export the chat with Voice Enabled function, download the text file, and download the Word file in the language of your choice.
+  Ensure that once all chats are translated, you can easily download the PDF file, export the chat with Voice Enabled function, download the text file, and download the Word file in the language of your choice.
 </p>
 
 <div id="google_translate_element"></div>
@@ -293,7 +293,7 @@ printButton.addEventListener("click", function() {
   const chatContainer = document.getElementById('chat_container');
   const content = chatContainer.innerText;
   if (content.trim() === "") {
-    alert("Chat container is empty.");
+    alert("The content is empty.");
     return;
   }
 
