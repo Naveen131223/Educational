@@ -282,31 +282,43 @@ const module = await import("./script.js?v=v7");
 	  
 
   
-<button id="downloadButton">Download PDF File</button>
+
 	  
 	<script>
 //print and export
-document.addEventListener('DOMContentLoaded', function() {
-      var printButton = document.createElement("button");
-      printButton.textContent = "Download PDF File";
-      printButton.className = "add-course-button-1";
-      printButton.addEventListener("click", function() {
-        var chatContainer = document.getElementById("chat_container");
+var printButton = document.createElement("button");
+printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
+printButton.className = "add-course-button-1";
+printButton.addEventListener("click", function() {
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
-        // Use html2pdf to generate the PDF
-        var opt = {
-          margin:       1,
-          filename:     'chat-content.pdf',
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2 },
-          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
+  // Apply styling to the printed content
+  var style = `
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>`;
 
-        html2pdf().set(opt).from(chatContainer).save();
-      });
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
 
-      document.body.appendChild(printButton);
-    });
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
+
+  // Execute the print function
+  printWindow.print();
+});
+
+document.body.appendChild(printButton);	
+
+		
 
 		
 		
