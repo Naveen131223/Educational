@@ -285,7 +285,6 @@ const module = await import("./script.js?v=v7");
 
 	<script>
 //print and export
-
 var printButton = document.createElement("button");
 printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
@@ -303,10 +302,11 @@ printButton.addEventListener("click", function() {
   // Apply styling to the printed content
   const style = document.createElement('style');
   style.innerHTML = `
-    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    body { font-family: 'Times New Roman'; font-size: 12pt; }
     .question { color: blue; }
     .answer { color: red; }
     .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    p { margin: 0 0 1em 0; line-height: 1.5; } /* Ensure sufficient line height */
   `;
 
   tempContainer.appendChild(style);
@@ -314,7 +314,6 @@ printButton.addEventListener("click", function() {
   // Create the styled content
   content.split('\n').forEach(line => {
     const p = document.createElement('p');
-    p.style.margin = "0 0 1em 0";
     p.innerText = line;
     tempContainer.appendChild(p);
   });
@@ -322,7 +321,7 @@ printButton.addEventListener("click", function() {
   // Convert the container to PDF
   html2pdf()
     .set({
-      margin: 1,
+      margin: [0.5, 0.5, 0.5, 0.5], // Set appropriate margins
       filename: 'chat.pdf',
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
