@@ -286,36 +286,33 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
+printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
 
-  // Apply styling to the printed content
+  // Apply styling to the content for the PDF
   var style = `
     <style>
       .question { color: blue; }
       .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+      .line-break { display: block; margin-bottom: 1em; }
     </style>`;
 
   // Replace line breaks with a styled span to add vertical space
-  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+  var chatContent = chatContainer.innerHTML
+    .replace(/\n/g, '<span class="line-break"></span>')
+    .replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+  // Create a container for the PDF content with styles
+  var pdfContainer = document.createElement('div');
+  pdfContainer.innerHTML = style + chatContent;
 
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
-  printWindow.document.close();
-
-  // Execute the print function
-  printWindow.print();
+  // Use html2pdf.js to generate and download the PDF
+  html2pdf().from(pdfContainer).save('chat-content.pdf');
 });
 
-document.body.appendChild(printButton);	
+document.body.appendChild(printButton);
         
         
     
