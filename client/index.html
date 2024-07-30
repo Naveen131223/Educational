@@ -287,11 +287,27 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
+printButton.textContent = "Download PDF File"; // Updating the button text to "Download PDF File"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
+
+  // Clone the chat container and remove everything that's not a span tag
+  var chatClone = chatContainer.cloneNode(true);
+  Array.from(chatClone.querySelectorAll("*:not(span)")).forEach(el => el.remove());
+
+  // Replace line breaks with a styled span to add vertical space
+  var spans = chatClone.querySelectorAll("span");
+  spans.forEach(function(span, index) {
+    span.innerHTML = span.innerHTML.replace(/\n/g, '<span class="line-break"></span>');
+
+    // Insert a page break after every 4 spans for note-like formatting
+    if ((index + 1) % 4 === 0) {
+      var pageBreak = document.createElement('div');
+      pageBreak.className = 'page-break';
+      span.parentNode.insertBefore(pageBreak, span.nextSibling);
+    }
+  });
 
   // Apply styling to the printed content
   var style = `
@@ -299,24 +315,25 @@ printButton.addEventListener("click", function() {
       .question { color: blue; }
       .answer { color: red; }
       .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+      .page-break { display: block; page-break-before: always; margin-top: 1em; }
+      span { display: block; margin: 0.5em 0; word-wrap: break-word; } /* Ensure proper text wrapping */
     </style>`;
 
-  // Replace line breaks with a styled span to add vertical space
-  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+  // Wrap the chat content in a div and apply the styles
+  var chatContent = `<div>${style}${chatClone.innerHTML}</div>`;
 
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
-
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
-  printWindow.document.close();
-
-  // Execute the print function
-  printWindow.print();
+  // Convert the chat content to a PDF using html2pdf.js
+  var opt = {
+    margin: 1,
+    filename: 'chat.pdf',
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  html2pdf().from(chatContent).set(opt).save();
 });
 
-document.body.appendChild(printButton);	
+document.body.appendChild(printButton);
+		
 
 		
 
