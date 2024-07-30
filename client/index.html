@@ -283,52 +283,52 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
+printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-  const chatContainer = document.getElementById('chat_container');
-  const content = chatContainer.innerText;
-  if (content.trim() === "") {
-    alert("The content is empty.");
-    return;
-  }
+    const chatContainer = document.getElementById('chat_container');
+    const spans = chatContainer.getElementsByTagName('span');
 
-  // Create a temporary container for styled content
-  const tempContainer = document.createElement('div');
+    if (spans.length === 0) {
+        alert("The content is empty.");
+        return;
+    }
 
-  // Apply styling to the printed content
-  const style = document.createElement('style');
-  style.innerHTML = `
-    body { font-family: 'Times New Roman'; font-size: 12pt; }
-    .question { color: blue; }
-    .answer { color: red; }
-    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    p { margin: 0 0 1em 0; line-height: 1.5; } /* Ensure sufficient line height */
-  `;
+    // Create a temporary container for styled content
+    const tempContainer = document.createElement('div');
 
-  tempContainer.appendChild(style);
+    // Apply styling to the printed content
+    const style = document.createElement('style');
+    style.innerHTML = `
+        body { font-family: 'Times New Roman'; font-size: 12pt; }
+        p { margin: 0 0 1em 0; line-height: 1.5; } /* Ensure sufficient line height */
+    `;
 
-  // Create the styled content
-  content.split('\n').forEach(line => {
-    const p = document.createElement('p');
-    p.innerText = line;
-    tempContainer.appendChild(p);
-  });
+    tempContainer.appendChild(style);
 
-  // Convert the container to PDF
-  html2pdf()
-    .set({
-      margin: [0.5, 0.5, 0.5, 0.5], // Set appropriate margins
-      filename: 'chat.pdf',
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    })
-    .from(tempContainer)
-    .save();
+    // Create the styled content from span tags
+    for (let span of spans) {
+        const p = document.createElement('p');
+        p.innerText = span.innerText;
+        tempContainer.appendChild(p);
+    }
+
+    // Convert the container to PDF
+    html2pdf()
+        .set({
+            margin: [0.5, 0.5, 0.5, 0.5], // Set appropriate margins
+            filename: 'chat.pdf',
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        })
+        .from(tempContainer)
+        .save();
 });
 
 document.body.appendChild(printButton);
-    
+		
+
+
 		
 		
 		
