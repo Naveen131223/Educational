@@ -323,6 +323,9 @@ printButton.addEventListener("click", function() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
+  // Set the font to support multiple languages
+  pdf.setFont('ArialUnicodeMS', 'normal');
+
   // Add content to the PDF with text wrapping
   const margin = 10; // Margin from the left
   const lineHeight = 10; // Increased line height for better readability
@@ -349,7 +352,7 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
-		
+	      
    
             
 		
