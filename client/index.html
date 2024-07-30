@@ -285,36 +285,46 @@ const module = await import("./script.js?v=v7");
 	  
 	<script>
 //print and export
+
 var printButton = document.createElement("button");
 printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerHTML;
 
-  // Apply styling to the content for the PDF
-  var style = `
-    <style>
-      .question { color: blue; }
-      .answer { color: red; }
-    </style>`;
+    // Apply styling to the content for the PDF
+    var style = `
+        <style>
+            body {
+                font-family: 'Times New Roman', serif;
+                font-size: 12pt;
+                margin: 1em;
+                line-height: 1.5;
+            }
+            .question {
+                color: blue;
+            }
+            .answer {
+                color: red;
+            }
+        </style>`;
 
-  // Remove user input keyboard printout and unnecessary tags
-  chatContent = chatContent
-    .replace(/<span class="user-input">.+?<\/span>/g, '')
-    .replace(/<span[^>]*>/g, '') // Remove opening <span> tags
-    .replace(/<\/span>/g, ''); // Remove closing </span> tags
+    // Remove unnecessary tags and prepare content for PDF
+    chatContent = chatContent
+        .replace(/<span class="user-input">.+?<\/span>/g, '') // Remove specific spans
+        .replace(/<\/?span[^>]*>/g, ''); // Remove all <span> tags
 
-  // Create a container for the PDF content with styles
-  var pdfContainer = document.createElement('div');
-  pdfContainer.innerHTML = style + chatContent;
+    // Create a container with styles
+    var pdfContainer = document.createElement('div');
+    pdfContainer.innerHTML = style + chatContent;
 
-  // Use html2pdf.js to generate and download the PDF
-  html2pdf().from(pdfContainer).save('chat-content.pdf');
+    // Use html2pdf.js to generate and download the PDF
+    html2pdf().from(pdfContainer).save('chat-content.pdf');
 });
 
 document.body.appendChild(printButton);
-        
+		
     
 
 				
