@@ -288,6 +288,7 @@ const module = await import("./script.js?v=v7");
 var printButton = document.createElement("button");
 printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
+
 printButton.addEventListener("click", function() {
     const chatContainer = document.getElementById('chat_container');
     const spans = chatContainer.getElementsByTagName('span');
@@ -311,10 +312,10 @@ printButton.addEventListener("click", function() {
         tempContainer.appendChild(p);
     });
 
-    // Convert the container to PDF
+    // Convert the container to PDF using html2pdf
     html2pdf()
         .set({
-            margin: [1, 0.5, 1, 0.5], // Set appropriate margins (top, right, bottom, left)
+            margin: [1, 0.5, 1, 0.5], // Set margins (top, right, bottom, left)
             filename: 'chat.pdf',
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -324,6 +325,7 @@ printButton.addEventListener("click", function() {
 });
 
 document.body.appendChild(printButton);
+		
 	
 
 		
