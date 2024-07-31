@@ -285,48 +285,58 @@ const module = await import("./script.js?v=v7");
 	  
 	<script>
 //print and export
+// Include jsPDF library in your HTML head
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File";
+printButton.textContent = "Download PDF File"; // Updating the button text to "Download PDF File"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-  var chatContainer = document.getElementById("chat_container");
-  var chatContent = chatContainer.innerHTML;
+    var chatContainer = document.getElementById("chat_container");
+    var chatContent = chatContainer.innerText;
 
-  // Apply styling to the printed content
-  var style = `
-    <style>
-      @font-face {
-        font-family: 'Arial';
-        src: url('https://fonts.gstatic.com/s/arial/v14/u-IRBgAAAAA.got') format('truetype');
-      }
-      body {
-        font-family: 'Arial', sans-serif;
-      }
-      .question { color: blue; }
-      .answer { color: red; }
-      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
-    </style>`;
+    // Format chat content for line breaks and remove user input keyboard printout
+    const maxLineLength = 100;
+    const lines = chatContent.split('\n').map(line => {
+        let result = '';
+        while (line.length > maxLineLength) {
+            let wrapAt = maxLineLength;
+            while (wrapAt > 0 && line[wrapAt] !== ' ') {
+                wrapAt--;
+            }
+            if (wrapAt === 0) {
+                wrapAt = maxLineLength; // No spaces found, force wrap at max length
+            }
+            result += line.slice(0, wrapAt).trimEnd() + '\n';
+            line = line.slice(wrapAt).trimStart();
+        }
+        return result + line;
+    });
 
-  // Replace line breaks with a styled span to add vertical space
-  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
+    const formattedContent = lines.join('\n');
 
-  // Remove user input keyboard printout
-  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
+    // Create PDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 10;
+    const lineHeight = 10;
+    let y = margin;
 
-  // Create a temporary element to hold the content and style for PDF generation
-  var tempElement = document.createElement('div');
-  tempElement.innerHTML = "<html><head><meta charset='UTF-8'></head><body>" + chatContent + "</body></html>";
-  
-  // Use html2pdf.js to generate and download the PDF
-  html2pdf().from(tempElement).set({
-    margin: 1,
-    filename: 'chat.pdf',
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-  }).save();
+    formattedContent.split('\n').forEach(line => {
+        if (y + lineHeight > pageHeight - margin) {
+            pdf.addPage();
+            y = margin;
+        }
+        pdf.text(line, margin, y);
+        y += lineHeight;
+    });
+
+    pdf.save('chat.pdf');
 });
 
 document.body.appendChild(printButton);
+	  
 		
 
     
