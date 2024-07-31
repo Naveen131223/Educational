@@ -286,7 +286,7 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
+printButton.textContent = "Download PDF File";
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   var chatContainer = document.getElementById("chat_container");
@@ -295,6 +295,13 @@ printButton.addEventListener("click", function() {
   // Apply styling to the printed content
   var style = `
     <style>
+      @font-face {
+        font-family: 'Arial';
+        src: url('https://fonts.gstatic.com/s/arial/v14/u-IRBgAAAAA.got') format('truetype');
+      }
+      body {
+        font-family: 'Arial', sans-serif;
+      }
       .question { color: blue; }
       .answer { color: red; }
       .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
@@ -306,17 +313,21 @@ printButton.addEventListener("click", function() {
   // Remove user input keyboard printout
   chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-  var printWindow = window.open("", "_blank");
-  printWindow.document.open();
-  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
-  printWindow.document.close();
-
-  // Execute the print function
-  printWindow.print();
+  // Create a temporary element to hold the content and style for PDF generation
+  var tempElement = document.createElement('div');
+  tempElement.innerHTML = "<html><head><meta charset='UTF-8'>" + style + "</head><body>" + chatContent + "</body></html>";
+  
+  // Use html2pdf.js to generate and download the PDF
+  html2pdf().from(tempElement).set({
+    margin: 1,
+    filename: 'chat.pdf',
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  }).save();
 });
 
 document.body.appendChild(printButton);
-   	
+		
 
     
         
