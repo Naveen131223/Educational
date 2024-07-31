@@ -315,18 +315,27 @@ printButton.addEventListener("click", function() {
     .answer { color: red; }
     .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
     body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+    .page-break { display: block; page-break-before: auto; } /* Ensure proper page breaks */
   `;
   cloneChatContainer.appendChild(style);
 
   // Convert chat content to HTML with line breaks
   cloneChatContainer.innerHTML = chatContent.split('\n').map(line => `<p style="margin: 0 0 1em 0;">${line}</p>`).join('');
 
-  // Generate and save the PDF using html2pdf
-  html2pdf().from(cloneChatContainer).save();
+  // Generate and save the PDF using html2pdf with page-break options
+  html2pdf().set({
+    margin: 10,
+    filename: 'chat.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'] }
+  }).from(cloneChatContainer).save();
 });
 
 document.body.appendChild(printButton);
 		
+  
 
 			
 		
