@@ -286,7 +286,7 @@ const module = await import("./script.js?v=v7");
 	<script>
 //print and export
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF Files"; // Updating the button text to "Print"
+printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
   var chatContainer = document.getElementById("chat_container");
@@ -308,20 +308,21 @@ printButton.addEventListener("click", function() {
     return;
   }
 
-  // Convert chat content to plain text with line breaks
-  var formattedContent = chatContent.split('\n').map(line => line.trim()).join('\n');
+  // Apply styling to the cloned container
+  var style = document.createElement("style");
+  style.innerHTML = `
+    .question { color: blue; }
+    .answer { color: red; }
+    .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    body { font-family: 'Times New Roman'; font-size: 12pt; margin-left: 1em; }
+  `;
+  cloneChatContainer.appendChild(style);
 
-  // Create a new jsPDF instance
-  const { jsPDF } = window.jspdf;
-  var doc = new jsPDF();
+  // Convert chat content to HTML with line breaks
+  cloneChatContainer.innerHTML = chatContent.split('\n').map(line => `<p style="margin: 0 0 1em 0;">${line}</p>`).join('');
 
-  // Add the formatted content to the PDF
-  doc.setFont("Times-Roman", "normal");
-  doc.setFontSize(12);
-  doc.text(formattedContent, 10, 10);
-
-  // Save the PDF
-  doc.save('chat.pdf');
+  // Generate and save the PDF using html2pdf
+  html2pdf().from(cloneChatContainer).save();
 });
 
 document.body.appendChild(printButton);
