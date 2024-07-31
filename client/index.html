@@ -285,57 +285,38 @@ const module = await import("./script.js?v=v7");
 	  
 	<script>
 //print and export
-// Include jsPDF library in your HTML head
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 var printButton = document.createElement("button");
-printButton.textContent = "Download PDF File"; // Updating the button text to "Download PDF File"
+printButton.textContent = "Download PDF File"; // Updating the button text to "Print"
 printButton.className = "add-course-button-1";
 printButton.addEventListener("click", function() {
-    var chatContainer = document.getElementById("chat_container");
-    var chatContent = chatContainer.innerText;
+  var chatContainer = document.getElementById("chat_container");
+  var chatContent = chatContainer.innerHTML;
 
-    // Format chat content for line breaks and remove user input keyboard printout
-    const maxLineLength = 100;
-    const lines = chatContent.split('\n').map(line => {
-        let result = '';
-        while (line.length > maxLineLength) {
-            let wrapAt = maxLineLength;
-            while (wrapAt > 0 && line[wrapAt] !== ' ') {
-                wrapAt--;
-            }
-            if (wrapAt === 0) {
-                wrapAt = maxLineLength; // No spaces found, force wrap at max length
-            }
-            result += line.slice(0, wrapAt).trimEnd() + '\n';
-            line = line.slice(wrapAt).trimStart();
-        }
-        return result + line;
-    });
+  // Apply styling to the printed content
+  var style = `
+    <style>
+      .question { color: blue; }
+      .answer { color: red; }
+      .line-break { display: block; margin-bottom: 1em; } /* Add space between lines */
+    </style>`;
 
-    const formattedContent = lines.join('\n');
+  // Replace line breaks with a styled span to add vertical space
+  chatContent = chatContent.replace(/\n/g, '<span class="line-break"></span>');
 
-    // Create PDF
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    const pageHeight = pdf.internal.pageSize.height;
-    const margin = 10;
-    const lineHeight = 10;
-    let y = margin;
+  // Remove user input keyboard printout
+  chatContent = chatContent.replace(/<span class="user-input">.+?<\/span>/g, '');
 
-    formattedContent.split('\n').forEach(line => {
-        if (y + lineHeight > pageHeight - margin) {
-            pdf.addPage();
-            y = margin;
-        }
-        pdf.text(line, margin, y);
-        y += lineHeight;
-    });
+  var printWindow = window.open("", "_blank");
+  printWindow.document.open();
+  printWindow.document.write("<html><head>" + style + "</head><body>" + chatContent + "</body></html>");
+  printWindow.document.close();
 
-    pdf.save('chat.pdf');
+  // Execute the print function
+  printWindow.print();
 });
 
 document.body.appendChild(printButton);
+   
 	  
 		
 
