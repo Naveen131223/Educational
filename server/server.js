@@ -6,7 +6,9 @@ import axios from 'axios';
 dotenv.config();
 
 const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
+const NEWS_API_URL = 'https://newsapi.org/v2/top-headlines'; // Base URL for NewsAPI
 const HF_API_KEY = process.env.HF_API_KEY;
+const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
 const app = express();
 app.use(cors());
@@ -131,101 +133,124 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: ` The current date is: ${currentDate}` }); // Add a space at the beginning
     }
 
-    const promptLowerCase = prompt.toLowerCase();
-    let maxWords = null;
-    let subtopics = null;
-
-    const markMatch = promptLowerCase.match(/(\d+)\s*marks?/i);
-    const wordMatch = promptLowerCase.match(/(\d+)\s*words?/i);
-    const pointsMatch = promptLowerCase.match(/(\d+)\s*(points?|steps?)/i);
-
-    if (markMatch) {
-      const marks = parseInt(markMatch[1], 10);
-      if (markCategories[marks]) {
-        maxWords = markCategories[marks].words;
-        subtopics = markCategories[marks].subtopics;
-      }
-    } else if (wordMatch) {
-      maxWords = parseInt(wordMatch[1], 10);
-    } else if (pointsMatch) {
-      const pointsRequested = parseInt(pointsMatch[1], 10);
-      const adjustedPoints = pointsRequested + 3;
-      maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
-    }
-
-    if (subtopics) {
-      prompt += ` Please cover the following subtopics: ${subtopics}.`;
-    } else if (maxWords) {
-      prompt += ` Please provide the correct response in ${maxWords} words.`;
-    } else {
-      prompt += " Provide an accurate response.";
-    }
-
-    if (mentionsDiagram(prompt)) {
-      prompt += " Include a title name with the diagram name in text.";
-    }
-
-    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
-
-    axios.post(HF_API_URL, {
-      inputs: prompt,
-      parameters: {
-        temperature: 0.7,
-        max_new_tokens: maxNewTokens,
-        top_p: 0.9
-      }
-    }, {
-      headers: {
-        'Authorization': `Bearer ${HF_API_KEY}`,
-        'Content-Type': 'application/json',
-      }
-    }).then(response => {
-      console.log('Response from Hugging Face API:', response.data);
-
-      let botResponse = 'No response generated';
-
-      if (response.data && response.data.length > 0) {
-        botResponse = response.data[0].generated_text || 'No response generated';
-      } else if (response.data && response.data.generated_text) {
-        botResponse = response.data.generated_text;
-      }
-
-      // Ensure the response does not repeat the prompt and handle truncation more robustly
-      if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
-        botResponse = botResponse.slice(prompt.length).trim();
-      }
-
-      // Remove the subtopics prompt from the response if present
-      if (subtopics && botResponse.includes(subtopics)) {
-        botResponse = botResponse.replace(subtopics, '').trim();
-      }
-
-      // Trim based on sentence boundaries, ensuring the text is concise and complete
-      const maxLength = maxWords ? maxWords * 6 : 2000;
-      if (botResponse.length > maxLength) {
-        const truncated = botResponse.slice(0, maxLength);
-        const lastSentenceEnd = truncated.lastIndexOf('.');
-        if (lastSentenceEnd > -1) {
-          botResponse = truncated.slice(0, lastSentenceEnd + 1);
-        } else {
-          botResponse = truncated;
+    if (prompt.toLowerCase().includes('news')) {
+      // Handle news request
+      axios.get(NEWS_API_URL, {
+        params: {
+          apiKey: NEWS_API_KEY,
+          q: 'latest', // Adjust the query as needed
+          language: 'en',
+          sortBy: 'publishedAt'
         }
+      }).then(response => {
+        console.log('Response from News API:', response.data);
+
+        const articles = response.data.articles || [];
+        const newsResponse = articles.map(article => `${article.title}: ${article.description}`).join('\n\n');
+
+        cacheResponse(prompt, newsResponse || 'No news articles found.');
+        return res.status(200).send({ bot: ` ${newsResponse || 'No news articles found.'}` }); // Add a space at the beginning
+      }).catch(error => {
+        console.error('Error fetching news:', error);
+        return res.status(500).send({ error: 'Error fetching news' });
+      });
+    } else {
+      const promptLowerCase = prompt.toLowerCase();
+      let maxWords = null;
+      let subtopics = null;
+
+      const markMatch = promptLowerCase.match(/(\d+)\s*marks?/i);
+      const wordMatch = promptLowerCase.match(/(\d+)\s*words?/i);
+      const pointsMatch = promptLowerCase.match(/(\d+)\s*(points?|steps?)/i);
+
+      if (markMatch) {
+        const marks = parseInt(markMatch[1], 10);
+        if (markCategories[marks]) {
+          maxWords = markCategories[marks].words;
+          subtopics = markCategories[marks].subtopics;
+        }
+      } else if (wordMatch) {
+        maxWords = parseInt(wordMatch[1], 10);
+      } else if (pointsMatch) {
+        const pointsRequested = parseInt(pointsMatch[1], 10);
+        const adjustedPoints = pointsRequested + 3;
+        maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
       }
 
-      // Remove incomplete or truncated sentences at the end
-      const lastSentenceEnd = botResponse.lastIndexOf('.');
-      if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
-        botResponse = botResponse.slice(0, lastSentenceEnd + 1);
+      if (subtopics) {
+        prompt += ` Please cover the following subtopics: ${subtopics}.`;
+      } else if (maxWords) {
+        prompt += ` Please provide the correct response in ${maxWords} words.`;
+      } else {
+        prompt += " Provide an accurate response.";
       }
 
-      botResponse = sanitizeResponse(botResponse);
+      if (mentionsDiagram(prompt)) {
+        prompt += " Include a title name with the diagram name in text.";
+      }
 
-      cacheResponse(prompt, botResponse);
-      return res.status(200).send({ bot: ` ${botResponse}` }); // Add a space at the beginning
-    }).catch(error => {
-      console.error('Error processing request:', error);
-      return res.status(500).send({ error: 'Error processing request' });
-    });
+      const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
+
+      axios.post(HF_API_URL, {
+        inputs: prompt,
+        parameters: {
+          temperature: 0.7,
+          max_new_tokens: maxNewTokens,
+          top_p: 0.9
+        }
+      }, {
+        headers: {
+          'Authorization': `Bearer ${HF_API_KEY}`,
+          'Content-Type': 'application/json',
+        }
+      }).then(response => {
+        console.log('Response from Hugging Face API:', response.data);
+
+        let botResponse = 'No response generated';
+
+        if (response.data && response.data.length > 0) {
+          botResponse = response.data[0].generated_text || 'No response generated';
+        } else if (response.data && response.data.generated_text) {
+          botResponse = response.data.generated_text;
+        }
+
+        // Ensure the response does not repeat the prompt and handle truncation more robustly
+        if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
+          botResponse = botResponse.slice(prompt.length).trim();
+        }
+
+        // Remove the subtopics prompt from the response if present
+        if (subtopics && botResponse.includes(subtopics)) {
+          botResponse = botResponse.replace(subtopics, '').trim();
+        }
+
+        // Trim based on sentence boundaries, ensuring the text is concise and complete
+        const maxLength = maxWords ? maxWords * 6 : 2000;
+        if (botResponse.length > maxLength) {
+          const truncated = botResponse.slice(0, maxLength);
+          const lastSentenceEnd = truncated.lastIndexOf('.');
+          if (lastSentenceEnd > -1) {
+            botResponse = truncated.slice(0, lastSentenceEnd + 1);
+          } else {
+            botResponse = truncated;
+          }
+        }
+
+        // Remove incomplete or truncated sentences at the end
+        const lastSentenceEnd = botResponse.lastIndexOf('.');
+        if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
+          botResponse = botResponse.slice(0, lastSentenceEnd + 1);
+        }
+
+        botResponse = sanitizeResponse(botResponse);
+
+        cacheResponse(prompt, botResponse);
+        return res.status(200).send({ bot: ` ${botResponse}` }); // Add a space at the beginning
+      }).catch(error => {
+        console.error('Error processing request:', error);
+        return res.status(500).send({ error: 'Error processing request' });
+      });
+    }
   } catch (error) {
     console.error('Unexpected error:', error);
     return res.status(500).send({ error: 'Unexpected error occurred' });
@@ -250,6 +275,6 @@ const gracefulShutdown = () => {
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-        
+          
