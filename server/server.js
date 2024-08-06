@@ -5,8 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_TEXT_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
-const HF_IMAGE_API_URL = 'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0';
+const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
 
 const app = express();
@@ -81,8 +80,7 @@ const getCurrentDate = () => {
 };
 
 const mentionsDiagram = (prompt) => {
-  const diagramKeywords = ['diagram', 'image', 'picture', 'pic'];
-  return diagramKeywords.some(keyword => prompt.toLowerCase().includes(keyword));
+  return prompt.toLowerCase().includes('diagram');
 };
 
 // Function to retrieve cached response or null if not cached
@@ -93,30 +91,6 @@ const getCachedResponse = (prompt) => {
 // Function to cache response
 const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
-};
-
-// Function to get diagram or image from Stable Diffusion model
-const getImage = async (prompt) => {
-  try {
-    const response = await axios.post(HF_IMAGE_API_URL, {
-      inputs: prompt,
-      parameters: {
-        temperature: 0.7,
-        max_new_tokens: 512,
-        top_p: 0.9
-      }
-    }, {
-      headers: {
-        'Authorization': `Bearer ${HF_API_KEY}`,
-        'Content-Type': 'application/json',
-      }
-    });
-    console.log('Response from Stable Diffusion API:', response.data);
-    return response.data; // Adjust based on actual API response
-  } catch (error) {
-    console.error('Error generating image:', error);
-    return null;
-  }
 };
 
 app.get('/', (req, res) => {
@@ -157,16 +131,6 @@ app.post('/', async (req, res) => {
       return res.status(200).send({ bot: ` The current date is: ${currentDate}` }); // Add a space at the beginning
     }
 
-    if (mentionsDiagram(prompt)) {
-      const image = await getImage(prompt);
-      if (image) {
-        cacheResponse(prompt, 'Here is your image: ' + image.url); // Adjust based on actual API response
-        return res.status(200).send({ bot: 'Here is your image: ' + image.url });
-      } else {
-        return res.status(500).send({ error: 'Failed to generate image' });
-      }
-    }
-
     const promptLowerCase = prompt.toLowerCase();
     let maxWords = null;
     let subtopics = null;
@@ -203,7 +167,7 @@ app.post('/', async (req, res) => {
 
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
 
-    axios.post(HF_TEXT_API_URL, {
+    axios.post(HF_API_URL, {
       inputs: prompt,
       parameters: {
         temperature: 0.7,
@@ -288,4 +252,4 @@ process.on('SIGINT', gracefulShutdown);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-      
+        
