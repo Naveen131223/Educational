@@ -5,7 +5,8 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
+const HF_API_URL_TEXT = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
+const HF_API_URL_IMAGE = 'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0';
 const HF_API_KEY = process.env.HF_API_KEY;
 
 const app = express();
@@ -161,13 +162,15 @@ app.post('/', async (req, res) => {
       prompt += " Provide an accurate response.";
     }
 
-    if (mentionsDiagram(prompt)) {
+    const generateImage = mentionsDiagram(prompt);
+
+    if (generateImage) {
       prompt += " Include a title name with the diagram name in text.";
     }
 
     const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
 
-    axios.post(HF_API_URL, {
+    const textResponse = await axios.post(HF_API_URL_TEXT, {
       inputs: prompt,
       parameters: {
         temperature: 0.7,
@@ -179,77 +182,74 @@ app.post('/', async (req, res) => {
         'Authorization': `Bearer ${HF_API_KEY}`,
         'Content-Type': 'application/json',
       }
-    }).then(response => {
-      console.log('Response from Hugging Face API:', response.data);
-
-      let botResponse = 'No response generated';
-
-      if (response.data && response.data.length > 0) {
-        botResponse = response.data[0].generated_text || 'No response generated';
-      } else if (response.data && response.data.generated_text) {
-        botResponse = response.data.generated_text;
-      }
-
-      // Ensure the response does not repeat the prompt and handle truncation more robustly
-      if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
-        botResponse = botResponse.slice(prompt.length).trim();
-      }
-
-      // Remove the subtopics prompt from the response if present
-      if (subtopics && botResponse.includes(subtopics)) {
-        botResponse = botResponse.replace(subtopics, '').trim();
-      }
-
-      // Trim based on sentence boundaries, ensuring the text is concise and complete
-      const maxLength = maxWords ? maxWords * 6 : 2000;
-      if (botResponse.length > maxLength) {
-        const truncated = botResponse.slice(0, maxLength);
-        const lastSentenceEnd = truncated.lastIndexOf('.');
-        if (lastSentenceEnd > -1) {
-          botResponse = truncated.slice(0, lastSentenceEnd + 1);
-        } else {
-          botResponse = truncated;
-        }
-      }
-
-      // Remove incomplete or truncated sentences at the end
-      const lastSentenceEnd = botResponse.lastIndexOf('.');
-      if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
-        botResponse = botResponse.slice(0, lastSentenceEnd + 1);
-      }
-
-      botResponse = sanitizeResponse(botResponse);
-
-      cacheResponse(prompt, botResponse);
-      return res.status(200).send({ bot: ` ${botResponse}` }); // Add a space at the beginning
-    }).catch(error => {
-      console.error('Error processing request:', error);
-      return res.status(500).send({ error: 'Error processing request' });
     });
+
+    console.log('Response from Hugging Face API:', textResponse.data);
+
+    let botResponse = 'No response generated';
+
+    if (textResponse.data && textResponse.data.length > 0) {
+      botResponse = textResponse.data[0].generated_text || 'No response generated';
+    } else if (textResponse.data && textResponse.data.generated_text) {
+      botResponse = textResponse.data.generated_text;
+    }
+
+    // Ensure the response does not repeat the prompt and handle truncation more robustly
+    if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
+      botResponse = botResponse.slice(prompt.length).trim();
+    }
+
+    // Remove the subtopics prompt from the response if present
+    if (subtopics && botResponse.includes(subtopics)) {
+      botResponse = botResponse.replace(subtopics, '').trim();
+    }
+
+    // Trim based on sentence boundaries, ensuring the text is concise and complete
+    const maxLength = maxWords ? maxWords * 6 : 2000;
+    if (botResponse.length > maxLength) {
+      const truncated = botResponse.slice(0, maxLength);
+      const lastSentenceEnd = truncated.lastIndexOf('.');
+      if (lastSentenceEnd > -1) {
+        botResponse = truncated.slice(0, lastSentenceEnd + 1);
+      } else {
+        botResponse = truncated;
+      }
+    }
+
+    // Remove incomplete or truncated sentences at the end
+    const lastSentenceEnd = botResponse.lastIndexOf('.');
+    if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
+      botResponse = botResponse.slice(0, lastSentenceEnd + 1);
+    }
+
+    botResponse = sanitizeResponse(botResponse);
+    cacheResponse(prompt, botResponse);
+
+    if (generateImage) {
+      const imageResponse = await axios.post(HF_API_URL_IMAGE, {
+        inputs: prompt,
+      }, {
+        headers: {
+        'Authorization': `Bearer ${HF_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      responseType: 'arraybuffer',
+    });
+
+    const imageBuffer = Buffer.from(imageResponse.data, 'binary').toString('base64');
+
+    res.status(200).send({
+      bot: ` ${botResponse}`,
+      image: `data:image/png;base64,${imageBuffer}`
+    });
+  } else {
+    res.status(200).send({ bot: ` ${botResponse}` }); // Add a space at the beginning
+  }
   } catch (error) {
-    console.error('Unexpected error:', error);
-    return res.status(500).send({ error: 'Unexpected error occurred' });
+    console.error('Error processing request:', error);
+    res.status(500).send({ error: 'Failed to process the request' });
   }
 });
 
-// Graceful shutdown logic
-const gracefulShutdown = () => {
-  console.log('Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server closed.');
-    process.exit(0);
-  });
-
-  // Force shutdown after 10 seconds if the server is still running
-  setTimeout(() => {
-    console.error('Forcing shutdown...');
-    process.exit(1);
-  }, 10000);
-};
-
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
-
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-        
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`AI server started on http://localhost:${port}`));
