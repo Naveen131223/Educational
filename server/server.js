@@ -93,6 +93,32 @@ const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
 };
 
+// Function to load the model by making a dummy request
+const loadModel = async () => {
+  console.log('Initializing model...');
+  try {
+    await axios.post(HF_API_URL, {
+      inputs: 'Initial model load',
+      parameters: {
+        temperature: 0.7,
+        max_new_tokens: 1,
+        top_p: 0.9
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${HF_API_KEY}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    console.log('Model loaded successfully.');
+  } catch (error) {
+    console.error('Error loading model:', error);
+  }
+};
+
+// Initial model load to avoid delay on first request
+loadModel();
+
 app.get('/', (req, res) => {
   res.status(200).send({ message: 'Hi Sister' });
 });
@@ -214,23 +240,28 @@ app.post('/', async (req, res) => {
 
       // Remove incomplete or truncated sentences at the end
       const lastSentenceEnd = botResponse.lastIndexOf('.');
-      if (lastSentenceEnd > -1 && lastSentenceEnd < botResponse.length - 1) {
+      if (lastSentenceEnd < botResponse.length - 1) {
         botResponse = botResponse.slice(0, lastSentenceEnd + 1);
       }
 
-      botResponse = sanitizeResponse(botResponse);
+      const sanitizedResponse = sanitizeResponse(botResponse);
 
-      cacheResponse(prompt, botResponse);
-      return res.status(200).send({ bot: ` ${botResponse}` }); // Add a space at the beginning
+      // Cache the response
+      cacheResponse(prompt, sanitizedResponse);
+
+      res.status(200).send({ bot: ` ${sanitizedResponse}` }); // Add a space at the beginning
     }).catch(error => {
-      console.error('Error processing request:', error);
-      return res.status(500).send({ error: 'Error processing request' });
+      console.error('Error communicating with Hugging Face API:', error);
+      res.status(500).send({ error: 'Error processing the request' });
     });
   } catch (error) {
-    console.error('Unexpected error:', error);
-    return res.status(500).send({ error: 'Unexpected error occurred' });
+    console.error('Error in the server code:', error);
+    res.status(500).send({ error: 'Internal server error' });
   }
 });
+
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => console.log(`Server is running on port http://localhost:${PORT}`));
 
 // Graceful shutdown logic
 const gracefulShutdown = () => {
@@ -249,7 +280,3 @@ const gracefulShutdown = () => {
 
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
-
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-        
