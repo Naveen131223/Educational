@@ -1,1 +1,282 @@
-const _0x580c47=_0x1b82;(function(_0x579149,_0x50a0cf){const _0x54049d=_0x1b82,_0x387429=_0x579149();while(!![]){try{const _0x62fca7=parseInt(_0x54049d(0x1bb))/0x1+parseInt(_0x54049d(0x1c9))/0x2+-parseInt(_0x54049d(0x1c5))/0x3*(-parseInt(_0x54049d(0x1e6))/0x4)+-parseInt(_0x54049d(0x1b8))/0x5+parseInt(_0x54049d(0x1a6))/0x6+parseInt(_0x54049d(0x1f3))/0x7+parseInt(_0x54049d(0x1c7))/0x8*(-parseInt(_0x54049d(0x1d4))/0x9);if(_0x62fca7===_0x50a0cf)break;else _0x387429['push'](_0x387429['shift']());}catch(_0x28f547){_0x387429['push'](_0x387429['shift']());}}}(_0x552d,0x9d733));function _0x1b82(_0x38bd99,_0x1f1b91){const _0x552d19=_0x552d();return _0x1b82=function(_0x1b82e4,_0x51d1b4){_0x1b82e4=_0x1b82e4-0x1a3;let _0x2f91f0=_0x552d19[_0x1b82e4];return _0x2f91f0;},_0x1b82(_0x38bd99,_0x1f1b91);}import _0x160a5a from'express';import*as _0xfc160c from'dotenv';import _0xcd9457 from'cors';import _0xe13004 from'axios';_0xfc160c['config']();const HF_API_URL='https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct',HF_API_KEY=process[_0x580c47(0x1ec)][_0x580c47(0x1e5)],app=_0x160a5a();app['use'](_0xcd9457()),app[_0x580c47(0x1f0)](_0x160a5a['json']());let cache={};const clearCache=()=>{const _0x465bae=_0x580c47;cache={},console[_0x465bae(0x1e4)](_0x465bae(0x1a5));},cacheClearInterval=0xa*0x3c*0x3e8;setInterval(clearCache,cacheClearInterval);const sanitizeResponse=_0x10cb3c=>{const _0x5e4c41=_0x580c47;let _0x484440=_0x10cb3c['replace'](_0x5e4c41(0x1d9),'');return _0x484440[_0x5e4c41(0x1a4)](/[!@#*]/g,'')[_0x5e4c41(0x1a4)](/(\.\.\.|…)*$/,'')['trim']();},responses=['How\x20can\x20I\x20assist\x20you?',_0x580c47(0x1cb),_0x580c47(0x1e1),_0x580c47(0x1dd),'I\x27m\x20here\x20to\x20help.\x20What\x20can\x20I\x20do\x20for\x20you?'],isGreeting=_0x4712b5=>{const _0x3f9f60=_0x580c47,_0x38e400=['hi',_0x3f9f60(0x1b3),'hey',_0x3f9f60(0x1d7),_0x3f9f60(0x1da),_0x3f9f60(0x1df),'hey\x20there'],_0x1850ed=_0x4712b5[_0x3f9f60(0x1bd)]()[_0x3f9f60(0x1ea)]();return _0x38e400[_0x3f9f60(0x1cf)](_0x1850ed);},markCategories={0x1:{'words':0x14},0x2:{'words':0x32},0x3:{'words':0x46},0x4:{'words':0x5a},0x5:{'words':0x96},0x6:{'words':0xbe},0x7:{'words':0xf0,'subtopics':_0x580c47(0x1a3)},0x8:{'words':0x122,'subtopics':_0x580c47(0x1e9)},0xa:{'words':0x212,'subtopics':'detailed\x20exploration,\x20several\x20subtopics,\x20introduction,\x20main\x20content,\x20and\x20conclusion'},0xc:{'words':0x276,'subtopics':'comprehensive\x20coverage,\x20numerous\x20subtopics,\x20in-depth\x20analysis,\x20examples,\x20and\x20conclusion'},0xf:{'words':0x2a8,'subtopics':'extensive\x20subtopics,\x20background\x20information,\x20detailed\x20explanations,\x20case\x20studies,\x20critical\x20analysis,\x20and\x20strong\x20conclusion'},0x14:{'words':0x370,'subtopics':_0x580c47(0x1c2)}},isAskingForDate=_0xe6ef1=>{const _0x35c362=_0x580c47,_0x361ac9=[_0x35c362(0x1c3),_0x35c362(0x1d6),_0x35c362(0x1f2),'today\x27s\x20date','current\x20day'],_0x31980=_0xe6ef1[_0x35c362(0x1bd)]()[_0x35c362(0x1ea)]();return _0x361ac9[_0x35c362(0x1f4)](_0x1a5a9f=>_0x31980[_0x35c362(0x1cf)](_0x1a5a9f));},getCurrentDate=()=>{const _0x4acb2e=_0x580c47,_0x2d378c=new Date(),_0x19f2a3={'weekday':_0x4acb2e(0x1ee),'year':_0x4acb2e(0x1db),'month':_0x4acb2e(0x1ee),'day':_0x4acb2e(0x1db)};return _0x2d378c[_0x4acb2e(0x1c1)](_0x4acb2e(0x1aa),_0x19f2a3);},mentionsDiagram=_0x36366c=>{const _0x4fd676=_0x580c47;return _0x36366c[_0x4fd676(0x1ea)]()[_0x4fd676(0x1cf)](_0x4fd676(0x1f6));},getCachedResponse=_0x4c0f33=>{return cache[_0x4c0f33]||null;},cacheResponse=(_0x1348df,_0x11bd16)=>{cache[_0x1348df]=_0x11bd16;},loadModel=async()=>{const _0x44df95=_0x580c47;console[_0x44df95(0x1e4)](_0x44df95(0x1c8));try{await _0xe13004[_0x44df95(0x1e0)](HF_API_URL,{'inputs':_0x44df95(0x1b4),'parameters':{'temperature':0.7,'max_new_tokens':0x1,'top_p':0.9}},{'headers':{'Authorization':_0x44df95(0x1d3)+HF_API_KEY,'Content-Type':'application/json'}}),console[_0x44df95(0x1e4)](_0x44df95(0x1bf));}catch(_0x14e6a2){console[_0x44df95(0x1b5)](_0x44df95(0x1c4),_0x14e6a2);}};function _0x552d(){const _0x7dedcd=['en-US','Server\x20is\x20running\x20on\x20port\x20http://localhost:','status','\x20The\x20current\x20date\x20is:\x20','Received\x20a\x20POST\x20request:','\x20Please\x20cover\x20the\x20following\x20subtopics:\x20','Prompt\x20is\x20required','floor','match','hello','Initial\x20model\x20load','error','PORT','length','524160gAxuVG','body','Error\x20communicating\x20with\x20Hugging\x20Face\x20API:','597152rgOAjD','SIGTERM','trim','Shutting\x20down\x20gracefully...','Model\x20loaded\x20successfully.','Initialise\x20model','toLocaleString','thorough\x20coverage,\x20extensive\x20subtopics,\x20historical\x20context,\x20detailed\x20arguments,\x20multiple\x20perspectives,\x20in-depth\x20analysis,\x20case\x20studies,\x20and\x20comprehensive\x20conclusion','date','Error\x20loading\x20model:','9327TxVPmO','Response\x20from\x20Hugging\x20Face\x20API:','16tEDmQf','Initializing\x20model...','2142406kqWAos','catch','How\x20can\x20I\x20help\x20you?','generated_text','Hi\x20Sister','exit','includes','The\x20current\x20date\x20is:\x20','min','close','Bearer\x20','12886110hKsFWs','Forcing\x20shutdown...','current\x20date','hi\x20bro','\x20Provide\x20an\x20accurate\x20response.','Here\x20is\x20the\x20response:','hi\x20sister','numeric','No\x20response\x20generated','Feel\x20free\x20to\x20ask\x20any\x20questions.','Server\x20closed.','hello\x20there','post','Is\x20there\x20anything\x20else\x20you\x27d\x20like\x20to\x20know?','slice','random','log','HF_API_KEY','808xBAHkA','lastIndexOf','listen','multiple\x20subtopics,\x20examples,\x20explanations,\x20and\x20analysis','toLowerCase','data','env','send','long','Warm-up\x20message\x20received:\x20Initialise\x20model','use','Response\x20retrieved\x20from\x20cache:','what\x20date','1264375olYyTC','some','startsWith','diagram','words','application/json','detailed\x20explanation,\x20multiple\x20examples,\x20and\x20analysis','replace','Cache\x20cleared\x20successfully','6817974wutYOB','Error\x20processing\x20the\x20request','\x20Include\x20a\x20title\x20name\x20with\x20the\x20diagram\x20name\x20in\x20text.','Error\x20in\x20the\x20server\x20code:'];_0x552d=function(){return _0x7dedcd;};return _0x552d();}loadModel(),app['get']('/',(_0x3331a2,_0x3a10e5)=>{const _0x2c4c72=_0x580c47;_0x3a10e5[_0x2c4c72(0x1ac)](0xc8)[_0x2c4c72(0x1ed)]({'message':_0x2c4c72(0x1cd)});}),app[_0x580c47(0x1e0)]('/',async(_0x369f4b,_0x157740)=>{const _0x22f7b5=_0x580c47;console['log'](_0x22f7b5(0x1ae),_0x369f4b[_0x22f7b5(0x1b9)]);try{let {prompt:_0xd7194f}=_0x369f4b[_0x22f7b5(0x1b9)];if(!_0xd7194f)return _0x157740[_0x22f7b5(0x1ac)](0x190)['send']({'error':_0x22f7b5(0x1b0)});if(_0xd7194f===_0x22f7b5(0x1c0))return console[_0x22f7b5(0x1e4)](_0x22f7b5(0x1ef)),_0x157740[_0x22f7b5(0x1ac)](0xc8)[_0x22f7b5(0x1ed)]({'bot':_0x22f7b5(0x1c0)});const _0x13cf8f=getCachedResponse(_0xd7194f);if(_0x13cf8f)return console['log'](_0x22f7b5(0x1f1),_0x13cf8f),_0x157740[_0x22f7b5(0x1ac)](0xc8)[_0x22f7b5(0x1ed)]({'bot':'\x20'+_0x13cf8f});if(isGreeting(_0xd7194f)){const _0x8d7fdd=responses[Math[_0x22f7b5(0x1b1)](Math[_0x22f7b5(0x1e3)]()*responses['length'])];return cacheResponse(_0xd7194f,_0x8d7fdd),_0x157740['status'](0xc8)[_0x22f7b5(0x1ed)]({'bot':'\x20'+_0x8d7fdd});}if(isAskingForDate(_0xd7194f)){const _0xcb6f19=getCurrentDate();return cacheResponse(_0xd7194f,_0x22f7b5(0x1d0)+_0xcb6f19),_0x157740['status'](0xc8)[_0x22f7b5(0x1ed)]({'bot':_0x22f7b5(0x1ad)+_0xcb6f19});}const _0x5e0398=_0xd7194f['toLowerCase']();let _0x325669=null,_0x2a14c3=null;const _0x1d8d03=_0x5e0398['match'](/(\d+)\s*marks?/i),_0x30b291=_0x5e0398['match'](/(\d+)\s*words?/i),_0x5c8131=_0x5e0398[_0x22f7b5(0x1b2)](/(\d+)\s*(points?|steps?)/i);if(_0x1d8d03){const _0x31dd8f=parseInt(_0x1d8d03[0x1],0xa);markCategories[_0x31dd8f]&&(_0x325669=markCategories[_0x31dd8f][_0x22f7b5(0x1f7)],_0x2a14c3=markCategories[_0x31dd8f]['subtopics']);}else{if(_0x30b291)_0x325669=parseInt(_0x30b291[0x1],0xa);else{if(_0x5c8131){const _0x15aa3b=parseInt(_0x5c8131[0x1],0xa),_0x307e02=_0x15aa3b+0x3;_0x325669=_0x307e02*0xa;}}}if(_0x2a14c3)_0xd7194f+=_0x22f7b5(0x1af)+_0x2a14c3+'.';else _0x325669?_0xd7194f+='\x20Please\x20provide\x20the\x20correct\x20response\x20in\x20'+_0x325669+'\x20words.':_0xd7194f+=_0x22f7b5(0x1d8);mentionsDiagram(_0xd7194f)&&(_0xd7194f+=_0x22f7b5(0x1a8));const _0x3442f2=Math['floor'](Math[_0x22f7b5(0x1d1)]((_0x325669||0x64)*1.5,0x7d0));_0xe13004[_0x22f7b5(0x1e0)](HF_API_URL,{'inputs':_0xd7194f,'parameters':{'temperature':0.7,'max_new_tokens':_0x3442f2,'top_p':0.9}},{'headers':{'Authorization':_0x22f7b5(0x1d3)+HF_API_KEY,'Content-Type':_0x22f7b5(0x1f8)}})['then'](_0x411943=>{const _0x329b23=_0x22f7b5;console[_0x329b23(0x1e4)](_0x329b23(0x1c6),_0x411943[_0x329b23(0x1eb)]);let _0x5027b0=_0x329b23(0x1dc);if(_0x411943[_0x329b23(0x1eb)]&&_0x411943['data']['length']>0x0)_0x5027b0=_0x411943['data'][0x0][_0x329b23(0x1cc)]||_0x329b23(0x1dc);else _0x411943[_0x329b23(0x1eb)]&&_0x411943[_0x329b23(0x1eb)][_0x329b23(0x1cc)]&&(_0x5027b0=_0x411943[_0x329b23(0x1eb)][_0x329b23(0x1cc)]);_0x5027b0['toLowerCase']()[_0x329b23(0x1f5)](_0xd7194f[_0x329b23(0x1ea)]())&&(_0x5027b0=_0x5027b0[_0x329b23(0x1e2)](_0xd7194f[_0x329b23(0x1b7)])[_0x329b23(0x1bd)]());_0x2a14c3&&_0x5027b0[_0x329b23(0x1cf)](_0x2a14c3)&&(_0x5027b0=_0x5027b0[_0x329b23(0x1a4)](_0x2a14c3,'')[_0x329b23(0x1bd)]());const _0x7053c=_0x325669?_0x325669*0x6:0x7d0;if(_0x5027b0[_0x329b23(0x1b7)]>_0x7053c){const _0x2d2d47=_0x5027b0[_0x329b23(0x1e2)](0x0,_0x7053c),_0x2b911b=_0x2d2d47[_0x329b23(0x1e7)]('.');_0x2b911b>-0x1?_0x5027b0=_0x2d2d47[_0x329b23(0x1e2)](0x0,_0x2b911b+0x1):_0x5027b0=_0x2d2d47;}const _0x332206=_0x5027b0[_0x329b23(0x1e7)]('.');_0x332206<_0x5027b0[_0x329b23(0x1b7)]-0x1&&(_0x5027b0=_0x5027b0['slice'](0x0,_0x332206+0x1));const _0x2f28b5=sanitizeResponse(_0x5027b0);cacheResponse(_0xd7194f,_0x2f28b5),_0x157740[_0x329b23(0x1ac)](0xc8)[_0x329b23(0x1ed)]({'bot':'\x20'+_0x2f28b5});})[_0x22f7b5(0x1ca)](_0x5de9d4=>{const _0x54f198=_0x22f7b5;console[_0x54f198(0x1b5)](_0x54f198(0x1ba),_0x5de9d4),_0x157740[_0x54f198(0x1ac)](0x1f4)[_0x54f198(0x1ed)]({'error':_0x54f198(0x1a7)});});}catch(_0x26f5bb){console[_0x22f7b5(0x1b5)](_0x22f7b5(0x1a9),_0x26f5bb),_0x157740[_0x22f7b5(0x1ac)](0x1f4)['send']({'error':'Internal\x20server\x20error'});}});const PORT=process[_0x580c47(0x1ec)][_0x580c47(0x1b6)]||0x1388,server=app[_0x580c47(0x1e8)](PORT,()=>console[_0x580c47(0x1e4)](_0x580c47(0x1ab)+PORT)),gracefulShutdown=()=>{const _0x51af44=_0x580c47;console[_0x51af44(0x1e4)](_0x51af44(0x1be)),server[_0x51af44(0x1d2)](()=>{const _0x25c644=_0x51af44;console[_0x25c644(0x1e4)](_0x25c644(0x1de)),process[_0x25c644(0x1ce)](0x0);}),setTimeout(()=>{const _0x135947=_0x51af44;console[_0x135947(0x1b5)](_0x135947(0x1d5)),process[_0x135947(0x1ce)](0x1);},0x2710);};process['on'](_0x580c47(0x1bc),gracefulShutdown),process['on']('SIGINT',gracefulShutdown);
+import express from 'express'; 
+import * as dotenv from 'dotenv';
+import cors from 'cors';
+import axios from 'axios';
+
+dotenv.config();
+
+const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
+const HF_API_KEY = process.env.HF_API_KEY;
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+let cache = {};
+
+// Function to clear the cache
+const clearCache = () => {
+  cache = {};
+  console.log('Cache cleared successfully');
+};
+
+// Set intervals to clear cache
+const cacheClearInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
+setInterval(clearCache, cacheClearInterval);
+
+const sanitizeResponse = (response) => {
+  let sanitized = response.replace("Here is the response:", "");
+  return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
+};
+
+const responses = [
+  "How can I assist you?",
+  "How can I help you?",
+  "Is there anything else you'd like to know?",
+  "Feel free to ask any questions.",
+  "I'm here to help. What can I do for you?",
+];
+
+const isGreeting = (prompt) => {
+  const greetings = [
+    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
+  ];
+  const normalizedPrompt = prompt.trim().toLowerCase();
+  return greetings.includes(normalizedPrompt);
+};
+
+const markCategories = {
+  1: { words: 20 },
+  2: { words: 50 },
+  3: { words: 70 },
+  4: { words: 90 },
+  5: { words: 150 },
+  6: { words: 190 },
+  7: { words: 240, subtopics: 'detailed explanation, multiple examples, and analysis' },
+  8: { words: 290, subtopics: 'multiple subtopics, examples, explanations, and analysis' },
+  10: { words: 530, subtopics: 'detailed exploration, several subtopics, introduction, main content, and conclusion' },
+  12: { words: 630, subtopics: 'comprehensive coverage, numerous subtopics, in-depth analysis, examples, and conclusion' },
+  15: { words: 680, subtopics: 'extensive subtopics, background information, detailed explanations, case studies, critical analysis, and strong conclusion' },
+  20: { words: 880, subtopics: 'thorough coverage, extensive subtopics, historical context, detailed arguments, multiple perspectives, in-depth analysis, case studies, and comprehensive conclusion' }
+};
+
+const isAskingForDate = (prompt) => {
+  const dateKeywords = [
+    'date', 'current date', 'what date', 'today\'s date', 'current day'
+  ];
+  const normalizedPrompt = prompt.trim().toLowerCase();
+  return dateKeywords.some(keyword => normalizedPrompt.includes(keyword));
+};
+
+const getCurrentDate = () => {
+  const now = new Date();
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+  return now.toLocaleString('en-US', options);
+};
+
+const mentionsDiagram = (prompt) => {
+  return prompt.toLowerCase().includes('diagram');
+};
+
+// Function to retrieve cached response or null if not cached
+const getCachedResponse = (prompt) => {
+  return cache[prompt] || null;
+};
+
+// Function to cache response
+const cacheResponse = (prompt, response) => {
+  cache[prompt] = response;
+};
+
+// Function to load the model by making a dummy request
+const loadModel = async () => {
+  console.log('Initializing model...');
+  try {
+    await axios.post(HF_API_URL, {
+      inputs: 'Initial model load',
+      parameters: {
+        temperature: 0.7,
+        max_new_tokens: 1,
+        top_p: 0.9
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${HF_API_KEY}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    console.log('Model loaded successfully.');
+  } catch (error) {
+    console.error('Error loading model:', error);
+  }
+};
+
+// Initial model load to avoid delay on first request
+loadModel();
+
+app.get('/', (req, res) => {
+  res.status(200).send({ message: 'Hi Sister' });
+});
+
+app.post('/', async (req, res) => {
+  console.log('Received a POST request:', req.body); // Log incoming requests
+
+  try {
+    let { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).send({ error: 'Prompt is required' });
+    }
+
+    // Handle warm-up prompt
+    if (prompt === 'Initialise model') {
+      console.log('Warm-up message received: Initialise model');
+      return res.status(200).send({ bot: 'Initialise model' });
+    }
+
+    const cachedResponse = getCachedResponse(prompt);
+    if (cachedResponse) {
+      console.log('Response retrieved from cache:', cachedResponse);
+      return res.status(200).send({ bot: ` ${cachedResponse}` }); // Add a space at the beginning
+    }
+
+    if (isGreeting(prompt)) {
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      cacheResponse(prompt, randomResponse);
+      return res.status(200).send({ bot: ` ${randomResponse}` }); // Add a space at the beginning
+    }
+
+    if (isAskingForDate(prompt)) {
+      const currentDate = getCurrentDate();
+      cacheResponse(prompt, `The current date is: ${currentDate}`);
+      return res.status(200).send({ bot: ` The current date is: ${currentDate}` }); // Add a space at the beginning
+    }
+
+    const promptLowerCase = prompt.toLowerCase();
+    let maxWords = null;
+    let subtopics = null;
+
+    const markMatch = promptLowerCase.match(/(\d+)\s*marks?/i);
+    const wordMatch = promptLowerCase.match(/(\d+)\s*words?/i);
+    const pointsMatch = promptLowerCase.match(/(\d+)\s*(points?|steps?)/i);
+
+    if (markMatch) {
+      const marks = parseInt(markMatch[1], 10);
+      if (markCategories[marks]) {
+        maxWords = markCategories[marks].words;
+        subtopics = markCategories[marks].subtopics;
+      }
+    } else if (wordMatch) {
+      maxWords = parseInt(wordMatch[1], 10);
+    } else if (pointsMatch) {
+      const pointsRequested = parseInt(pointsMatch[1], 10);
+      const adjustedPoints = pointsRequested + 3;
+      maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
+    }
+
+    if (subtopics) {
+      prompt += ` Please cover the following subtopics: ${subtopics}.`;
+    } else if (maxWords) {
+      prompt += ` Please provide the correct response in ${maxWords} words.`;
+    } else {
+      prompt += " Provide an accurate response.";
+    }
+
+    if (mentionsDiagram(prompt)) {
+      prompt += " Include a title name with the diagram name in text.";
+    }
+
+    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
+
+    axios.post(HF_API_URL, {
+      inputs: prompt,
+      parameters: {
+        temperature: 0.7,
+        max_new_tokens: maxNewTokens,
+        top_p: 0.9
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${HF_API_KEY}`,
+        'Content-Type': 'application/json',
+      }
+    }).then(response => {
+      console.log('Response from Hugging Face API:', response.data);
+
+      let botResponse = 'No response generated';
+
+      if (response.data && response.data.length > 0) {
+        botResponse = response.data[0].generated_text || 'No response generated';
+      } else if (response.data && response.data.generated_text) {
+        botResponse = response.data.generated_text;
+      }
+
+      // Ensure the response does not repeat the prompt and handle truncation more robustly
+      if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
+        botResponse = botResponse.slice(prompt.length).trim();
+      }
+
+      // Remove the subtopics prompt from the response if present
+      if (subtopics && botResponse.includes(subtopics)) {
+        botResponse = botResponse.replace(subtopics, '').trim();
+      }
+
+      // Trim based on sentence boundaries, ensuring the text is concise and complete
+      const maxLength = maxWords ? maxWords * 6 : 2000;
+      if (botResponse.length > maxLength) {
+        const truncated = botResponse.slice(0, maxLength);
+        const lastSentenceEnd = truncated.lastIndexOf('.');
+        if (lastSentenceEnd > -1) {
+          botResponse = truncated.slice(0, lastSentenceEnd + 1);
+        } else {
+          botResponse = truncated;
+        }
+      }
+
+      // Remove incomplete or truncated sentences at the end
+      const lastSentenceEnd = botResponse.lastIndexOf('.');
+      if (lastSentenceEnd < botResponse.length - 1) {
+        botResponse = botResponse.slice(0, lastSentenceEnd + 1);
+      }
+
+      const sanitizedResponse = sanitizeResponse(botResponse);
+
+      // Cache the response
+      cacheResponse(prompt, sanitizedResponse);
+
+      res.status(200).send({ bot: ` ${sanitizedResponse}` }); // Add a space at the beginning
+    }).catch(error => {
+      console.error('Error communicating with Hugging Face API:', error);
+      res.status(500).send({ error: 'Error processing the request' });
+    });
+  } catch (error) {
+    console.error('Error in the server code:', error);
+    res.status(500).send({ error: 'Internal server error' });
+  }
+});
+
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => console.log(`Server is running on port http://localhost:${PORT}`));
+
+// Graceful shutdown logic
+const gracefulShutdown = () => {
+  console.log('Shutting down gracefully...');
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+
+  // Force shutdown after 10 seconds if the server is still running
+  setTimeout(() => {
+    console.error('Forcing shutdown...');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
