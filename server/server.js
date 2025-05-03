@@ -5,7 +5,7 @@ import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/google/flan-t5-large';
+const HF_API_URL = 'https://api-inference.huggingface.co/models/ahxt/LiteLlama-460M-1T';
 const HF_API_KEY = process.env.HF_API_KEY;
 
 const app = express();
