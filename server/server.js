@@ -1,14 +1,11 @@
-import express from 'express';
+import express from 'express'; 
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
 
 dotenv.config();
 
-// ✅ FIX: corrected model endpoint URL
-const HF_API_URL =
-  'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
-
+const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Llama-3.1-8B-Instruct';
 const HF_API_KEY = process.env.HF_API_KEY;
 
 const app = express();
@@ -17,39 +14,32 @@ app.use(express.json());
 
 let cache = {};
 
+// Function to clear the cache
 const clearCache = () => {
   cache = {};
   console.log('Cache cleared successfully');
 };
 
-const cacheClearInterval = 10 * 60 * 1000;
+// Set intervals to clear cache
+const cacheClearInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
 setInterval(clearCache, cacheClearInterval);
 
 const sanitizeResponse = (response) => {
-  let sanitized = response.replace('Here is the response:', '');
-  return sanitized
-    .replace(/[!@#*]/g, '')
-    .replace(/(\.\.\.|…)*$/, '')
-    .trim();
+  let sanitized = response.replace("Here is the response:", "");
+  return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
 };
 
 const responses = [
-  'How can I assist you?',
-  'How can I help you?',
+  "How can I assist you?",
+  "How can I help you?",
   "Is there anything else you'd like to know?",
-  'Feel free to ask any questions.',
+  "Feel free to ask any questions.",
   "I'm here to help. What can I do for you?",
 ];
 
 const isGreeting = (prompt) => {
   const greetings = [
-    'hi',
-    'hello',
-    'hey',
-    'hi bro',
-    'hi sister',
-    'hello there',
-    'hey there',
+    'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
   ];
   const normalizedPrompt = prompt.trim().toLowerCase();
   return greetings.includes(normalizedPrompt);
@@ -72,14 +62,10 @@ const markCategories = {
 
 const isAskingForDate = (prompt) => {
   const dateKeywords = [
-    'date',
-    'current date',
-    'what date',
-    "today's date",
-    'current day',
+    'date', 'current date', 'what date', 'today\'s date', 'current day'
   ];
   const normalizedPrompt = prompt.trim().toLowerCase();
-  return dateKeywords.some((keyword) => normalizedPrompt.includes(keyword));
+  return dateKeywords.some(keyword => normalizedPrompt.includes(keyword));
 };
 
 const getCurrentDate = () => {
@@ -97,40 +83,40 @@ const mentionsDiagram = (prompt) => {
   return prompt.toLowerCase().includes('diagram');
 };
 
+// Function to retrieve cached response or null if not cached
 const getCachedResponse = (prompt) => {
   return cache[prompt] || null;
 };
 
+// Function to cache response
 const cacheResponse = (prompt, response) => {
   cache[prompt] = response;
 };
 
+// Function to load the model by making a dummy request
 const loadModel = async () => {
   console.log('Initializing model...');
   try {
-    await axios.post(
-      HF_API_URL,
-      {
-        inputs: 'Initial model load',
-        parameters: {
-          temperature: 0.7,
-          max_new_tokens: 1,
-          top_p: 0.9,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HF_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
+    await axios.post(HF_API_URL, {
+      inputs: 'Initial model load',
+      parameters: {
+        temperature: 0.7,
+        max_new_tokens: 1,
+        top_p: 0.9
       }
-    );
+    }, {
+      headers: {
+        'Authorization': `Bearer ${HF_API_KEY}`,
+        'Content-Type': 'application/json',
+      }
+    });
     console.log('Model loaded successfully.');
   } catch (error) {
-    console.error('Error loading model:', error?.response?.data || error.message);
+    console.error('Error loading model:', error);
   }
 };
 
+// Initial model load to avoid delay on first request
 loadModel();
 
 app.get('/', (req, res) => {
@@ -138,7 +124,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-  console.log('Received a POST request:', req.body);
+  console.log('Received a POST request:', req.body); // Log incoming requests
 
   try {
     let { prompt } = req.body;
@@ -147,6 +133,7 @@ app.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Prompt is required' });
     }
 
+    // Handle warm-up prompt
     if (prompt === 'Initialise model') {
       console.log('Warm-up message received: Initialise model');
       return res.status(200).send({ bot: 'Initialise model' });
@@ -155,22 +142,19 @@ app.post('/', async (req, res) => {
     const cachedResponse = getCachedResponse(prompt);
     if (cachedResponse) {
       console.log('Response retrieved from cache:', cachedResponse);
-      return res.status(200).send({ bot: ` ${cachedResponse}` });
+      return res.status(200).send({ bot: ` ${cachedResponse}` }); // Add a space at the beginning
     }
 
     if (isGreeting(prompt)) {
-      const randomResponse =
-        responses[Math.floor(Math.random() * responses.length)];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       cacheResponse(prompt, randomResponse);
-      return res.status(200).send({ bot: ` ${randomResponse}` });
+      return res.status(200).send({ bot: ` ${randomResponse}` }); // Add a space at the beginning
     }
 
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
       cacheResponse(prompt, `The current date is: ${currentDate}`);
-      return res
-        .status(200)
-        .send({ bot: ` The current date is: ${currentDate}` });
+      return res.status(200).send({ bot: ` The current date is: ${currentDate}` }); // Add a space at the beginning
     }
 
     const promptLowerCase = prompt.toLowerCase();
@@ -192,7 +176,7 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       const pointsRequested = parseInt(pointsMatch[1], 10);
       const adjustedPoints = pointsRequested + 3;
-      maxWords = adjustedPoints * 10;
+      maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
     }
 
     if (subtopics) {
@@ -200,85 +184,86 @@ app.post('/', async (req, res) => {
     } else if (maxWords) {
       prompt += ` Please provide the correct response in ${maxWords} words.`;
     } else {
-      prompt += ' Provide an accurate response.';
+      prompt += " Provide an accurate response.";
     }
 
     if (mentionsDiagram(prompt)) {
-      prompt +=
-        ' Include a title name with the diagram name in text.';
+      prompt += " Include a title name with the diagram name in text.";
     }
 
-    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000));
+    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
 
-    const hfResponse = await axios.post(
-      HF_API_URL,
-      {
-        inputs: prompt,
-        parameters: {
-          temperature: 0.7,
-          max_new_tokens: maxNewTokens,
-          top_p: 0.9,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HF_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
+    axios.post(HF_API_URL, {
+      inputs: prompt,
+      parameters: {
+        temperature: 0.7,
+        max_new_tokens: maxNewTokens,
+        top_p: 0.9
       }
-    );
+    }, {
+      headers: {
+        'Authorization': `Bearer ${HF_API_KEY}`,
+        'Content-Type': 'application/json',
+      }
+    }).then(response => {
+      console.log('Response from Hugging Face API:', response.data);
 
-    console.log('Response from Hugging Face API:', hfResponse.data);
+      let botResponse = 'No response generated';
 
-    let botResponse = 'No response generated';
+      if (response.data && response.data.length > 0) {
+        botResponse = response.data[0].generated_text || 'No response generated';
+      } else if (response.data && response.data.generated_text) {
+        botResponse = response.data.generated_text;
+      }
 
-    if (Array.isArray(hfResponse.data) && hfResponse.data[0]?.generated_text) {
-      botResponse = hfResponse.data[0].generated_text;
-    } else if (hfResponse.data?.generated_text) {
-      botResponse = hfResponse.data.generated_text;
-    }
+      // Ensure the response does not repeat the prompt and handle truncation more robustly
+      if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
+        botResponse = botResponse.slice(prompt.length).trim();
+      }
 
-    if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
-      botResponse = botResponse.slice(prompt.length).trim();
-    }
+      // Remove the subtopics prompt from the response if present
+      if (subtopics && botResponse.includes(subtopics)) {
+        botResponse = botResponse.replace(subtopics, '').trim();
+      }
 
-    if (subtopics && botResponse.includes(subtopics)) {
-      botResponse = botResponse.replace(subtopics, '').trim();
-    }
+      // Trim based on sentence boundaries, ensuring the text is concise and complete
+      const maxLength = maxWords ? maxWords * 6 : 2000;
+      if (botResponse.length > maxLength) {
+        const truncated = botResponse.slice(0, maxLength);
+        const lastSentenceEnd = truncated.lastIndexOf('.');
+        if (lastSentenceEnd > -1) {
+          botResponse = truncated.slice(0, lastSentenceEnd + 1);
+        } else {
+          botResponse = truncated;
+        }
+      }
 
-    const maxLength = maxWords ? maxWords * 6 : 2000;
-    if (botResponse.length > maxLength) {
-      const truncated = botResponse.slice(0, maxLength);
-      const lastSentenceEnd = truncated.lastIndexOf('.');
-      botResponse =
-        lastSentenceEnd > -1
-          ? truncated.slice(0, lastSentenceEnd + 1)
-          : truncated;
-    }
+      // Remove incomplete or truncated sentences at the end
+      const lastSentenceEnd = botResponse.lastIndexOf('.');
+      if (lastSentenceEnd < botResponse.length - 1) {
+        botResponse = botResponse.slice(0, lastSentenceEnd + 1);
+      }
 
-    const lastSentenceEnd = botResponse.lastIndexOf('.');
-    if (lastSentenceEnd < botResponse.length - 1) {
-      botResponse = botResponse.slice(0, lastSentenceEnd + 1);
-    }
+      const sanitizedResponse = sanitizeResponse(botResponse);
 
-    const sanitizedResponse = sanitizeResponse(botResponse);
-    cacheResponse(prompt, sanitizedResponse);
+      // Cache the response
+      cacheResponse(prompt, sanitizedResponse);
 
-    res.status(200).send({ bot: ` ${sanitizedResponse}` });
+      res.status(200).send({ bot: ` ${sanitizedResponse}` }); // Add a space at the beginning
+    }).catch(error => {
+      console.error('Error communicating with Hugging Face API:', error);
+      res.status(500).send({ error: 'Error processing the request' });
+    });
   } catch (error) {
-    console.error(
-      'Error communicating with Hugging Face API:',
-      error?.response?.data || error.message
-    );
-    res.status(500).send({ error: 'Error processing the request' });
+    console.error('Error in the server code:', error);
+    res.status(500).send({ error: 'Internal server error' });
   }
 });
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () =>
-  console.log(`Server is running on port http://localhost:${PORT}`)
-);
+const server = app.listen(PORT, () => console.log(`Server is running on port http://localhost:${PORT}`));
 
+// Graceful shutdown logic
 const gracefulShutdown = () => {
   console.log('Shutting down gracefully...');
   server.close(() => {
@@ -286,6 +271,7 @@ const gracefulShutdown = () => {
     process.exit(0);
   });
 
+  // Force shutdown after 10 seconds if the server is still running
   setTimeout(() => {
     console.error('Forcing shutdown...');
     process.exit(1);
