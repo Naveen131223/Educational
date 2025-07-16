@@ -1,11 +1,12 @@
-import express from 'express'; 
+import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import axios from 'axios';
 
 dotenv.config();
 
-const HF_API_URL = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
+// ✅ Use a generative chatbot model
+const HF_API_URL = 'https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill';
 const HF_API_KEY = process.env.HF_API_KEY;
 
 const app = express();
@@ -20,8 +21,8 @@ const clearCache = () => {
   console.log('Cache cleared successfully');
 };
 
-// Set intervals to clear cache
-const cacheClearInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
+// Set interval to clear cache every 10 minutes
+const cacheClearInterval = 10 * 60 * 1000;
 setInterval(clearCache, cacheClearInterval);
 
 const sanitizeResponse = (response) => {
@@ -98,10 +99,10 @@ const loadModel = async () => {
   console.log('Initializing model...');
   try {
     await axios.post(HF_API_URL, {
-      inputs: 'Initial model load',
+      inputs: 'Hello!',
       parameters: {
         temperature: 0.7,
-        max_new_tokens: 1,
+        max_new_tokens: 5,
         top_p: 0.9
       }
     }, {
@@ -112,7 +113,7 @@ const loadModel = async () => {
     });
     console.log('Model loaded successfully.');
   } catch (error) {
-    console.error('Error loading model:', error);
+    console.error('Error loading model:', error.response?.data || error.message);
   }
 };
 
@@ -124,7 +125,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-  console.log('Received a POST request:', req.body); // Log incoming requests
+  console.log('Received a POST request:', req.body);
 
   try {
     let { prompt } = req.body;
@@ -142,19 +143,19 @@ app.post('/', async (req, res) => {
     const cachedResponse = getCachedResponse(prompt);
     if (cachedResponse) {
       console.log('Response retrieved from cache:', cachedResponse);
-      return res.status(200).send({ bot: ` ${cachedResponse}` }); // Add a space at the beginning
+      return res.status(200).send({ bot: ` ${cachedResponse}` });
     }
 
     if (isGreeting(prompt)) {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       cacheResponse(prompt, randomResponse);
-      return res.status(200).send({ bot: ` ${randomResponse}` }); // Add a space at the beginning
+      return res.status(200).send({ bot: ` ${randomResponse}` });
     }
 
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
       cacheResponse(prompt, `The current date is: ${currentDate}`);
-      return res.status(200).send({ bot: ` The current date is: ${currentDate}` }); // Add a space at the beginning
+      return res.status(200).send({ bot: ` The current date is: ${currentDate}` });
     }
 
     const promptLowerCase = prompt.toLowerCase();
@@ -176,7 +177,7 @@ app.post('/', async (req, res) => {
     } else if (pointsMatch) {
       const pointsRequested = parseInt(pointsMatch[1], 10);
       const adjustedPoints = pointsRequested + 3;
-      maxWords = adjustedPoints * 10; // assume roughly 10 words per point/step
+      maxWords = adjustedPoints * 10;
     }
 
     if (subtopics) {
@@ -191,7 +192,7 @@ app.post('/', async (req, res) => {
       prompt += " Include a title name with the diagram name in text.";
     }
 
-    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000)); // Ensure integer value
+    const maxNewTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000));
 
     axios.post(HF_API_URL, {
       inputs: prompt,
@@ -211,22 +212,24 @@ app.post('/', async (req, res) => {
       let botResponse = 'No response generated';
 
       if (response.data && response.data.length > 0) {
-        botResponse = response.data[0].generated_text || 'No response generated';
+        botResponse =
+          response.data[0].generated_text ||
+          response.data[0].summary_text ||
+          'No response generated';
       } else if (response.data && response.data.generated_text) {
         botResponse = response.data.generated_text;
+      } else if (response.data && response.data.summary_text) {
+        botResponse = response.data.summary_text;
       }
 
-      // Ensure the response does not repeat the prompt and handle truncation more robustly
       if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
         botResponse = botResponse.slice(prompt.length).trim();
       }
 
-      // Remove the subtopics prompt from the response if present
       if (subtopics && botResponse.includes(subtopics)) {
         botResponse = botResponse.replace(subtopics, '').trim();
       }
 
-      // Trim based on sentence boundaries, ensuring the text is concise and complete
       const maxLength = maxWords ? maxWords * 6 : 2000;
       if (botResponse.length > maxLength) {
         const truncated = botResponse.slice(0, maxLength);
@@ -238,7 +241,6 @@ app.post('/', async (req, res) => {
         }
       }
 
-      // Remove incomplete or truncated sentences at the end
       const lastSentenceEnd = botResponse.lastIndexOf('.');
       if (lastSentenceEnd < botResponse.length - 1) {
         botResponse = botResponse.slice(0, lastSentenceEnd + 1);
@@ -246,12 +248,11 @@ app.post('/', async (req, res) => {
 
       const sanitizedResponse = sanitizeResponse(botResponse);
 
-      // Cache the response
       cacheResponse(prompt, sanitizedResponse);
 
-      res.status(200).send({ bot: ` ${sanitizedResponse}` }); // Add a space at the beginning
+      res.status(200).send({ bot: ` ${sanitizedResponse}` });
     }).catch(error => {
-      console.error('Error communicating with Hugging Face API:', error);
+      console.error('Error communicating with Hugging Face API:', error.response?.data || error.message);
       res.status(500).send({ error: 'Error processing the request' });
     });
   } catch (error) {
@@ -271,7 +272,6 @@ const gracefulShutdown = () => {
     process.exit(0);
   });
 
-  // Force shutdown after 10 seconds if the server is still running
   setTimeout(() => {
     console.error('Forcing shutdown...');
     process.exit(1);
