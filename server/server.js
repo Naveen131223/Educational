@@ -14,22 +14,16 @@ app.use(express.json());
 
 let cache = {};
 
-// Function to clear the cache
 const clearCache = () => {
   cache = {};
   console.log('Cache cleared successfully');
 };
 
-// Clear cache every 10 minutes
-const cacheClearInterval = 10 * 60 * 1000;
-setInterval(clearCache, cacheClearInterval);
+setInterval(clearCache, 10 * 60 * 1000); // 10 minutes
 
 const sanitizeResponse = (response) => {
   let sanitized = response.replace("Here is the response:", "");
-  return sanitized
-    .replace(/[!@#*]/g, '')
-    .replace(/(\.\.\.|…)*$/, '')
-    .trim();
+  return sanitized.replace(/[!@#*]/g, '').replace(/(\.\.\.|…)*$/, '').trim();
 };
 
 const responses = [
@@ -44,8 +38,7 @@ const isGreeting = (prompt) => {
   const greetings = [
     'hi', 'hello', 'hey', 'hi bro', 'hi sister', 'hello there', 'hey there'
   ];
-  const normalizedPrompt = prompt.trim().toLowerCase();
-  return greetings.includes(normalizedPrompt);
+  return greetings.includes(prompt.trim().toLowerCase());
 };
 
 const markCategories = {
@@ -67,67 +60,28 @@ const isAskingForDate = (prompt) => {
   const dateKeywords = [
     'date', 'current date', 'what date', 'today\'s date', 'current day'
   ];
-  const normalizedPrompt = prompt.trim().toLowerCase();
-  return dateKeywords.some(keyword => normalizedPrompt.includes(keyword));
+  return dateKeywords.some(keyword => prompt.toLowerCase().includes(keyword));
 };
 
 const getCurrentDate = () => {
-  const now = new Date();
-  const options = {
+  return new Date().toLocaleString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  };
-  return now.toLocaleString('en-US', options);
+  });
 };
 
-const mentionsDiagram = (prompt) => {
-  return prompt.toLowerCase().includes('diagram');
-};
+const mentionsDiagram = (prompt) => prompt.toLowerCase().includes('diagram');
 
-const getCachedResponse = (prompt) => {
-  return cache[prompt] || null;
-};
-
-const cacheResponse = (prompt, response) => {
-  cache[prompt] = response;
-};
-
-const loadModel = async () => {
-  console.log('Initializing model...');
-  try {
-    await axios.post(OPENROUTER_API_URL, {
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: 'Initial model load' }
-      ],
-      temperature: 0.7,
-      top_p: 0.9,
-      max_tokens: 1
-    }, {
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-      }
-    });
-    console.log('Model loaded successfully.');
-  } catch (error) {
-    console.error('Error loading model:', error?.response?.data || error.message);
-  }
-};
-
-// Initial model load
-loadModel();
+const getCachedResponse = (prompt) => cache[prompt] || null;
+const cacheResponse = (prompt, response) => { cache[prompt] = response; };
 
 app.get('/', (req, res) => {
   res.status(200).send({ message: 'Hi Sister' });
 });
 
 app.post('/', async (req, res) => {
-  console.log('Received a POST request:', req.body);
-
   try {
     let { prompt } = req.body;
 
@@ -136,13 +90,11 @@ app.post('/', async (req, res) => {
     }
 
     if (prompt === 'Initialise model') {
-      console.log('Warm-up message received: Initialise model');
       return res.status(200).send({ bot: 'Initialise model' });
     }
 
     const cachedResponse = getCachedResponse(prompt);
     if (cachedResponse) {
-      console.log('Response retrieved from cache:', cachedResponse);
       return res.status(200).send({ bot: ` ${cachedResponse}` });
     }
 
@@ -154,8 +106,9 @@ app.post('/', async (req, res) => {
 
     if (isAskingForDate(prompt)) {
       const currentDate = getCurrentDate();
-      cacheResponse(prompt, `The current date is: ${currentDate}`);
-      return res.status(200).send({ bot: ` The current date is: ${currentDate}` });
+      const message = `The current date is: ${currentDate}`;
+      cacheResponse(prompt, message);
+      return res.status(200).send({ bot: ` ${message}` });
     }
 
     const promptLowerCase = prompt.toLowerCase();
@@ -176,8 +129,7 @@ app.post('/', async (req, res) => {
       maxWords = parseInt(wordMatch[1], 10);
     } else if (pointsMatch) {
       const pointsRequested = parseInt(pointsMatch[1], 10);
-      const adjustedPoints = pointsRequested + 3;
-      maxWords = adjustedPoints * 10;
+      maxWords = (pointsRequested + 3) * 10;
     }
 
     if (subtopics) {
@@ -192,45 +144,28 @@ app.post('/', async (req, res) => {
       prompt += " Include a title name with the diagram name in text.";
     }
 
-    const maxTokens = Math.floor(Math.min((maxWords || 100) * 6, 2000));
+    const maxTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000));
 
     const apiResponse = await axios.post(OPENROUTER_API_URL, {
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: prompt }
-      ],
+      model: "mistral-7b-instruct",
+      messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      top_p: 0.9,
-      max_tokens: maxTokens
+      max_tokens: maxTokens,
     }, {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'http://localhost', // Required by OpenRouter
         'Content-Type': 'application/json',
       }
     });
 
-    console.log('Response from OpenRouter:', apiResponse.data);
-
-    let botResponse = apiResponse.data?.choices?.[0]?.message?.content || 'No response generated';
-
-    if (botResponse.toLowerCase().startsWith(prompt.toLowerCase())) {
-      botResponse = botResponse.slice(prompt.length).trim();
-    }
-
-    if (subtopics && botResponse.includes(subtopics)) {
-      botResponse = botResponse.replace(subtopics, '').trim();
-    }
+    let botResponse = apiResponse.data?.choices?.[0]?.message?.content || "No response generated";
 
     const maxLength = maxWords ? maxWords * 6 : 2000;
     if (botResponse.length > maxLength) {
       const truncated = botResponse.slice(0, maxLength);
       const lastSentenceEnd = truncated.lastIndexOf('.');
-      if (lastSentenceEnd > -1) {
-        botResponse = truncated.slice(0, lastSentenceEnd + 1);
-      } else {
-        botResponse = truncated;
-      }
+      botResponse = lastSentenceEnd > -1 ? truncated.slice(0, lastSentenceEnd + 1) : truncated;
     }
 
     const lastSentenceEnd = botResponse.lastIndexOf('.');
@@ -239,20 +174,18 @@ app.post('/', async (req, res) => {
     }
 
     const sanitizedResponse = sanitizeResponse(botResponse);
-
     cacheResponse(prompt, sanitizedResponse);
 
     res.status(200).send({ bot: ` ${sanitizedResponse}` });
+
   } catch (error) {
-    console.error('Error communicating with OpenRouter API:', error?.response?.data || error.message);
-    res.status(500).send({ error: 'Error processing the request' });
+    console.error('Error in POST /:', error?.response?.data || error.message);
+    res.status(500).send({ error: 'Failed to process your request' });
   }
 });
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () =>
-  console.log(`Server is running on port http://localhost:${PORT}`)
-);
+const server = app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
 const gracefulShutdown = () => {
   console.log('Shutting down gracefully...');
@@ -262,7 +195,7 @@ const gracefulShutdown = () => {
   });
 
   setTimeout(() => {
-    console.error('Forcing shutdown...');
+    console.error('Force shutdown...');
     process.exit(1);
   }, 10000);
 };
