@@ -147,14 +147,14 @@ app.post('/', async (req, res) => {
     const maxTokens = Math.floor(Math.min((maxWords || 100) * 1.5, 2000));
 
     const apiResponse = await axios.post(OPENROUTER_API_URL, {
-      model: "mistral-7b-instruct",
+      model: "meta-llama/llama-3-8b-instruct",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
       max_tokens: maxTokens,
     }, {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'http://localhost', // Required by OpenRouter
+        'HTTP-Referer': 'http://localhost',
         'Content-Type': 'application/json',
       }
     });
