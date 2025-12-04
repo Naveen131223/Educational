@@ -224,7 +224,7 @@ form.addEventListener('keyup', function(e) {
 });
 
 /* ================= SCROLL ================= */
-
+ 
 function scrollToLatestMessage() {
   chatContainer.scrollTo({
     top: chatContainer.scrollHeight,
