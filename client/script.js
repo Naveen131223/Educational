@@ -1,1 +1,241 @@
-const _0x2d8374=_0x3b7a;(function(_0x4ce43d,_0x4f1cff){const _0x130e00=_0x3b7a,_0x1d584d=_0x4ce43d();while(!![]){try{const _0x215b4f=parseInt(_0x130e00(0xf9))/0x1*(parseInt(_0x130e00(0xf4))/0x2)+-parseInt(_0x130e00(0xc3))/0x3*(parseInt(_0x130e00(0xc8))/0x4)+parseInt(_0x130e00(0xfa))/0x5*(parseInt(_0x130e00(0xdf))/0x6)+parseInt(_0x130e00(0xbc))/0x7*(parseInt(_0x130e00(0xc6))/0x8)+-parseInt(_0x130e00(0x108))/0x9+parseInt(_0x130e00(0xf8))/0xa*(-parseInt(_0x130e00(0xd8))/0xb)+parseInt(_0x130e00(0xfb))/0xc*(parseInt(_0x130e00(0xca))/0xd);if(_0x215b4f===_0x4f1cff)break;else _0x1d584d['push'](_0x1d584d['shift']());}catch(_0x34a44a){_0x1d584d['push'](_0x1d584d['shift']());}}}(_0x3883,0x93e94));import _0x480ba7 from'./assets/bot.svg';function _0x3883(){const _0xc67a02=['bot','submit','status','Error\x20sending\x20feedback:','form','send','random','Read\x20AI\x20Output','Submit','Stop\x20Reading','Provide\x20feedback','speechSynthesis','beforeend','addEventListener','314wjnBho','\x22\x20/>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22message\x22\x20id=\x22','Cancel','disabled','6520350aRsxBx','3155UtSKoV','130ejLHJR','4506036HmMlMq','Continue\x20Reading','pitch','button','now','value','\x0a\x20\x20background-color:\x20#007bff;\x0a\x20\x20color:\x20#fff;\x0a\x20\x20padding:\x208px\x2012px;\x0a\x20\x20border:\x20none;\x0a\x20\x20border-radius:\x204px;\x0a\x20\x20margin-top:\x2010px;\x0a\x20\x20cursor:\x20pointer;\x0a','load','type','en-IN-ta','button[type=\x22submit\x22]','textContent','user','4161528vDIwYo','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span>','https://educational-development.onrender.com/','https://educational-development.onrender.com/feedback','....','Google\x20US\x20English','text','textarea','keyup','</span>','querySelector','application/json','length','trim','\x0a\x20\x20background-color:\x20#28a745;\x0a\x20\x20color:\x20#fff;\x0a\x20\x20padding:\x208px\x2012px;\x0a\x20\x20border:\x20none;\x0a\x20\x20border-radius:\x204px;\x0a\x20\x20margin-top:\x2010px;\x0a\x20\x20cursor:\x20pointer;\x0a\x20\x20margin-left:\x2010px;\x0a','responseText','POST','lang','262164SqtfBk','setAttribute','parse','input','onend','statusText','innerHTML','79719RCLECf','click','Failed\x20to\x20send\x20feedback:','136ltYXeQ','add','124TUpmmn','getElementById','39dIdtim','reset','feedback-form','classList','Content-Type','setRequestHeader','toString','keyCode','appendChild','open','id-','readyState','error','cssText','11dftxUD','voiceURI','<span>','push','speak','onreadystatechange','cancel','65886OddSKV','Something\x20went\x20wrong','createElement','removeChild','preventDefault','style','printButtonContainer'];_0x3883=function(){return _0xc67a02;};return _0x3883();}import _0x15ffaa from'./assets/user.svg';const form=document[_0x2d8374(0x112)](_0x2d8374(0xea)),chatContainer=document['querySelector']('#chat_container'),input=form[_0x2d8374(0x112)](_0x2d8374(0x10f)),submitButton=form[_0x2d8374(0x112)](_0x2d8374(0x105)),printButton=document[_0x2d8374(0xe1)](_0x2d8374(0xfe)),continueReadingButton=document[_0x2d8374(0xe1)](_0x2d8374(0xfe));let loadInterval;const userChats=[],botChats=[];let utterance,currentUtteranceIndex=-0x1,isReading=![];printButton['style'][_0x2d8374(0xd7)]=_0x2d8374(0x101),continueReadingButton[_0x2d8374(0xe4)][_0x2d8374(0xd7)]=_0x2d8374(0x116),printButton['textContent']='Read\x20AI\x20Output',continueReadingButton[_0x2d8374(0x106)]=_0x2d8374(0xfc);function toggleReading(_0x5a1c99,_0x1ce9ea){const _0x28ac16=_0x2d8374;isReading&&currentUtteranceIndex===_0x1ce9ea?(window[_0x28ac16(0xf1)][_0x28ac16(0xde)](),isReading=![],printButton[_0x28ac16(0x106)]=_0x28ac16(0xed)):(currentUtteranceIndex!==_0x1ce9ea&&(utterance=new SpeechSynthesisUtterance(_0x5a1c99),currentUtteranceIndex=_0x1ce9ea,utterance[_0x28ac16(0xd9)]=_0x28ac16(0x10d),utterance[_0x28ac16(0xbb)]=_0x28ac16(0x104),utterance['volume']=0x4,utterance['rate']=0.9,utterance[_0x28ac16(0xfd)]=1.2,utterance[_0x28ac16(0xc0)]=()=>{const _0x52c515=_0x28ac16;isReading=![],printButton['textContent']=_0x52c515(0xed);const _0x2d585e=currentUtteranceIndex+0x1,_0x4953f4=botChats[_0x2d585e];_0x4953f4&&toggleReading(_0x4953f4[_0x52c515(0x100)],_0x2d585e);}),window[_0x28ac16(0xf1)][_0x28ac16(0xdc)](utterance),isReading=!![],printButton[_0x28ac16(0x106)]=_0x28ac16(0xef));}printButton[_0x2d8374(0xf3)](_0x2d8374(0xc4),()=>{const _0x32d261=_0x2d8374,_0x2763fc=botChats[botChats[_0x32d261(0x114)]-0x1];_0x2763fc&&toggleReading(_0x2763fc[_0x32d261(0x100)],botChats[_0x32d261(0x114)]-0x1);}),chatContainer[_0x2d8374(0xd2)](printButton),continueReadingButton[_0x2d8374(0xf3)](_0x2d8374(0xc4),()=>{const _0x322a4c=_0x2d8374,_0x5bb302=botChats[currentUtteranceIndex];_0x5bb302&&toggleReading(_0x5bb302[_0x322a4c(0x100)],currentUtteranceIndex);}),chatContainer['appendChild'](continueReadingButton);function loader(_0xabe0c){_0xabe0c['textContent']='',loadInterval=setInterval(()=>{const _0x596867=_0x3b7a;_0xabe0c[_0x596867(0x106)]+='.',_0xabe0c[_0x596867(0x106)]===_0x596867(0x10c)&&(_0xabe0c[_0x596867(0x106)]='');},0x64);}function generateUniqueId(){const _0x44f9f4=_0x2d8374,_0x5c6a1b=Date[_0x44f9f4(0xff)](),_0x400682=Math[_0x44f9f4(0xec)](),_0x1c535a=_0x400682[_0x44f9f4(0xd0)](0x10)['slice'](0x2,0x8);return _0x44f9f4(0xd4)+_0x5c6a1b+'-'+_0x1c535a;}function createChatStripe(_0x2547a6,_0x399ca2,_0x2735c8){const _0x5d60c7=_0x2d8374,_0x15ead0=_0x2547a6?_0x480ba7:_0x15ffaa,_0x1313f7={'isAi':_0x2547a6,'value':_0x399ca2};return _0x2547a6?botChats['push'](_0x1313f7):userChats[_0x5d60c7(0xdb)](_0x1313f7),'\x0a\x20\x20\x20\x20<div\x20class=\x22wrapper\x20'+(_0x2547a6?'ai':'')+'\x22>\x0a\x20\x20\x20\x20\x20\x20<div\x20class=\x22chat\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22profile\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<img\x20src=\x22'+_0x15ead0+'\x22\x20alt=\x22'+(_0x2547a6?_0x5d60c7(0xe6):_0x5d60c7(0x107))+_0x5d60c7(0xf5)+_0x2735c8+_0x5d60c7(0x109)+_0x399ca2+'</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20</div>\x0a\x20\x20';}let thinkingTimeout;const handleSubmit=function(_0x448928){const _0x594f92=_0x2d8374;_0x448928[_0x594f92(0xe3)]();const _0x3c6496=input[_0x594f92(0x100)][_0x594f92(0x115)]();if(_0x3c6496==='')return;submitButton[_0x594f92(0xf7)]=!![];const _0x43a61a=createChatStripe(![],_0x3c6496);chatContainer['insertAdjacentHTML'](_0x594f92(0xf2),_0x43a61a),form[_0x594f92(0xcb)](),scrollToLatestMessage();const _0x1f4c70=generateUniqueId(),_0x3a3187=createChatStripe(!![],'',_0x1f4c70);chatContainer['insertAdjacentHTML']('beforeend',_0x3a3187);const _0x4f4e9b=document[_0x594f92(0xc9)](_0x1f4c70);loader(_0x4f4e9b);try{thinkingTimeout=setTimeout(function(){const _0x1e6fc3=_0x594f92;try{const _0x2ce811=new XMLHttpRequest();_0x2ce811[_0x1e6fc3(0xd3)](_0x1e6fc3(0xba),_0x1e6fc3(0x10a),!![]),_0x2ce811[_0x1e6fc3(0xcf)](_0x1e6fc3(0xce),'application/json'),_0x2ce811[_0x1e6fc3(0xdd)]=function(){const _0x558036=_0x1e6fc3;if(_0x2ce811[_0x558036(0xd5)]===0x4){clearInterval(loadInterval),_0x4f4e9b[_0x558036(0x106)]='';if(_0x2ce811[_0x558036(0xe8)]===0xc8){const _0x30f41e=JSON[_0x558036(0xbe)](_0x2ce811[_0x558036(0x117)]),_0x58de3d=_0x30f41e[_0x558036(0xe6)][_0x558036(0x115)]();_0x4f4e9b[_0x558036(0xc2)]=_0x558036(0xda)+_0x58de3d+_0x558036(0x111),scrollToLatestMessage(),submitButton[_0x558036(0xf7)]=![],input['focus'](),listenForFeedback(_0x3c6496,_0x58de3d),toggleReading(_0x58de3d,botChats[_0x558036(0x114)]-0x1);}else{const _0x1dbb4c=_0x2ce811[_0x558036(0x117)];_0x4f4e9b[_0x558036(0x106)]=_0x558036(0xe0),alert(_0x1dbb4c),submitButton[_0x558036(0xf7)]=![];}}},_0x2ce811[_0x1e6fc3(0xeb)](JSON['stringify']({'prompt':_0x3c6496}));}catch(_0x186eac){_0x4f4e9b['textContent']='Something\x20went\x20wrong',console[_0x1e6fc3(0xd6)](_0x186eac),submitButton['disabled']=![];}},0x3e8);}catch(_0x26cba8){_0x4f4e9b[_0x594f92(0x106)]=_0x594f92(0xe0),console[_0x594f92(0xd6)](_0x26cba8),submitButton['disabled']=![];}},listenForFeedback=function(_0x13bc8b,_0x18b284){const _0x2ffbd8=_0x2d8374,_0x2d8bca=document[_0x2ffbd8(0xe1)](_0x2ffbd8(0xea)),_0x3d2719=document[_0x2ffbd8(0xe1)](_0x2ffbd8(0xbf)),_0x1793bb=document[_0x2ffbd8(0xe1)](_0x2ffbd8(0xfe)),_0x5f1dee=document[_0x2ffbd8(0xe1)](_0x2ffbd8(0xfe));_0x2d8bca[_0x2ffbd8(0xcd)][_0x2ffbd8(0xc7)](_0x2ffbd8(0xcc)),_0x3d2719['setAttribute'](_0x2ffbd8(0x103),_0x2ffbd8(0x10e)),_0x3d2719[_0x2ffbd8(0xbd)]('placeholder',_0x2ffbd8(0xf0)),_0x1793bb[_0x2ffbd8(0xbd)]('type',_0x2ffbd8(0xe7)),_0x1793bb[_0x2ffbd8(0x106)]=_0x2ffbd8(0xee),_0x5f1dee[_0x2ffbd8(0xbd)](_0x2ffbd8(0x103),'button'),_0x5f1dee[_0x2ffbd8(0x106)]=_0x2ffbd8(0xf6),_0x2d8bca[_0x2ffbd8(0xd2)](_0x3d2719),_0x2d8bca[_0x2ffbd8(0xd2)](_0x1793bb),_0x2d8bca[_0x2ffbd8(0xd2)](_0x5f1dee);const _0x4a4a77=document[_0x2ffbd8(0xe1)]('div');_0x4a4a77[_0x2ffbd8(0xcd)][_0x2ffbd8(0xc7)]('feedback-container'),_0x4a4a77[_0x2ffbd8(0xd2)](_0x2d8bca),chatContainer['appendChild'](_0x4a4a77),_0x2d8bca[_0x2ffbd8(0xf3)](_0x2ffbd8(0xe7),function(_0x4ae668){const _0x5aba6f=_0x2ffbd8;_0x4ae668['preventDefault']();const _0x4962f3=_0x3d2719[_0x5aba6f(0x100)][_0x5aba6f(0x115)]();if(_0x4962f3==='')return;sendFeedback(_0x13bc8b,_0x18b284,_0x4962f3),chatContainer[_0x5aba6f(0xe2)](_0x4a4a77);}),_0x5f1dee[_0x2ffbd8(0xf3)](_0x2ffbd8(0xc4),function(){const _0x4e2298=_0x2ffbd8;chatContainer[_0x4e2298(0xe2)](_0x4a4a77);});},sendFeedback=function(_0x939187,_0x15600e,_0x544255){const _0x201a2f=_0x2d8374;try{const _0x3380c9=new XMLHttpRequest();_0x3380c9['open']('POST',_0x201a2f(0x10b),!![]),_0x3380c9[_0x201a2f(0xcf)](_0x201a2f(0xce),_0x201a2f(0x113)),_0x3380c9[_0x201a2f(0xdd)]=function(){const _0x4dfbf8=_0x201a2f;_0x3380c9[_0x4dfbf8(0xd5)]===0x4&&_0x3380c9[_0x4dfbf8(0xe8)]!==0xc8&&console[_0x4dfbf8(0xd6)](_0x4dfbf8(0xc5),_0x3380c9[_0x4dfbf8(0xe8)],_0x3380c9[_0x4dfbf8(0xc1)]);},_0x3380c9[_0x201a2f(0xeb)](JSON['stringify']({'prompt':_0x939187,'botResponse':_0x15600e,'feedback':_0x544255}));}catch(_0x58cb19){console[_0x201a2f(0xd6)](_0x201a2f(0xe9),_0x58cb19);}};form[_0x2d8374(0xf3)](_0x2d8374(0xe7),handleSubmit),form[_0x2d8374(0xf3)](_0x2d8374(0x110),function(_0x561a73){const _0x4ea656=_0x2d8374;_0x561a73[_0x4ea656(0xd1)]===0xd&&handleSubmit(_0x561a73);});function _0x3b7a(_0x287492,_0x4ab7ec){const _0x38834a=_0x3883();return _0x3b7a=function(_0x3b7a15,_0x5efe1f){_0x3b7a15=_0x3b7a15-0xba;let _0x199038=_0x38834a[_0x3b7a15];return _0x199038;},_0x3b7a(_0x287492,_0x4ab7ec);}function scrollToLatestMessage(){chatContainer['scrollTo']({'top':chatContainer['scrollHeight'],'behavior':'smooth'});}window[_0x2d8374(0xf3)](_0x2d8374(0x102),function(){scrollToLatestMessage();});const printButtonContainer=document[_0x2d8374(0xc9)](_0x2d8374(0xe5)),continueReadingButtonContainer=document[_0x2d8374(0xc9)]('continueReadingButtonContainer');printButtonContainer['appendChild'](printButton),continueReadingButtonContainer[_0x2d8374(0xd2)](continueReadingButton);
+import bot from './assets/bot.svg';
+import user from './assets/user.svg';
+
+const form = document.querySelector('form');
+const chatContainer = document.querySelector('#chat_container');
+const input = form.querySelector('textarea');
+const submitButton = form.querySelector('button[type="submit"]');
+
+const printButton = document.createElement('button');
+const continueReadingButton = document.createElement('button');
+const muteButton = document.createElement('button');
+
+let loadInterval;
+const userChats = [];
+const botChats = [];
+let utterance;
+let currentUtteranceIndex = -1;
+let isReading = false;
+let isMuted = false; // ✅ MUTE STATE
+
+/* ================= BUTTON STYLES ================= */
+
+printButton.style.cssText = `
+  background-color: #007bff;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+`;
+printButton.textContent = 'Read AI Output';
+
+continueReadingButton.style.cssText = `
+  background-color: #28a745;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+`;
+continueReadingButton.textContent = 'Continue Reading';
+
+// ✅ MUTE BUTTON (RED / YELLOW ONLY)
+muteButton.style.cssText = `
+  background-color: #dc3545;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+`;
+muteButton.textContent = 'Mute Voice';
+
+/* ================= SPEECH FUNCTION ================= */
+
+function toggleReading(message, index) {
+  if (isMuted) return; // ✅ BLOCK VOICE WHEN MUTED
+
+  if (isReading && currentUtteranceIndex === index) {
+    window.speechSynthesis.cancel();
+    isReading = false;
+    printButton.textContent = 'Read AI Output';
+  } else {
+    if (currentUtteranceIndex !== index) {
+      utterance = new SpeechSynthesisUtterance(message);
+      currentUtteranceIndex = index;
+      utterance.lang = 'en-IN';
+      utterance.volume = 1;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.2;
+
+      utterance.onend = () => {
+        isReading = false;
+        printButton.textContent = 'Read AI Output';
+
+        const nextIndex = currentUtteranceIndex + 1;
+        const nextBotChat = botChats[nextIndex];
+        if (nextBotChat) {
+          toggleReading(nextBotChat.value, nextIndex);
+        }
+      };
+    }
+
+    window.speechSynthesis.speak(utterance);
+    isReading = true;
+    printButton.textContent = 'Stop Reading';
+  }
+}
+
+/* ================= BUTTON EVENTS ================= */
+
+printButton.addEventListener('click', () => {
+  const lastBotChat = botChats[botChats.length - 1];
+  if (lastBotChat) {
+    toggleReading(lastBotChat.value, botChats.length - 1);
+  }
+});
+
+continueReadingButton.addEventListener('click', () => {
+  const lastBotChat = botChats[currentUtteranceIndex];
+  if (lastBotChat) {
+    toggleReading(lastBotChat.value, currentUtteranceIndex);
+  }
+});
+
+// ✅ MUTE / UNMUTE LOGIC
+muteButton.addEventListener('click', () => {
+  if (!isMuted) {
+    window.speechSynthesis.cancel();
+    isMuted = true;
+    muteButton.textContent = 'Unmute Voice';
+    muteButton.style.backgroundColor = '#ffc107'; // ✅ YELLOW
+    muteButton.style.color = '#000';
+  } else {
+    isMuted = false;
+    muteButton.textContent = 'Mute Voice';
+    muteButton.style.backgroundColor = '#dc3545'; // ✅ RED
+    muteButton.style.color = '#fff';
+  }
+});
+
+/* ================= LOADER ================= */
+
+function loader(element) {
+  element.textContent = '';
+  loadInterval = setInterval(() => {
+    element.textContent += '.';
+    if (element.textContent === '....') element.textContent = '';
+  }, 100);
+}
+
+/* ================= UNIQUE ID ================= */
+
+function generateUniqueId() {
+  return `id-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+/* ================= CHAT UI ================= */
+
+function createChatStripe(isAi, value, uniqueId) {
+  const profileImg = isAi ? bot : user;
+  const message = { isAi, value };
+
+  if (isAi) botChats.push(message);
+  else userChats.push(message);
+
+  return `
+    <div class="wrapper ${isAi ? 'ai' : ''}">
+      <div class="chat">
+        <div class="profile">
+          <img src="${profileImg}" />
+        </div>
+        <div class="message" id="${uniqueId}">
+          <span>${value}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ================= FEEDBACK ================= */
+
+const listenForFeedback = function(prompt, botResponse) {
+  const feedbackForm = document.createElement('form');
+  const feedbackInput = document.createElement('input');
+  const feedbackSubmitButton = document.createElement('button');
+  const feedbackCancelButton = document.createElement('button');
+
+  feedbackInput.placeholder = 'Provide feedback';
+  feedbackSubmitButton.textContent = 'Submit';
+  feedbackCancelButton.textContent = 'Cancel';
+  feedbackCancelButton.type = 'button';
+
+  feedbackForm.append(feedbackInput, feedbackSubmitButton, feedbackCancelButton);
+  chatContainer.appendChild(feedbackForm);
+
+  feedbackForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    chatContainer.removeChild(feedbackForm);
+  });
+
+  feedbackCancelButton.addEventListener('click', function() {
+    chatContainer.removeChild(feedbackForm);
+  });
+};
+
+/* ================= FORM SUBMIT ================= */
+
+const handleSubmit = function(e) {
+  e.preventDefault();
+
+  const prompt = input.value.trim();
+  if (!prompt) return;
+
+  submitButton.disabled = true;
+
+  chatContainer.insertAdjacentHTML('beforeend', createChatStripe(false, prompt));
+  form.reset();
+  scrollToLatestMessage();
+
+  const uniqueId = generateUniqueId();
+  chatContainer.insertAdjacentHTML('beforeend', createChatStripe(true, '', uniqueId));
+
+  const messageDiv = document.getElementById(uniqueId);
+  loader(messageDiv);
+
+  setTimeout(() => {
+    clearInterval(loadInterval);
+    messageDiv.innerHTML = `<span>AI Response</span>`;
+    submitButton.disabled = false;
+    scrollToLatestMessage();
+    toggleReading("AI Response", botChats.length - 1);
+  }, 1000);
+};
+
+form.addEventListener('submit', handleSubmit);
+form.addEventListener('keyup', function(e) {
+  if (e.keyCode === 13) handleSubmit(e);
+});
+
+/* ================= SCROLL ================= */
+
+function scrollToLatestMessage() {
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
+    behavior: 'smooth',
+  });
+}
+
+window.addEventListener('load', scrollToLatestMessage);
+
+/* ================= BUTTON CONTAINERS ================= */
+
+document.getElementById('printButtonContainer').appendChild(printButton);
+document.getElementById('continueReadingButtonContainer').appendChild(continueReadingButton);
+document.getElementById('muteButtonContainer').appendChild(muteButton);
