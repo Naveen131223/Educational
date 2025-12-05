@@ -14,9 +14,9 @@ let loadInterval;
 const userChats = [];
 const botChats = [];
 let utterance;
-let currentUtteranceIndex = -1;
+let currentUtteranceIndex = -1; // which bot message is being read
 let isReading = false;
-let isMuted = false;
+let isMuted = false; // ✅ mute state
 
 /* ================= BUTTON STYLES ================= */
 
@@ -39,6 +39,7 @@ continueReadingButton.style.cssText = `
   border-radius: 4px;
   margin-top: 10px;
   cursor: pointer;
+  margin-left: 10px;
 `;
 continueReadingButton.textContent = 'Continue Reading';
 
@@ -50,15 +51,15 @@ muteButton.style.cssText = `
   border-radius: 4px;
   margin-top: 10px;
   cursor: pointer;
+  margin-left: 10px;
 `;
 muteButton.textContent = 'Mute Voice';
 
-/* ================= ✅ FIXED SPEECH FUNCTION ================= */
+/* ================= SPEECH FUNCTION (FIXED) ================= */
 
 function toggleReading(message, index) {
-
-  // ✅ Always prepare utterance (even if muted)
-  if (currentUtteranceIndex !== index) {
+  // Always prepare utterance for this index (even if muted)
+  if (currentUtteranceIndex !== index || !utterance) {
     utterance = new SpeechSynthesisUtterance(message);
     currentUtteranceIndex = index;
     utterance.voiceURI = 'Google US English';
@@ -71,22 +72,23 @@ function toggleReading(message, index) {
       isReading = false;
       printButton.textContent = 'Read AI Output';
 
+      // Auto-continue to next bot message if it exists and has value
       const nextIndex = currentUtteranceIndex + 1;
       const nextBotChat = botChats[nextIndex];
-      if (nextBotChat) {
+      if (nextBotChat && nextBotChat.value) {
         toggleReading(nextBotChat.value, nextIndex);
       }
     };
   }
 
-  // ✅ If muted → don't speak, but system stays ready
+  // If muted → do not speak, but keep utterance ready
   if (isMuted) {
     isReading = false;
     printButton.textContent = 'Read AI Output';
     return;
   }
 
-  // ✅ Normal play / stop toggle
+  // Normal toggle: stop or start
   if (isReading) {
     window.speechSynthesis.cancel();
     isReading = false;
@@ -102,33 +104,32 @@ function toggleReading(message, index) {
 
 printButton.addEventListener('click', () => {
   const lastBotChat = botChats[botChats.length - 1];
-  if (lastBotChat) {
+  if (lastBotChat && lastBotChat.value) {
     toggleReading(lastBotChat.value, botChats.length - 1);
   }
 });
 
 continueReadingButton.addEventListener('click', () => {
   const lastBotChat = botChats[currentUtteranceIndex];
-  if (lastBotChat) {
+  if (lastBotChat && lastBotChat.value) {
     toggleReading(lastBotChat.value, currentUtteranceIndex);
   }
 });
 
-/* ================= ✅ FIXED MUTE / UNMUTE ================= */
-
+// Mute / Unmute with state reset
 muteButton.addEventListener('click', () => {
   if (!isMuted) {
     window.speechSynthesis.cancel();
     isMuted = true;
     isReading = false;
     muteButton.textContent = 'Unmute Voice';
-    muteButton.style.backgroundColor = '#ffc107'; // YELLOW
+    muteButton.style.backgroundColor = '#ffc107'; // yellow
     muteButton.style.color = '#000';
     printButton.textContent = 'Read AI Output';
   } else {
     isMuted = false;
     muteButton.textContent = 'Mute Voice';
-    muteButton.style.backgroundColor = '#dc3545'; // RED
+    muteButton.style.backgroundColor = '#dc3545'; // red
     muteButton.style.color = '#fff';
   }
 });
@@ -137,9 +138,12 @@ muteButton.addEventListener('click', () => {
 
 function loader(element) {
   element.textContent = '';
+
   loadInterval = setInterval(() => {
     element.textContent += '.';
-    if (element.textContent === '....') element.textContent = '';
+    if (element.textContent === '....') {
+      element.textContent = '';
+    }
   }, 100);
 }
 
@@ -147,6 +151,7 @@ function generateUniqueId() {
   const timestamp = Date.now();
   const randomNumber = Math.random();
   const hexadecimalString = randomNumber.toString(16).slice(2, 8);
+
   return `id-${timestamp}-${hexadecimalString}`;
 }
 
@@ -154,8 +159,11 @@ function createChatStripe(isAi, value, uniqueId) {
   const profileImg = isAi ? bot : user;
   const message = { isAi, value };
 
-  if (isAi) botChats.push(message);
-  else userChats.push(message);
+  if (isAi) {
+    botChats.push(message);
+  } else {
+    userChats.push(message);
+  }
 
   return `
     <div class="wrapper ${isAi ? 'ai' : ''}">
@@ -171,108 +179,173 @@ function createChatStripe(isAi, value, uniqueId) {
   `;
 }
 
-let thinkingTimeout;
-
-/* ================= FORM SUBMIT ================= */
+/* ================= HANDLE SUBMIT (FULL RESPONSE FIX) ================= */
 
 const handleSubmit = function(e) {
   e.preventDefault();
 
   const prompt = input.value.trim();
-  if (!prompt) return;
+  if (prompt === '') return;
 
+  // Disable the submit button while processing
   submitButton.disabled = true;
 
+  // User's chat stripe
   const userChatStripe = createChatStripe(false, prompt);
   chatContainer.insertAdjacentHTML('beforeend', userChatStripe);
+
+  // Clear the textarea input
   form.reset();
+
+  // Scroll to the latest message
   scrollToLatestMessage();
 
+  // Bot's chat stripe placeholder
   const uniqueId = generateUniqueId();
   const botChatStripe = createChatStripe(true, '', uniqueId);
   chatContainer.insertAdjacentHTML('beforeend', botChatStripe);
 
   const messageDiv = document.getElementById(uniqueId);
+
+  // Show loading indicator
   loader(messageDiv);
 
   try {
-    thinkingTimeout = setTimeout(function() {
-      try {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://educational-development.onrender.com/', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://educational-development.onrender.com/', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
 
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState === 4) {
-            clearInterval(loadInterval);
-            messageDiv.textContent = '';
+    // ✅ Use onload to ensure full response is available
+    xhr.onload = function() {
+      clearInterval(loadInterval);
+      messageDiv.textContent = '';
 
-            if (xhr.status === 200) {
-              const data = JSON.parse(xhr.responseText);
-              const parsedData = data.bot.trim();
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        const parsedData = (data.bot || '').trim();
 
-              messageDiv.innerHTML = `<span>${parsedData}</span>`;
-              scrollToLatestMessage();
-              submitButton.disabled = false;
-              input.focus();
-              listenForFeedback(prompt, parsedData);
-              toggleReading(parsedData, botChats.length - 1);
-            } else {
-              messageDiv.textContent = 'Something went wrong';
-              submitButton.disabled = false;
-            }
-          }
-        };
+        // Display full bot response
+        messageDiv.innerHTML = `<span>${parsedData}</span>`;
 
-        xhr.send(JSON.stringify({ prompt: prompt }));
-      } catch (error) {
+        // Update botChats last entry with real text (for reading)
+        if (botChats.length > 0) {
+          botChats[botChats.length - 1].value = parsedData;
+        }
+
+        // Scroll to latest, re-enable input
+        scrollToLatestMessage();
+        submitButton.disabled = false;
+        input.focus();
+
+        // Feedback
+        listenForFeedback(prompt, parsedData);
+
+        // Auto start reading
+        toggleReading(parsedData, botChats.length - 1);
+      } else {
+        const err = xhr.responseText;
         messageDiv.textContent = 'Something went wrong';
+        console.error('Server error:', err);
+        alert(err);
         submitButton.disabled = false;
       }
-    }, 100);
+    };
+
+    xhr.onerror = function() {
+      clearInterval(loadInterval);
+      messageDiv.textContent = 'Network error';
+      console.error('Network error');
+      submitButton.disabled = false;
+    };
+
+    xhr.send(JSON.stringify({ prompt: prompt }));
   } catch (error) {
+    clearInterval(loadInterval);
     messageDiv.textContent = 'Something went wrong';
+    console.error(error);
     submitButton.disabled = false;
   }
 };
 
-/* ================= FEEDBACK ================= */
+/* ================= FEEDBACK FUNCTIONS ================= */
 
+// Function to listen for user feedback on the AI response
 const listenForFeedback = function(prompt, botResponse) {
   const feedbackForm = document.createElement('form');
   const feedbackInput = document.createElement('input');
   const feedbackSubmitButton = document.createElement('button');
   const feedbackCancelButton = document.createElement('button');
 
+  feedbackForm.classList.add('feedback-form');
   feedbackInput.setAttribute('type', 'text');
   feedbackInput.setAttribute('placeholder', 'Provide feedback');
+  feedbackSubmitButton.setAttribute('type', 'submit');
   feedbackSubmitButton.textContent = 'Submit';
+  feedbackCancelButton.setAttribute('type', 'button');
   feedbackCancelButton.textContent = 'Cancel';
-  feedbackCancelButton.type = 'button';
 
   feedbackForm.appendChild(feedbackInput);
   feedbackForm.appendChild(feedbackSubmitButton);
   feedbackForm.appendChild(feedbackCancelButton);
 
-  chatContainer.appendChild(feedbackForm);
+  const feedbackContainer = document.createElement('div');
+  feedbackContainer.classList.add('feedback-container');
+  feedbackContainer.appendChild(feedbackForm);
+
+  chatContainer.appendChild(feedbackContainer);
 
   feedbackForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    chatContainer.removeChild(feedbackForm);
+
+    const feedback = feedbackInput.value.trim();
+    if (feedback === '') return;
+
+    // Send the feedback to the server for model improvement
+    sendFeedback(prompt, botResponse, feedback);
+
+    // Remove the feedback form
+    chatContainer.removeChild(feedbackContainer);
   });
 
   feedbackCancelButton.addEventListener('click', function() {
-    chatContainer.removeChild(feedbackForm);
+    chatContainer.removeChild(feedbackContainer);
   });
 };
 
-/* ================= SCROLL ================= */
+// Function to send feedback to the server for model improvement
+const sendFeedback = function(prompt, botResponse, feedback) {
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://educational-development.onrender.com/feedback', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status !== 200) {
+        console.error('Failed to send feedback:', xhr.status, xhr.statusText);
+      }
+    };
+
+    xhr.send(JSON.stringify({
+      prompt: prompt,
+      botResponse: botResponse,
+      feedback: feedback,
+    }));
+  } catch (error) {
+    console.error('Error sending feedback:', error);
+  }
+};
+
+/* ================= SCROLL & EVENTS ================= */
 
 form.addEventListener('submit', handleSubmit);
+
 form.addEventListener('keyup', function(e) {
-  if (e.keyCode === 13) handleSubmit(e);
+  if (e.keyCode === 13) {
+    handleSubmit(e);
+  }
 });
 
+// Auto-scroll to the latest message smoothly
 function scrollToLatestMessage() {
   chatContainer.scrollTo({
     top: chatContainer.scrollHeight,
@@ -280,11 +353,12 @@ function scrollToLatestMessage() {
   });
 }
 
+// Scroll on initial load
 window.addEventListener('load', function() {
   scrollToLatestMessage();
 });
 
-/* ================= ✅ BUTTON CONTAINERS ================= */
+/* ================= BUTTON CONTAINERS ================= */
 
 const printButtonContainer = document.getElementById('printButtonContainer');
 const continueReadingButtonContainer = document.getElementById('continueReadingButtonContainer');
@@ -293,3 +367,4 @@ const muteButtonContainer = document.getElementById('muteButtonContainer');
 printButtonContainer.appendChild(printButton);
 continueReadingButtonContainer.appendChild(continueReadingButton);
 muteButtonContainer.appendChild(muteButton);
+      
