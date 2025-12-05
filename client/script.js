@@ -5,8 +5,10 @@ const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
 const input = form.querySelector('textarea');
 const submitButton = form.querySelector('button[type="submit"]');
+
 const printButton = document.createElement('button');
 const continueReadingButton = document.createElement('button');
+const muteButton = document.createElement('button');
 
 let loadInterval;
 const userChats = [];
@@ -14,7 +16,9 @@ const botChats = [];
 let utterance;
 let currentUtteranceIndex = -1;
 let isReading = false;
-let isMuted = false;   // ✅ ADDED FOR MUTE SYSTEM
+let isMuted = false;   // ✅ MUTE STATE
+
+// ================= BUTTON STYLES =================
 
 printButton.style.cssText = `
   background-color: #007bff;
@@ -25,6 +29,7 @@ printButton.style.cssText = `
   margin-top: 10px;
   cursor: pointer;
 `;
+printButton.textContent = 'Read AI Output';
 
 continueReadingButton.style.cssText = `
   background-color: #28a745;
@@ -34,16 +39,10 @@ continueReadingButton.style.cssText = `
   border-radius: 4px;
   margin-top: 10px;
   cursor: pointer;
-  margin-left: 10px;
 `;
-
-printButton.textContent = 'Read AI Output';
 continueReadingButton.textContent = 'Continue Reading';
 
-// ================= ✅ MUTE BUTTON (ONLY ADDITION) =================
-
-const muteButton = document.createElement('button');
-
+// ✅ MUTE BUTTON (RED / YELLOW ONLY)
 muteButton.style.cssText = `
   background-color: #dc3545;
   color: #fff;
@@ -51,10 +50,8 @@ muteButton.style.cssText = `
   border: none;
   border-radius: 4px;
   margin-top: 10px;
-  margin-left: 10px;
   cursor: pointer;
 `;
-
 muteButton.textContent = 'Mute Voice';
 
 // ================= SPEECH FUNCTION =================
@@ -112,8 +109,7 @@ continueReadingButton.addEventListener('click', () => {
   }
 });
 
-// ================= ✅ MUTE / UNMUTE LOGIC =================
-
+// ✅ MUTE / UNMUTE LOGIC
 muteButton.addEventListener('click', () => {
   if (!isMuted) {
     window.speechSynthesis.cancel();
@@ -176,7 +172,7 @@ const handleSubmit = function(e) {
   e.preventDefault();
 
   const prompt = input.value.trim();
-  if (prompt === '') return;
+  if (!prompt) return;
 
   submitButton.disabled = true;
 
@@ -207,6 +203,7 @@ const handleSubmit = function(e) {
             if (xhr.status === 200) {
               const data = JSON.parse(xhr.responseText);
               const parsedData = data.bot.trim();
+
               messageDiv.innerHTML = `<span>${parsedData}</span>`;
               scrollToLatestMessage();
               submitButton.disabled = false;
@@ -280,8 +277,12 @@ window.addEventListener('load', function() {
   scrollToLatestMessage();
 });
 
-// ================= ✅ BUTTON APPEND =================
+// ================= ✅ BUTTON APPEND USING YOUR DIVS =================
 
-chatContainer.appendChild(printButton);
-chatContainer.appendChild(continueReadingButton);
-chatContainer.appendChild(muteButton);
+const printButtonContainer = document.getElementById('printButtonContainer');
+const continueReadingButtonContainer = document.getElementById('continueReadingButtonContainer');
+const muteButtonContainer = document.getElementById('muteButtonContainer');
+
+printButtonContainer.appendChild(printButton);
+continueReadingButtonContainer.appendChild(continueReadingButton);
+muteButtonContainer.appendChild(muteButton);
