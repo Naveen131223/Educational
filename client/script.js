@@ -16,9 +16,9 @@ const botChats = [];
 let utterance;
 let currentUtteranceIndex = -1;
 let isReading = false;
-let isMuted = false;   // ✅ MUTE STATE
+let isMuted = false;
 
-// ================= BUTTON STYLES =================
+/* ================= BUTTON STYLES ================= */
 
 printButton.style.cssText = `
   background-color: #007bff;
@@ -42,7 +42,6 @@ continueReadingButton.style.cssText = `
 `;
 continueReadingButton.textContent = 'Continue Reading';
 
-// ✅ MUTE BUTTON (RED / YELLOW ONLY)
 muteButton.style.cssText = `
   background-color: #dc3545;
   color: #fff;
@@ -54,46 +53,52 @@ muteButton.style.cssText = `
 `;
 muteButton.textContent = 'Mute Voice';
 
-// ================= SPEECH FUNCTION =================
+/* ================= ✅ FIXED SPEECH FUNCTION ================= */
 
 function toggleReading(message, index) {
 
-  if (isMuted) return;   // ✅ BLOCK VOICE WHEN MUTED
+  // ✅ Always prepare utterance (even if muted)
+  if (currentUtteranceIndex !== index) {
+    utterance = new SpeechSynthesisUtterance(message);
+    currentUtteranceIndex = index;
+    utterance.voiceURI = 'Google US English';
+    utterance.lang = 'en-IN-ta';
+    utterance.volume = 2;
+    utterance.rate = 0.9;
+    utterance.pitch = 1.2;
 
-  if (isReading && currentUtteranceIndex === index) {
+    utterance.onend = () => {
+      isReading = false;
+      printButton.textContent = 'Read AI Output';
+
+      const nextIndex = currentUtteranceIndex + 1;
+      const nextBotChat = botChats[nextIndex];
+      if (nextBotChat) {
+        toggleReading(nextBotChat.value, nextIndex);
+      }
+    };
+  }
+
+  // ✅ If muted → don't speak, but system stays ready
+  if (isMuted) {
+    isReading = false;
+    printButton.textContent = 'Read AI Output';
+    return;
+  }
+
+  // ✅ Normal play / stop toggle
+  if (isReading) {
     window.speechSynthesis.cancel();
     isReading = false;
     printButton.textContent = 'Read AI Output';
   } else {
-
-    if (currentUtteranceIndex !== index) {
-      utterance = new SpeechSynthesisUtterance(message);
-      currentUtteranceIndex = index;
-      utterance.voiceURI = 'Google US English';
-      utterance.lang = 'en-IN-ta';
-      utterance.volume = 2;
-      utterance.rate = 0.9;
-      utterance.pitch = 1.2;
-
-      utterance.onend = () => {
-        isReading = false;
-        printButton.textContent = 'Read AI Output';
-
-        const nextIndex = currentUtteranceIndex + 1;
-        const nextBotChat = botChats[nextIndex];
-        if (nextBotChat) {
-          toggleReading(nextBotChat.value, nextIndex);
-        }
-      };
-    }
-
     window.speechSynthesis.speak(utterance);
     isReading = true;
     printButton.textContent = 'Stop Reading';
   }
 }
 
-// ================= BUTTON EVENTS =================
+/* ================= BUTTON EVENTS ================= */
 
 printButton.addEventListener('click', () => {
   const lastBotChat = botChats[botChats.length - 1];
@@ -109,32 +114,32 @@ continueReadingButton.addEventListener('click', () => {
   }
 });
 
-// ✅ MUTE / UNMUTE LOGIC
+/* ================= ✅ FIXED MUTE / UNMUTE ================= */
+
 muteButton.addEventListener('click', () => {
   if (!isMuted) {
     window.speechSynthesis.cancel();
     isMuted = true;
+    isReading = false;
     muteButton.textContent = 'Unmute Voice';
-    muteButton.style.backgroundColor = '#ffc107'; // ✅ YELLOW
+    muteButton.style.backgroundColor = '#ffc107'; // YELLOW
     muteButton.style.color = '#000';
+    printButton.textContent = 'Read AI Output';
   } else {
     isMuted = false;
     muteButton.textContent = 'Mute Voice';
-    muteButton.style.backgroundColor = '#dc3545'; // ✅ RED
+    muteButton.style.backgroundColor = '#dc3545'; // RED
     muteButton.style.color = '#fff';
   }
 });
 
-// ================= LOADER =================
+/* ================= LOADER ================= */
 
 function loader(element) {
   element.textContent = '';
-
   loadInterval = setInterval(() => {
     element.textContent += '.';
-    if (element.textContent === '....') {
-      element.textContent = '';
-    }
+    if (element.textContent === '....') element.textContent = '';
   }, 100);
 }
 
@@ -167,6 +172,8 @@ function createChatStripe(isAi, value, uniqueId) {
 }
 
 let thinkingTimeout;
+
+/* ================= FORM SUBMIT ================= */
 
 const handleSubmit = function(e) {
   e.preventDefault();
@@ -229,7 +236,7 @@ const handleSubmit = function(e) {
   }
 };
 
-// ================= FEEDBACK =================
+/* ================= FEEDBACK ================= */
 
 const listenForFeedback = function(prompt, botResponse) {
   const feedbackForm = document.createElement('form');
@@ -259,7 +266,7 @@ const listenForFeedback = function(prompt, botResponse) {
   });
 };
 
-// ================= SCROLL =================
+/* ================= SCROLL ================= */
 
 form.addEventListener('submit', handleSubmit);
 form.addEventListener('keyup', function(e) {
@@ -277,7 +284,7 @@ window.addEventListener('load', function() {
   scrollToLatestMessage();
 });
 
-// ================= ✅ BUTTON APPEND USING YOUR DIVS =================
+/* ================= ✅ BUTTON CONTAINERS ================= */
 
 const printButtonContainer = document.getElementById('printButtonContainer');
 const continueReadingButtonContainer = document.getElementById('continueReadingButtonContainer');
